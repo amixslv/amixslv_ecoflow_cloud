@@ -4,11 +4,7 @@
   "version": "2026.5.1",
   "documentation": "https://github.com/amixslv/amixslv_ecoflow_cloud",
   "issue_tracker": "https://github.com/amixslv/amixslv_ecoflow_cloud/issues",
-  "requirements": [
-    "paho-mqtt>=2.1.0",
-    "protobuf==6.32.0",
-    "jsonpath-ng>=1.7.0"
-  ],
+  "requirements": [],
   "dependencies": [
     "mqtt",
     "integration"
@@ -16,6 +12,6 @@
   "codeowners": [
     "@amixslv"
   ],
-  "iot_class": "cloud_push",
+  "iot_class":  "cloud_polling",
   "config_flow": true
 }
