@@ -1,0 +1,272 @@
+syntax = "proto3";
+
+
+message PowerStreamHeader
+{
+    optional bytes pdata = 1;
+    optional int32 src = 2;
+    optional int32 dest = 3;
+    optional int32 d_src= 4;
+    optional int32 d_dest = 5;
+    optional int32 enc_type = 6;
+    optional int32 check_type = 7;
+    optional int32 cmd_func = 8;
+    optional int32 cmd_id = 9;
+    optional int32 data_len = 10;
+    optional int32 need_ack = 11;
+    optional int32 is_ack = 12;
+    optional int32 seq = 14;
+    optional int32 product_id = 15;
+    optional int32 version = 16;
+    optional int32 payload_ver = 17;
+    optional int32 time_snap = 18;
+    optional int32 is_rw_cmd = 19;
+    optional int32 is_queue = 20;
+    optional int32 ack_type= 21;
+    optional string code = 22;
+    optional string from_ = 23;
+    optional string module_sn = 24;
+    optional string device_sn = 25;
+}
+
+message PowerStreamSendHeaderMsg
+{
+    repeated PowerStreamHeader msg = 1;
+}
+
+
+message PowerStreamInverterHeartbeat {
+    optional uint32 inv_error_code = 1;
+    optional uint32 inv_warning_code = 3;
+    optional uint32 pv1_error_code = 2;
+    optional uint32 pv1_warning_code = 4;
+    optional uint32 pv2_error_code = 5;
+    optional uint32 pv2_warning_code = 6;
+    optional uint32 bat_error_code = 7;
+    optional uint32 bat_warning_code = 8;
+    optional uint32 llc_error_code = 9;
+    optional uint32 llc_warning_code = 10;
+    optional uint32 pv1_statue = 11;
+    optional uint32 pv2_statue = 12;
+    optional uint32 bat_statue = 13;
+    optional uint32 llc_statue = 14;
+    optional uint32 inv_statue = 15;
+    optional int32 pv1_input_volt = 16;
+    optional int32 pv1_op_volt = 17;
+    optional int32 pv1_input_cur = 18;
+    optional int32 pv1_input_watts = 19;
+    optional int32 pv1_temp = 20;
+    optional int32 pv2_input_volt = 21;
+    optional int32 pv2_op_volt = 22;
+    optional int32 pv2_input_cur = 23;
+    optional int32 pv2_input_watts = 24;
+    optional int32 pv2_temp = 25;
+    optional int32 bat_input_volt = 26;
+    optional int32 bat_op_volt = 27;
+    optional int32 bat_input_cur = 28;
+    optional int32 bat_input_watts = 29;
+    optional int32 bat_temp = 30;
+    optional uint32 bat_soc = 31;
+    optional int32 llc_input_volt = 32;
+    optional int32 llc_op_volt = 33;
+    optional int32 llc_temp = 34;
+    optional int32 inv_input_volt = 35;
+    optional int32 inv_op_volt = 36;
+    optional int32 inv_output_cur = 37;
+    optional int32 inv_output_watts = 38;
+    optional int32 inv_temp = 39;
+    optional int32 inv_freq = 40;
+    optional int32 inv_dc_cur = 41;
+    optional int32 bp_type = 42;
+    optional int32 inv_relay_status = 43;
+    optional int32 pv1_relay_status = 44;
+    optional int32 pv2_relay_status = 45;
+    optional uint32 install_country = 46;
+    optional uint32 install_town = 47;
+    optional uint32 permanent_watts = 48;
+    optional uint32 dynamic_watts = 49;
+    optional uint32 supply_priority = 50;
+    optional uint32 lower_limit = 51;
+    optional uint32 upper_limit = 52;
+    optional uint32 inv_on_off = 53;
+    optional uint32 wireless_error_code = 54;
+    optional uint32 wireless_warning_code = 55;
+    optional uint32 inv_brightness = 56;
+    optional uint32 heartbeat_frequency = 57;
+    optional uint32 rated_power = 58;
+    optional uint32 chg_remain_time = 59;
+    optional uint32 dsg_remain_time = 60;
+    optional uint32 feed_protect = 61;
+}
+
+message PowerStreamPermanentWattsPack
+{
+    optional uint32 permanent_watts = 1;
+}
+
+message PowerStreamSupplyPriorityPack
+{
+    optional uint32 supply_priority = 1;
+}
+
+message PowerStreamBatLowerPack
+{
+    optional int32 lower_limit = 1;
+}
+
+message PowerStreamBatUpperPack
+{
+    optional int32 upper_limit = 1;
+}
+
+message PowerStreamBrightnessPack
+{
+    optional int32 brightness = 1;
+}
+
+message PowerStreamPowerItem
+{
+    optional uint32 timestamp = 1;
+    optional sint32 timezone = 2;
+    optional uint32 inv_to_grid_power = 3;
+    optional uint32 inv_to_plug_power = 4;
+    optional int32 battery_power = 5;
+    optional uint32 pv1_output_power = 6;
+    optional uint32 pv2_output_power = 7;
+}
+
+message PowerStreamPowerPack
+{
+    optional uint32 sys_seq = 1;
+    repeated PowerStreamPowerItem sys_power_stream = 2;
+}
+
+message PowerStreamPowerAckPack
+{
+    optional uint32 sys_seq = 1;
+}
+
+message PowerStreamNodeMessage
+{
+    optional string sn = 1;
+    optional bytes mac = 2;
+}
+
+message PowerStreamMeshChildNodeInfo
+{
+    optional uint32 topology_type = 1;
+    optional uint32 mesh_protocol = 2;
+    optional uint32 max_sub_device_num = 3;
+    optional bytes parent_mac_id = 4;
+    optional bytes mesh_id = 5;
+    repeated PowerStreamNodeMessage sub_device_list = 6;
+}
+
+message PowerStreamSetValue
+{
+    optional int32 value = 1;
+}
+
+message PowerStreamEnergyItem
+{
+    optional uint32 timestamp = 1;
+    optional uint32 watth_type = 2;
+    repeated uint32 watth = 3;
+}
+
+message PowerStreamEnergyTotalReport
+{
+    optional uint32 watth_seq = 1;
+    optional PowerStreamEnergyItem watth_item = 2;
+}
+
+message PowerStreamBatchEnergyTotalReport
+{
+    optional uint32 watth_seq = 1;
+    repeated PowerStreamEnergyItem watth_item = 2;
+}
+
+message PowerStreamEnergyTotalReportAck
+{
+    optional uint32 result = 1;
+    optional uint32 watth_seq = 2;
+    optional uint32 watth_type = 3;
+}
+
+message PowerStreamEventRecordItem
+{
+    optional uint32 timestamp = 1;
+    optional uint32 sys_ms = 2;
+    optional uint32 event_no = 3;
+    repeated float event_detail = 4;
+}
+
+message PowerStreamEventRecordReport
+{
+    optional uint32 event_ver = 1;
+    optional uint32 event_seq = 2;
+    repeated PowerStreamEventRecordItem event_item = 3;
+}
+
+message PowerStreamEventInfoReportAck
+{
+    optional uint32 result = 1;
+    optional uint32 event_seq = 2;
+    optional uint32 event_item_num =3;
+}
+
+message PowerStreamProductNameSet
+{
+    optional string name = 1;
+}
+
+message PowerStreamProductNameSetAck
+{
+    optional uint32 result = 1;
+}
+
+message PowerStreamProductNameGet { }
+
+message PowerStreamProductNameGetAck
+{
+    optional string name = 3;
+}
+
+message PowerStreamRTCTimeGet { }
+
+message PowerStreamRTCTimeGetAck
+{
+    optional uint32 timestamp = 1;
+    optional int32 timezone = 2;
+}
+
+message PowerStreamRTCTimeSet
+{
+    optional uint32 timestamp = 1;
+    optional int32 timezone = 2;
+}
+
+message PowerStreamRTCTimeSetAck
+{
+    optional uint32 result = 1;
+}
+
+message PowerStreamCountryTownMessage
+{
+    optional uint32 country = 1;
+    optional uint32 town = 2;
+}
+
+enum PlCmdSets
+{
+    PL_NONE_CMD_SETS = 0;
+    PL_BASIC_CMD_SETS = 1;
+    PL_EXT_CMD_SETS = 254;
+}
+
+enum PlCmdId
+{
+    PL_CMD_ID_NONE = 0;
+    PL_CMD_ID_XLOG = 16;
+    PL_CMD_ID_WATTH = 32;
+}

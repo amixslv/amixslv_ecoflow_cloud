@@ -1,0 +1,599 @@
+syntax = "proto3";
+
+//
+//  DELTA 3 PLUS — HEADER STRUCTURES
+//
+
+// ─────────────────────────────────────────────────────────────
+//  Delta3PlusHeader
+// ─────────────────────────────────────────────────────────────
+message Delta3PlusHeader
+{
+  optional bytes pdata = 1;          // Iekapsulētais binārais payload
+  optional int32 src = 2;            // Avota modulis
+  optional int32 dest = 3;           // Mērķa modulis
+  optional int32 d_src = 4;          // Detalizēts avota ID
+  optional int32 d_dest = 5;         // Detalizēts mērķa ID
+  optional int32 enc_type = 6;       // Šifrēšanas tips
+  optional int32 check_type = 7;     // Kontroles summas tips
+  optional int32 cmd_func = 8;       // Komandas funkcijas ID
+  optional int32 cmd_id = 9;         // Komandas ID
+  optional int32 data_len = 10;      // Datu garums
+  optional int32 need_ack = 11;      // Vai nepieciešams ACK
+  optional int32 is_ack = 12;        // Vai šis ir ACK
+  optional int32 seq = 14;           // Sekvences numurs
+  optional int32 product_id = 15;    // Produkta ID
+  optional int32 version = 16;       // Protokola versija
+  optional int32 payload_ver = 17;   // Payload versija
+  optional int32 time_snap = 18;     // Laika zīmogs
+  optional int32 is_rw_cmd = 19;     // Read/Write komanda
+  optional int32 is_queue = 20;      // Vai komanda rindā
+  optional int32 ack_type = 21;      // ACK tips
+  optional string code = 22;         // Kods (string)
+  optional string from = 23;         // Avota identifikators
+  optional string module_sn = 24;    // Moduļa sērijas numurs
+  optional string device_sn = 25;    // Ierīces sērijas numurs
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Delta3PlusSendHeaderMsg
+// ─────────────────────────────────────────────────────────────
+message Delta3PlusSendHeaderMsg
+{
+  repeated Delta3PlusHeader msg = 1;   // Saraksts ar header ziņojumiem
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Delta3PlusHeaderMessage
+// ─────────────────────────────────────────────────────────────
+message Delta3PlusHeaderMessage
+{
+  repeated Delta3PlusHeader header = 1; // Header masīvs
+}
+//
+//  DELTA 3 PLUS — DISPLAY PROPERTY UPLOAD
+//  (cmdFunc = 254, cmdId = 21)
+// 
+
+message Delta3PlusDisplayPropertyUpload {
+
+  optional uint32 errcode = 1;                     // Kļūdas kods (0 = OK)
+  optional float pow_in_sum_w = 3;                 // Kopējā ievades jauda (W)
+  optional float pow_out_sum_w = 4;                // Kopējā izvades jauda (W)
+  optional uint32 energy_backup_en = 7;            // Rezerves enerģijas režīms ieslēgts (0/1)
+  optional uint32 energy_backup_start_soc = 8;     // SOC slieksnis rezerves režīmam (%)
+  optional float pow_get_qcusb1 = 9;               // QC USB1 jauda (W)
+  optional float pow_get_qcusb2 = 10;              // QC USB2 jauda (W)
+  optional float pow_get_typec1 = 11;              // Type‑C1 jauda (W)
+  optional float pow_get_typec2 = 12;              // Type‑C2 jauda (W)
+  optional uint32 flow_info_qcusb1 = 13;           // QC USB1 plūsmas virziens
+  optional uint32 flow_info_qcusb2 = 14;           // QC USB2 plūsmas virziens
+  optional uint32 flow_info_typec1 = 15;           // Type‑C1 plūsmas virziens
+  optional uint32 flow_info_typec2 = 16;           // Type‑C2 plūsmas virziens
+  optional uint32 dev_standby_time = 17;           // Ierīces standby timeout (min)
+  optional uint32 screen_off_time = 18;            // Ekrāna izslēgšanās laiks (sek)
+  optional uint32 ac_standby_time = 19;            // AC standby timeout (min)
+  optional uint32 ac_always_on_flag = 22;          // AC vienmēr ieslēgts (0/1)
+  optional uint32 ac_always_on_mini_soc = 23;      // Min SOC AC always‑on režīmam (%)
+  optional uint32 xboost_en = 25;                  // X‑Boost ieslēgts (0/1)
+  optional uint32 pcs_fan_level = 30;              // PCS ventilatora līmenis
+  optional uint32 flow_info_12v = 33;              // 12V DC plūsmas virziens
+  optional float pow_get_12v = 37;                 // 12V DC jauda (W)
+  optional uint32 flow_info_ac2dc = 45;            // AC→DC plūsmas virziens
+  optional uint32 flow_info_dc2ac = 46;            // DC→AC plūsmas virziens
+  optional uint32 flow_info_ac_in = 47;            // AC ievades plūsmas virziens
+  optional float pow_get_ac = 53;                  // AC izvades jauda (W)
+  optional float pow_get_ac_in = 54;               // AC ievades jauda (W)
+  optional uint32 plug_in_info_ac_in_flag = 61;    // AC ievade pieslēgta (0/1)
+  optional uint32 plug_in_info_ac_in_feq = 62;     // AC ievades frekvence (Hz)
+  optional uint32 dc_out_open = 74;                // DC izvade ieslēgta (0/1)
+  optional uint32 cfg_ac_out_open = 76;            // AC izvade ieslēgta (0/1)
+  optional float pow_get_dcp2 = 77;                // DCP2 jauda (W)
+  optional uint32 flow_info_dcp2_in = 78;          // DCP2 ievades plūsma
+  optional uint32 flow_info_dcp2_out = 79;         // DCP2 izvades plūsma
+  optional uint32 plug_in_info_dcp2_in_flag = 83;  // DCP2 ievade pieslēgta (0/1)
+  optional uint32 plug_in_info_dcp2_dsg_chg_type = 84; // DCP2 režīms (dsg/chg)
+  optional uint32 plug_in_info_dcp2_charger_flag = 85; // DCP2 lādētājs pieslēgts (0/1)
+  optional uint32 plug_in_info_dcp2_type = 86;     // DCP2 tips
+  optional uint32 plug_in_info_dcp2_detail = 87;   // DCP2 detalizēts tips
+  optional string plug_in_info_dcp2_sn = 88;       // DCP2 sērijas numurs
+  optional uint32 plug_in_info_dcp2_run_state = 89;// DCP2 darbības stāvoklis
+  optional uint32 plug_in_info_dcp2_firm_ver = 90; // DCP2 FW versija
+  optional uint32 bms_err_code = 140;              // BMS kļūdas kods
+  optional uint32 output_power_off_memory = 147;   // Power‑off memory (READ lauks)
+  optional uint32 pv_chg_type = 148;               // PV uzlādes tips (0=Auto,1=Solar,2=Car)
+  optional uint32 flow_info_bms_dsg = 152;         // BMS izlādes plūsma
+  optional uint32 flow_info_bms_chg = 153;         // BMS uzlādes plūsma
+  optional float pow_get_bms = 158;                // BMS jauda (W)
+  optional uint32 en_beep = 195;                   // Skaņas signāls ieslēgts (0/1)
+  optional uint32 plug_in_info_ac_charger_flag = 202; // AC lādētājs pieslēgts (0/1)
+  optional uint32 plug_in_info_ac_in_chg_pow_max = 209; // AC max uzlādes jauda (W)
+  optional uint32 ac_out_freq = 211;               // AC izvades frekvence (Hz)
+  optional uint32 dev_sleep_state = 212;           // Ierīces miega stāvoklis
+  optional uint32 pd_err_code = 213;               // PD kļūdas kods
+  optional uint32 mppt_err_code = 215;             // MPPT kļūdas kods
+  optional uint32 llc_hv_lv_flag = 227;            // LLC high/low voltage indikators
+  optional uint32 llc_inv_err_code = 232;          // LLC invertora kļūdas kods
+  optional uint32 plug_in_info_ac_out_dsg_pow_max = 238; // AC max discharge power (W)
+  optional float bms_batt_soc = 242;               // BMS SOC (%)
+  optional float bms_batt_soh = 243;               // BMS SOH (%)
+  optional uint32 bms_design_cap = 248;            // Dizaina kapacitāte (mAh)
+  optional uint32 bms_dsg_rem_time = 254;          // Atlikušais izlādes laiks (min)
+  optional uint32 bms_chg_rem_time = 255;          // Atlikušais uzlādes laiks (min)
+  optional int32 bms_min_cell_temp = 258;          // Min šūnas temperatūra (°C)
+  optional int32 bms_max_cell_temp = 259;          // Max šūnas temperatūra (°C)
+  optional int32 bms_min_mos_temp = 260;           // Min MOSFET temperatūra (°C)
+  optional int32 bms_max_mos_temp = 261;           // Max MOSFET temperatūra (°C)
+  optional float cms_batt_soc = 262;               // Kombinētais SOC (%)
+  optional float cms_batt_soh = 263;               // Kombinētais SOH (%)
+  optional uint32 cms_dsg_rem_time = 268;          // Kombinētais izlādes laiks (min)
+  optional uint32 cms_chg_rem_time = 269;          // Kombinētais uzlādes laiks (min)
+  optional uint32 cms_max_chg_soc = 270;           // Max SOC iestatījums (%)
+  optional uint32 cms_min_dsg_soc = 271;           // Min SOC iestatījums (%)
+  optional uint32 cms_bms_run_state = 275;         // Kombinētā BMS darbības stāvoklis
+  optional uint32 bms_chg_dsg_state = 281;         // Uzlādes/izlādes stāvoklis (0/1/2)
+  optional uint32 cms_chg_dsg_state = 282;         // Kombinētais uzlādes/izlādes stāvoklis
+  optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
+  optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
+  optional uint32 ups_alram = 355;                 // UPS trauksme (0/1)
+  optional uint32 plug_in_info_pv_dc_amp_max = 356; // PV max uzlādes strāva (A)
+  optional uint32 led_mode = 357;                  // LED režīms
+  optional uint32 low_power_alarm = 358;           // Zemas jaudas trauksme (W)
+  optional uint32 silence_chg_watt = 359;          // Klusās uzlādes jauda (W)
+  optional uint32 flow_info_pv = 360;              // PV plūsmas virziens
+  optional float pow_get_pv = 361;                 // PV jauda (W)
+  optional uint32 plug_in_info_pv_flag = 362;      // PV pieslēgts (0/1)
+  optional uint32 plug_in_info_pv_type = 363;      // PV tips
+  optional uint32 plug_in_info_pv_charger_flag = 364; // PV lādētājs pieslēgts (0/1)
+  optional uint32 plug_in_info_pv_chg_amp_max = 365; // PV max strāva (A)
+  optional uint32 plug_in_info_pv_chg_vol_max = 366; // PV max spriegums (V)
+  optional uint32 flow_info_ac_out = 367;          // AC izvades plūsmas virziens
+  optional float pow_get_ac_out = 368;             // AC izvades jauda (W)
+  optional uint32 flow_info_dcp_in = 423;          // DCP ievades plūsma
+  optional uint32 flow_info_dcp_out = 424;         // DCP izvades plūsma
+  optional float pow_get_dcp = 425;                // DCP jauda (W)
+  optional uint32 plug_in_info_dcp_in_flag = 426;  // DCP ievade pieslēgta (0/1)
+  optional uint32 plug_in_info_dcp_type = 427;     // DCP tips
+  optional uint32 plug_in_info_dcp_detail = 428;   // DCP detalizēts tips
+  optional uint32 plug_in_info_dcp_dsg_chg_type = 431; // DCP režīms (dsg/chg)
+  optional string plug_in_info_dcp_sn = 433;       // DCP sērijas numurs
+  optional uint32 plug_in_info_dcp_firm_ver = 434; // DCP FW versija
+  optional uint32 plug_in_info_dcp_charger_flag = 435; // DCP lādētājs pieslēgts (0/1)
+  optional uint32 plug_in_info_dcp_run_state = 436; // DCP darbības stāvoklis
+  optional uint32 plug_in_info_dcp_err_code = 438; // DCP kļūdas kods
+  optional uint32 plug_in_info_dcp2_err_code = 439; // DCP2 kļūdas kods
+  optional uint32 plug_in_info_ac_in_chg_hal_pow_max = 458; // AC half‑power max (W)
+}
+//
+//  DELTA 3 PLUS — RUNTIME PROPERTY UPLOAD
+//  (cmdFunc = 254, cmdId = 22)
+//  Šie lauki tiek sūtīti biežāk nekā DisplayPropertyUpload,
+//  un satur iekšējo elektronikas stāvokli, temperatūras,
+//  spriegumus, strāvas un kļūdu indikatorus.
+//
+message Delta3PlusRuntimePropertyUpload {
+
+  optional uint32 ac_phase_type = 21;             // AC fāzes tips (1F/3F)
+  optional uint32 pcs_work_mode = 24;             // PCS darba režīms
+
+  optional float temp_pcs_dc = 26;                // PCS DC temperatūra (°C)
+  optional float temp_pcs_ac = 27;                // PCS AC temperatūra (°C)
+
+  optional uint32 plug_in_info_ac_out_type = 59;  // AC izvades tips
+  optional uint32 plug_in_info_ac_out_freq = 60;  // AC izvades frekvence (Hz)
+
+  optional float plug_in_info_ac_out_vol = 67;    // AC izvades spriegums (V)
+  optional float plug_in_info_ac_in_vol = 68;     // AC ievades spriegums (V)
+
+  optional float plug_in_info_bms_vol = 169;      // BMS spriegums (mV)
+
+  optional uint32 pd_mppt_comm_err = 172;         // PD↔MPPT komunikācijas kļūda (0/1)
+  optional uint32 pd_llc_comm_err = 173;          // PD↔LLC komunikācijas kļūda (0/1)
+  optional uint32 pd_bms_comm_err = 174;          // PD↔BMS komunikācijas kļūda (0/1)
+  optional uint32 pd_iot_comm_err = 175;          // PD↔IoT komunikācijas kļūda (0/1)
+
+  optional uint32 pd_firm_ver = 176;              // PD firmware versija
+  optional uint32 iot_firm_ver = 177;             // IoT firmware versija
+  optional uint32 mppt_firm_ver = 178;            // MPPT firmware versija
+
+  optional float plug_in_info_ac_in_amp = 223;    // AC ievades strāva (A)
+  optional float plug_in_info_ac_out_amp = 224;   // AC izvades strāva (A)
+
+  optional uint32 llc_inv_firm_ver = 231;         // LLC invertora FW versija
+  optional uint32 bms_firm_ver = 241;             // BMS firmware versija
+
+  optional float bms_batt_vol = 244;              // Akumulatora spriegums (V)
+  optional float bms_batt_amp = 245;              // Akumulatora strāva (A)
+
+  optional uint32 bms_bal_state = 246;            // BMS balansēšanas stāvoklis
+  optional uint32 bms_full_cap = 247;             // Pilnā kapacitāte (mAh)
+  optional uint32 bms_remain_cap = 249;           // Atlikusī kapacitāte (mAh)
+
+  optional uint32 bms_alm_state = 250;            // BMS brīdinājuma stāvoklis
+  optional uint32 bms_pro_state = 251;            // BMS aizsardzības stāvoklis
+  optional uint32 bms_flt_state = 252;            // BMS kļūdu stāvoklis
+  optional uint32 bms_err_code = 253;             // BMS kļūdas kods
+
+  optional uint32 bms_min_cell_vol = 256;         // Min šūnas spriegums (mV)
+  optional uint32 bms_max_cell_vol = 257;         // Max šūnas spriegums (mV)
+
+  optional float cms_batt_vol = 264;              // Kombinētais akumulatora spriegums (V)
+  optional float cms_batt_amp = 265;              // Kombinētā strāva (A)
+
+  optional float cms_chg_req_vol = 266;           // Pieprasītais uzlādes spriegums (V)
+  optional float cms_chg_req_amp = 267;           // Pieprasītā uzlādes strāva (A)
+
+  optional uint32 bms_overload_icon = 276;        // Pārslodzes indikators
+  optional uint32 bms_warn_icon = 277;            // Brīdinājuma indikators
+  optional uint32 bms_high_temp_icon = 278;       // Augstas temperatūras indikators
+  optional uint32 bms_low_temp_icon = 279;        // Zemas temperatūras indikators
+  optional uint32 bms_limit_icon = 280;           // Ierobežojuma indikators
+
+  optional uint32 bms_alm_state_2 = 291;          // Papildu brīdinājuma stāvoklis
+  optional uint32 bms_pro_state_2 = 292;          // Papildu aizsardzības stāvoklis
+
+  optional int32 display_property_full_upload_period = 293;       // Pilnā telemetrija — periods (ms)
+  optional int32 display_property_incremental_upload_period = 294;// Inkrementālā telemetrija — periods (ms)
+  optional int32 runtime_property_full_upload_period = 295;       // Pilnā runtime telemetrija — periods (ms)
+  optional int32 runtime_property_incremental_upload_period = 296;// Inkrementālā runtime telemetrija — periods (ms)
+
+  optional float pv_vin_ref = 338;                // PV references spriegums (V)
+
+  optional uint32 inv_main_fsmstate = 349;        // Invertora FSM stāvoklis
+  optional uint32 l1_main_fsmstate = 350;         // L1 FSM stāvoklis
+
+  optional float dcdc_chg_req_cur = 376;          // DC‑DC pieprasītā uzlādes strāva (A)
+  optional float llc_recv_cms_chg_req_vol = 377;  // LLC saņemtais CMS uzlādes spriegums (V)
+
+  optional float temp_pv = 379;                   // PV modulis temperatūra (°C)
+  optional float plug_in_info_pv_vol = 380;       // PV ievades spriegums (V)
+  optional float plug_in_info_pv_amp = 381;       // PV ievades strāva (A)
+
+  optional float plug_in_info_12v_vol = 382;      // 12V izvades spriegums (V)
+  optional float plug_in_info_12v_amp = 383;      // 12V izvades strāva (A)
+
+  optional float llc_bat_vol = 384;               // LLC akumulatora spriegums (V)
+  optional float llc_bat_cur = 385;               // LLC akumulatora strāva (A)
+  optional float llc_bus_vol = 386;               // LLC kopnes spriegums (V)
+
+  optional float plug_in_info_dcp_vol = 443;      // DCP spriegums (V)
+  optional float plug_in_info_dcp_amp = 448;      // DCP strāva (A)
+}
+
+//
+//  DELTA 3 PLUS — SET COMMAND
+//  (cmdFunc = 254, cmdId = 17)
+//  Šis ziņojums tiek sūtīts no lietotāja → ierīcei,
+//  lai mainītu konfigurāciju, iestatījumus un režīmus.
+//  Visi lauki saglabāti no Delta3, pievienoti Delta3 Plus lauki.
+//
+message Delta3PlusSetCommand {
+
+    optional int32 cfg_power_off = 3;                 // Izslēgt ierīci (1 = power off)
+    optional uint32 cfg_utc_time = 6;                 // UTC timestamp (sekundēs)
+    optional int32 cfg_utc_timezone = 7;              // Laika joslas nobīde (minūtēs)
+
+    optional int32 en_beep = 9;                       // Skaņas signāls (0/1)
+    optional int32 ac_standby_time = 10;              // AC standby timeout (min)
+    optional int32 dc_standby_time = 11;              // DC standby timeout (min)
+    optional int32 screen_off_time = 12;              // Ekrāna izslēgšanās laiks (sek)
+    optional int32 dev_standby_time = 13;             // Ierīces standby timeout (min)
+
+    optional int32 lcd_light = 14;                    // LCD spilgtums (0–100)
+
+    optional int32 cfg_dc12v_out_open = 18;           // 12V DC izvade (0/1)
+
+    optional int32 xboost_en = 25;                    // X‑Boost režīms (0/1)
+
+    optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
+    optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
+
+    optional Delta3PlusCfgEnergyBackup cfg_energy_backup = 43;  
+        // Rezerves enerģijas konfigurācija:
+        //   energy_backup_en (0/1)
+        //   energy_backup_start_soc (%)
+
+    optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+
+    optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
+
+    optional uint32 plug_in_info_pv_dc_amp_max = 87;  // Max PV uzlādes strāva (A)
+
+    optional uint32 cfg_led_mode = 89;                // LED režīms (0–n)
+
+    optional uint32 pv_chg_type = 90;                 // PV uzlādes tips:
+                                                      //   0 = Auto
+                                                      //   1 = Car
+                                                      //   2 = Solar/Car
+                                                      //   3 = Solar
+                                                      //   4 = ExtraBattery/Generator port
+                                                      //   5 = DCP
+                                                      //   6 = DCP2
+                                                      //   7 = AC Charger
+                                                      //   8 = MPPT Only
+                                                      //   9 = DC High Voltage
+
+    optional int32 output_power_off_memory = 141;     // Power‑off memory (0/1)
+}
+//
+//  DELTA 3 PLUS — SET REPLY
+//  (cmdFunc = 254, cmdId = 18)
+//  Ierīces atbilde uz SetCommand.
+//  Satur gan apstiprinājumu, gan atjauninātos iestatījumus.
+//
+message Delta3PlusSetReply {
+
+    optional int32 action_id = 1;                     // Darbības ID (atkārto SetCommand)
+    optional bool config_ok = 2;                      // Vai konfigurācija veiksmīga (true/false)
+
+    optional uint32 cfg_utc_time = 6;                 // UTC timestamp (sekundēs)
+    optional int32 cfg_utc_timezone = 7;              // Laika joslas nobīde (min)
+
+    optional int32 en_beep = 9;                       // Skaņas signāls (0/1)
+    optional int32 ac_standby_time = 10;              // AC standby timeout (min)
+    optional int32 dc_standby_time = 11;              // DC standby timeout (min)
+    optional int32 screen_off_time = 12;              // Ekrāna izslēgšanās laiks (sek)
+    optional int32 dev_standby_time = 13;             // Ierīces standby timeout (min)
+
+    optional int32 lcd_light = 14;                    // LCD spilgtums (0–100)
+
+    optional int32 cfg_dc12v_out_open = 18;           // 12V DC izvade (0/1)
+
+    optional int32 xboost_en = 25;                    // X‑Boost režīms (0/1/2/3/4)
+
+    optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
+    optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
+
+    optional Delta3PlusCfgEnergyBackup cfg_energy_backup = 43;
+        // Rezerves enerģijas konfigurācija:
+        //   energy_backup_en (0/1)
+        //   energy_backup_start_soc (%)
+
+    optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+
+    optional uint32 dc_out_open = 74;                 // DC izvade ieslēgta (0/1)
+    optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
+
+    optional uint32 plug_in_info_pv_dc_amp_max = 87;  // Max PV uzlādes strāva (A)
+
+    optional uint32 cfg_led_mode = 89;                // LED režīms (0–7)
+
+    optional uint32 pv_chg_type = 90;                 // PV uzlādes tips:
+                                                      //   0 = Auto
+                                                      //   1 = Car
+                                                      //   2 = Solar/Car
+                                                      //   3 = Solar
+                                                      //   4 = ExtraBattery/Generator
+                                                      //   5 = DCP
+                                                      //   6 = DCP2
+                                                      //   7 = AC Charger
+                                                      //   8 = MPPT Only
+                                                      //   9 = DC High Voltage
+                                                      //   10 = Smart Generator
+                                                      //   11 = Smart Alternator
+                                                      //   12 = Regulated DC
+                                                      //   13 = Unregulated DC
+                                                      //   14 = USB‑C PD
+                                                      //   15 = USB‑C PPS
+                                                      //   16 = Reserved
+
+    optional int32 output_power_off_memory = 141;     // Power‑off memory (0/1)
+}
+
+message Delta3PlusCfgEnergyBackup {
+  optional uint32 energy_backup_en = 1;
+  optional uint32 energy_backup_start_soc = 2;
+}
+
+//
+//  DELTA 3 PLUS — CMS HEARTBEAT REPORT
+//  (cmdFunc = 32, cmdId = 2)
+//  CMS = Cell Management System.
+//  Šis ziņojums tiek sūtīts ļoti bieži (ik ~1 sekundi),
+//  un satur apvienoto BMS/CMS stāvokli.
+//
+message Delta3PlusCMSHeartBeatReport {
+  optional Delta3PlusCMSStatus1 msg32_2_1 = 1;   // CMS statusa bloks 1
+  optional Delta3PlusCMSStatus2 msg32_2_2 = 2;   // CMS statusa bloks 2
+}
+//
+//  DELTA 3 PLUS — CMS STATUS 1
+//  Galvenie CMS parametri: SOC, spriegumi, laiki, stāvokļi.
+//
+message Delta3PlusCMSStatus1 {
+
+  optional sint32 cms_status_misc1 = 1;          // Iekšējais CMS statuss (nenorādīts)
+  optional sint32 cms_status_misc2 = 2;          // Rezervēts / nenorādīts
+  optional sint32 cms_status_misc3 = 3;          // Rezervēts / nenorādīts
+
+  optional sint32 cms_batt_vol_mv = 4;           // Akumulatora spriegums (mV)
+  optional uint32 cms_chg_req_amp = 5;           // Pieprasītā uzlādes strāva (mA)
+
+  optional sint32 cms_status_misc4 = 6;          // Rezervēts / nenorādīts
+
+  optional uint32 cms_max_chg_soc = 7;           // Max SOC iestatījums (%)
+  optional uint32 cms_min_dsg_soc = 8;           // Min SOC iestatījums (%)
+
+  optional uint32 ac_out_freq = 9;               // AC izvades frekvence (Hz)
+
+  optional sint32 cms_status_misc5 = 10;         // Rezervēts
+  optional sint32 cms_status_misc6 = 11;         // Rezervēts
+
+  optional uint32 cms_chg_rem_time = 12;         // Atlikušais uzlādes laiks (min)
+  optional uint32 cms_dsg_rem_time = 13;         // Atlikušais izlādes laiks (min)
+
+  optional sint32 cms_chg_dsg_state = 14;        // Uzlādes/izlādes stāvoklis:
+                                                 //   0 = Idle
+                                                 //   1 = Discharging
+                                                 //   2 = Charging
+                                                 //   3 = Balancing
+                                                 //   4 = Sleep
+                                                 //   5 = Error
+                                                 //   6 = Pre‑Charge
+                                                 //   7 = Pre‑Discharge
+
+  optional float cms_batt_soc = 15;              // Kombinētais SOC (%)
+
+  repeated sint32 bms_is_conn_state = 16;        // BMS moduļu savienojuma stāvokļi:
+                                                 //   0 = Nav savienots
+                                                 //   1 = Savienots
+                                                 //   2 = Kļūda
+                                                 //   3 = Booting
+                                                 //   4 = Updating
+
+  optional sint32 cms_status_misc7 = 17;         // Rezervēts
+  optional sint32 cms_status_misc8 = 18;         // Rezervēts
+  optional sint32 cms_status_misc9 = 19;         // Rezervēts
+  optional sint32 cms_status_misc10 = 20;        // Rezervēts
+  optional sint32 cms_status_misc11 = 21;        // Rezervēts
+  optional sint32 cms_status_misc12 = 22;        // Rezervēts
+
+  optional uint32 cms_oil_off_soc = 23;          // SOC, pie kura ģenerators izslēdzas
+                                                 // (Smart Generator integrācija)
+}
+//
+//  DELTA 3 PLUS — CMS STATUS 2
+//  Papildu CMS statusa lauki (reti izmantoti).
+//
+message Delta3PlusCMSStatus2 {
+  optional sint32 cms_status_misc13 = 1;         // Rezervēts / nenorādīts
+  optional sint32 cms_status_misc14 = 2;         // Rezervēts
+  optional sint32 cms_status_misc15 = 3;         // Rezervēts
+  optional sint32 cms_status_misc16 = 4;         // Rezervēts
+  optional sint32 cms_status_misc17 = 5;         // Rezervēts
+}
+//
+//  DELTA 3 PLUS — BMS HEARTBEAT REPORT
+//  (cmdFunc = 32, cmdId = 3)
+//  Pilns akumulatora BMS statuss. Sūtās regulāri (ik 1–2 sek).
+//  Satur šūnu spriegumus, temperatūras, kļūdas, kapacitāti,
+//  balansēšanu, MOS stāvokļus, enerģijas uzskaiti un BMS versijas.
+//
+message Delta3PlusBMSHeartBeatReport {
+
+  optional uint32 num = 1;                 // Baterijas modulis (0 = iekšējais, 1..n = papildu)
+  optional uint32 type = 2;                // Baterijas tips (modelis)
+  optional uint32 cell_id = 3;             // Šūnas ID (iekšējai diagnostikai)
+
+  optional uint32 err_code = 4;            // BMS kļūdas kods (bitmask)
+  optional uint32 sys_ver = 5;             // Sistēmas firmware versija
+
+  optional uint32 soc = 6;                 // SOC (%)
+  optional uint32 vol = 7;                 // Kopējais spriegums (mV)
+  optional int32 amp = 8;                  // Strāva (mA, negatīva = izlāde)
+  optional int32 temp = 9;                 // Baterijas temperatūra (°C)
+
+  optional uint32 open_bms_flag = 10;      // BMS atvērts / aizvērts (0/1)
+
+  optional uint32 design_cap = 11;         // Dizaina kapacitāte (mAh)
+  optional uint32 remain_cap = 12;         // Atlikusī kapacitāte (mAh)
+  optional uint32 full_cap = 13;           // Pilnā kapacitāte (mAh)
+
+  optional uint32 cycles = 14;             // Ciklu skaits
+  optional uint32 soh = 15;                // SOH (%)
+
+  optional uint32 max_cell_vol = 16;       // Max šūnas spriegums (mV)
+  optional uint32 min_cell_vol = 17;       // Min šūnas spriegums (mV)
+
+  optional int32 max_cell_temp = 18;       // Max šūnas temperatūra (°C)
+  optional int32 min_cell_temp = 19;       // Min šūnas temperatūra (°C)
+
+  optional int32 max_mos_temp = 20;        // Max MOSFET temperatūra (°C)
+  optional int32 min_mos_temp = 21;        // Min MOSFET temperatūra (°C)
+
+  optional uint32 bms_fault = 22;          // BMS kļūdu bitmask (paplašināts)
+  optional uint32 bq_sys_stat_reg = 23;    // BQ čipa statuss (iekšējais)
+
+  optional uint32 tag_chg_amp = 24;        // Mērķa uzlādes strāva (mA)
+  optional float f32_show_soc = 25;        // SOC, ko rāda displejs (%)
+
+  optional uint32 input_watts = 26;        // Ievades jauda (W)
+  optional uint32 output_watts = 27;       // Izvades jauda (W)
+
+  optional uint32 remain_time = 28;        // Atlikušais laiks (min)
+  optional uint32 mos_state = 29;          // MOSFET stāvoklis (bitmask)
+  optional uint32 balance_state = 30;      // Balansēšanas stāvoklis (bitmask)
+
+  optional uint32 max_vol_diff = 31;       // Max sprieguma starpība starp šūnām (mV)
+
+  optional uint32 cell_series_num = 32;    // Šūnu skaits sērijā
+  repeated uint32 cell_vol = 33;           // Individuālie šūnu spriegumi (mV)
+
+  optional uint32 cell_ntc_num = 34;       // Šūnu temperatūras sensoru skaits
+  repeated int32 cell_temp = 35;           // Individuālās šūnu temperatūras (°C)
+
+  optional string hw_ver = 36;             // BMS hardware versija
+  optional uint32 bms_heartbeat_ver = 37;  // Heartbeat protokola versija
+
+  optional uint32 ecloud_ocv = 38;         // OCV vērtība (EcoFlow algoritms)
+  optional string bms_sn = 39;             // BMS sērijas numurs
+
+  optional uint32 product_type = 40;       // Produkta tips
+  optional uint32 product_detail = 41;     // Produkta detalizēts tips
+
+  optional float act_soc = 42;             // Faktiskais SOC (%)
+  optional float diff_soc = 43;            // SOC starpība starp algoritmiem (%)
+  optional float target_soc = 44;          // Mērķa SOC (%)
+
+  optional uint32 sys_loader_ver = 45;     // Bootloader versija
+  optional uint32 sys_state = 46;          // Sistēmas stāvoklis (FSM)
+
+  optional uint32 chg_dsg_state = 47;      // Uzlādes/izlādes stāvoklis (0–7)
+  optional uint32 all_err_code = 48;       // Apvienotais kļūdu kods
+  optional uint32 all_bms_fault = 49;      // Apvienotais BMS fault bitmask
+
+  optional uint32 accu_chg_cap = 50;       // Uzkrātā uzlādes kapacitāte (mAh)
+  optional uint32 accu_dsg_cap = 51;       // Uzkrātā izlādes kapacitāte (mAh)
+
+  optional float real_soh = 52;            // Reālais SOH (%)
+  optional float calendar_soh = 53;        // Kalendārais SOH (%)
+  optional float cycle_soh = 54;           // Ciklu SOH (%)
+
+  optional uint32 mos_ntc_num = 55;        // MOSFET temperatūras sensoru skaits
+  repeated int32 mos_temp = 56;            // MOSFET temperatūras (°C)
+
+  optional uint32 env_ntc_num = 57;        // Vides temperatūras sensoru skaits
+  repeated int32 env_temp = 58;            // Vides temperatūras (°C)
+
+  optional uint32 heatfilm_ntc_num = 59;   // Heatfilm sensoru skaits
+  repeated int32 heatfilm_temp = 60;       // Heatfilm temperatūras (°C)
+
+  optional uint32 cur_sensor_ntc_num = 61; // Strāvas sensoru NTC skaits
+  repeated int32 cur_sensor_temp = 62;     // Strāvas sensoru temperatūras (°C)
+
+  optional int32 max_env_temp = 63;        // Max vides temperatūra (°C)
+  optional int32 min_env_temp = 64;        // Min vides temperatūra (°C)
+
+  optional int32 max_heatfilm_temp = 65;   // Max heatfilm temperatūra (°C)
+  optional int32 min_heatfilm_temp = 66;   // Min heatfilm temperatūra (°C)
+
+  optional int32 max_cur_sensor_temp = 67; // Max strāvas sensora temperatūra (°C)
+  optional int32 min_cur_sensor_temp = 68; // Min strāvas sensora temperatūra (°C)
+
+  optional uint32 balance_cmd = 69;        // Balansēšanas komanda (iekšējā)
+  repeated uint32 remain_balance_time = 70;// Atlikušais balansēšanas laiks (sek)
+
+  optional uint32 afe_sys_status = 71;     // AFE sistēmas statuss
+  optional uint32 mcu_pin_in_status = 72;  // MCU ieeju stāvoklis (bitmask)
+  optional uint32 mcu_pin_out_status = 73; // MCU izeju stāvoklis (bitmask)
+
+  optional uint32 bms_alarm_state1 = 74;   // BMS trauksmes stāvoklis 1
+  optional uint32 bms_alarm_state2 = 75;   // BMS trauksmes stāvoklis 2
+
+  optional uint32 bms_protect_state1 = 76; // BMS aizsardzības stāvoklis 1
+  optional uint32 bms_protect_state2 = 77; // BMS aizsardzības stāvoklis 2
+
+  optional uint32 bms_fault_state = 78;    // BMS fault state (paplašināts)
+
+  optional uint32 accu_chg_energy = 79;    // Uzkrātā uzlādes enerģija (Wh)
+  optional uint32 accu_dsg_energy = 80;    // Uzkrātā izlādes enerģija (Wh)
+
+  optional string pack_sn = 81;            // Akumulatora pakas sērijas numurs
+
+  optional uint32 water_in_flag = 82;      // Ūdens detektēts (0/1)
+}
+
+// Header Message Wrapper
+message Delta3PlusHeaderMessage {
+  repeated Delta3Header header = 1;
+}

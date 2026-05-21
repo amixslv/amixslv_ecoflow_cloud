@@ -1,0 +1,256 @@
+import logging
+import importlib
+import time
+
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.device_registry import async_get as async_get_device_registry
+
+from ..api.cloud_client import CloudClient
+from ..api.mqtt_client import MQTTClient
+from ..core.entity_generator import EntityGenerator
+from ..supported_devices import DEVICE_TYPE_MAP
+from ..api.message import JSONMessage
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class DeviceManager:
+    """
+    Pilnībā automātisks Device Manager:
+
+    - pieslēdzas Cloud API
+    - ielādē pareizo pb2 pēc device_type
+    - inicializē MQTT
+    - inicializē EntityGenerator vienu reizi
+    - apstrādā MQTT ziņas (runtime values)
+    """
+
+    def __init__(self, hass: HomeAssistant, config_entry):
+        self.hass = hass
+        self.entry = config_entry
+
+        self.username = config_entry.data["username"]
+        self.password = config_entry.data["password"]
+
+        self.device_label = config_entry.data["device_label"]
+        self.device_type = DEVICE_TYPE_MAP[self.device_label]["device_type"]
+        self.device_sn = config_entry.data["device_sn"]
+
+        self.client: CloudClient | None = None
+        self.entity_generator: EntityGenerator | None = None
+        self.pb2_module = None
+        self.mqtt: MQTTClient | None = None
+
+        # RATE-LIMIT LOGGING
+        self._last_log_time = 0.0
+        self._log_interval = 10.0  # seconds
+
+        # RATE-LIMIT ENTITY UPDATES
+        self._last_update_time = 0.0
+        self._update_interval = 0.5  # seconds
+        self._pending_decoded: dict | None = None
+
+    # ----------------------------------------------------------------------
+    # MAIN SETUP
+    # ----------------------------------------------------------------------
+    async def async_setup(self):
+        """Setup Cloud API + MQTT + PB2 + EntityGenerator."""
+        _LOGGER.info("DM: async_setup START for %s (%s)", self.device_label, self.device_sn)
+
+        # 1. Cloud API login
+        self.client = CloudClient(
+            username=self.username,
+            password=self.password,
+        )
+        try:
+            mqtt_info = await self.client.login()
+            _LOGGER.info(
+                "DM: Cloud login OK: host=%s port=%s user_id=%s",
+                mqtt_info.host,
+                mqtt_info.port,
+                self.client.user_id,
+            )
+        except Exception as e:
+            _LOGGER.error("DM: Cloud login FAILED: %s", e)
+            raise
+
+        # 2. Setup MQTT FIRST
+        try:
+            await self._setup_mqtt(mqtt_info)
+            _LOGGER.info("DM: MQTT setup OK")
+        except Exception as e:
+            _LOGGER.error("DM: MQTT setup FAILED: %s", e)
+            raise
+
+        # 3. Load pb2 module dynamically
+        try:
+            await self._load_pb2()
+            _LOGGER.info("DM: PB2 loaded OK")
+        except Exception as e:
+            _LOGGER.error("DM: PB2 load FAILED: %s", e)
+            raise
+
+        # 4. Create EntityGenerator ONCE
+        try:
+            self.entity_generator = EntityGenerator(
+                manager=self,
+                hass=self.hass,
+                device_sn=self.device_sn,
+                device_type=self.device_type,
+                pb2_module=self.pb2_module,
+            )
+            _LOGGER.info("DM: EntityGenerator initialized")
+        except Exception as e:
+            _LOGGER.error("DM: EntityGenerator init FAILED: %s", e)
+            raise
+
+        # 5. Register device in HA
+        try:
+            self._register_device()
+            _LOGGER.info("DM: Device registered OK")
+        except Exception as e:
+            _LOGGER.error("DM: Device registration FAILED: %s", e)
+            raise
+
+        _LOGGER.info("DM: async_setup END for %s", self.device_sn)
+        return True
+
+    # ----------------------------------------------------------------------
+    # PB2 LOADING
+    # ----------------------------------------------------------------------
+    async def _load_pb2(self):
+        """Load the correct pb2 module based on DEVICE_TYPE_MAP."""
+        try:
+            proto_file = DEVICE_TYPE_MAP[self.device_label]["proto"]
+        except KeyError:
+            raise ValueError(f"Unsupported device_label: {self.device_label}")
+
+        full_path = f"custom_components.amixslv_ecoflow_cloud.protocol.{proto_file}"
+
+        try:
+            self.pb2_module = await self.hass.async_add_executor_job(
+                importlib.import_module, full_path
+            )
+            _LOGGER.debug("DM: Loaded PB2 module: %s", full_path)
+        except Exception as e:
+            _LOGGER.error("DM: Failed to load PB2 module %s: %s", full_path, e)
+            raise
+
+    # ----------------------------------------------------------------------
+    # MQTT SETUP
+    # ----------------------------------------------------------------------
+    async def _setup_mqtt(self, mqtt_info):
+        """Initialize MQTT client and subscribe to topics."""
+        self.mqtt = MQTTClient(
+            url=mqtt_info.host,
+            port=mqtt_info.port,
+            username=mqtt_info.username,
+            password=mqtt_info.password,
+            client_id=mqtt_info.client_id,
+            on_message_callback=self._on_mqtt_message,
+        )
+
+        await self.mqtt.async_setup(self.hass)
+        _LOGGER.debug("DM: MQTT async_setup completed")
+
+        topic1 = f"/app/device/property/{self.device_sn}"
+        topic2 = f"/app/device/prop/{self.device_sn}"
+
+        self.mqtt.subscribe([topic1, topic2])
+        _LOGGER.info("DM: Subscribed to topics %s and %s", topic1, topic2)
+
+    # ----------------------------------------------------------------------
+    # MQTT MESSAGE HANDLER
+    # ----------------------------------------------------------------------
+    @callback
+    def _on_mqtt_message(self, topic: str, payload: bytes):
+        """Handle incoming MQTT messages (called from Paho thread)."""
+        now = time.time()
+
+        # Rate-limit logging
+        if now - self._last_log_time > self._log_interval:
+            _LOGGER.debug("DM: MQTT MESSAGE topic=%s len=%s", topic, len(payload))
+            self._last_log_time = now
+
+        if not self.entity_generator:
+            _LOGGER.error("DM: EntityGenerator not initialized yet")
+            return
+
+        # Decode PROTO
+        try:
+            decoded = self.entity_generator.decode_message(payload)
+        except Exception as e:
+            _LOGGER.error("DM: Failed to decode MQTT message: %s", e)
+            return
+
+        if not decoded:
+            return
+
+        self._pending_decoded = decoded
+
+        # Rate-limit entity updates
+        if now - self._last_update_time < self._update_interval:
+            return
+
+        self._last_update_time = now
+        self.hass.loop.call_soon_threadsafe(self._apply_pending_update)
+
+    # ----------------------------------------------------------------------
+    # APPLY PENDING UPDATE (HA EVENT LOOP)
+    # ----------------------------------------------------------------------
+    def _apply_pending_update(self):
+        """Apply the latest decoded message on HA event loop."""
+        if not self._pending_decoded:
+            return
+
+        if not self.entity_generator:
+            _LOGGER.error("DM: EntityGenerator not initialized in _apply_pending_update")
+            return
+
+        try:
+            self.entity_generator.update_entities(self._pending_decoded)
+        except Exception as e:
+            _LOGGER.error("DM: update_entities FAILED: %s", e)
+
+    # ----------------------------------------------------------------------
+    # DEVICE REGISTRATION
+    # ----------------------------------------------------------------------
+    def _register_device(self):
+        device_registry = async_get_device_registry(self.hass)
+
+        device_registry.async_get_or_create(
+            config_entry_id=self.entry.entry_id,
+            identifiers={(self.entry.domain, self.device_sn)},
+            manufacturer="EcoFlow",
+            name=self.device_sn,
+            model=self.device_type,
+        )
+
+        _LOGGER.debug("DM: Registered device %s (%s)", self.device_type, self.device_sn)
+
+    # ----------------------------------------------------------------------
+    # SEND SET COMMAND
+    # ----------------------------------------------------------------------
+    async def send_set_command(self, field: str, value):
+        if not self.mqtt:
+            _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
+            return
+
+        data = {
+            "sn": self.device_sn,
+            "params": {
+                field: value,
+            },
+        }
+
+        msg = JSONMessage(data)
+        payload = msg.to_mqtt_payload()
+
+        if not payload:
+            _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
+            return
+
+        topic = "/app/device/control"
+
+        _LOGGER.debug("DM: SEND SET %s=%s → topic=%s payload=%s", field, value, topic, data)
+        self.mqtt.publish(topic, payload)
