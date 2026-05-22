@@ -1,0 +1,78 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyd
+*.pdb
+*.so
+
+# C extensions
+*.egg-info/
+*.egg
+.eggs/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# -------------------------
+# Home Assistant integration dev
+# -------------------------
+# HA cache
+.storage/
+.homeassistant/
+
+# Pytest cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# -------------------------
+# Build / packaging
+# -------------------------
+build/
+dist/
+*.log
+*.tmp
+*.bak
+
+# -------------------------
+# IDE / Editor
+# -------------------------
+# VSCode
+.vscode/
+
+# PyCharm / IntelliJ
+.idea/
+
+# -------------------------
+# OS-specific
+# -------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
