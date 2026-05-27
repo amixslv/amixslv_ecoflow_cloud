@@ -5,7 +5,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 
-from . import DOMAIN
+from .cont import DOMAIN
 from .core.device_manager import DeviceManager
 
 _LOGGER = logging.getLogger(__name__)

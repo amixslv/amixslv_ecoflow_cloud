@@ -5,7 +5,7 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-from . import DOMAIN
+from .cont import DOMAIN
 from .supported_devices import SUPPORTED_DEVICE_LABELS, DEVICE_TYPE_MAP
 from .api.cloud_client import CloudClient
 

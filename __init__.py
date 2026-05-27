@@ -2,20 +2,10 @@ import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 
+from .cont import DOMAIN, PLATFORMS
 from .core.device_manager import DeviceManager
 
 _LOGGER = logging.getLogger(__name__)
-
-DOMAIN = "amixslv_ecoflow_cloud"
-
-# Platformas, kuras HA ielādēs
-PLATFORMS = [
-    "sensor",
-    "switch",
-    "number",
-    "select",
-    "binary_sensor",
-]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
