@@ -24,7 +24,7 @@ async def async_setup_entry(
         return False
 
     # Reģistrē callback dinamiskai entītiju pievienošanai
-    manager.entity_generator.add_entities_callback = async_add_entities
+    manager.entity_generator.set_platform_callback("sensor", async_add_entities)
 
     # Izveido sākotnējās sensoru entītijas
     try:
