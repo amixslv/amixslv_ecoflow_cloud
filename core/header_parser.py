@@ -29,6 +29,11 @@ class EcoFlowHeader:
         self.data_len = None
         self.seq = None
         self.pdata = b""
+        self.src = None
+        self.dest = None
+        self.d_src = None
+        self.d_dest = None
+        self.enc_type = None
 
         # Try both known header formats
         if self._parse_new_format():
@@ -64,11 +69,11 @@ class EcoFlowHeader:
 
         try:
             (
-                _src,
-                _dest,
-                _dsrc,
-                _ddest,
-                _enc,
+                src,
+                dest,
+                dsrc,
+                ddest,
+                enc,
                 _chk,
                 cmd_func,
                 cmd_id,
@@ -82,6 +87,11 @@ class EcoFlowHeader:
             if cmd_func not in (32, 254):
                 return False
 
+            self.src = src
+            self.dest = dest
+            self.d_src = dsrc
+            self.d_dest = ddest
+            self.enc_type = enc
             self.cmd_func = cmd_func
             self.cmd_id = cmd_id
             self.data_len = data_len

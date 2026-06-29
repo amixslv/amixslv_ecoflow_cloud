@@ -1,48 +1,47 @@
-import logging
 import base64
+import logging
 from typing import Any
 
 from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.json_format import MessageToDict
 
-from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from ..entities.sensor import Sensor
-from ..entities.number import Number
-from ..entities.select import Select
-from ..entities.switch import Switch
 from ..entities.binary_sensor import BinarySensor
 from ..entities.diagnostics import Diagnostics
-
+from ..entities.number import Number
+from ..entities.select import Select
+from ..entities.sensor import Sensor
+from ..entities.switch import Switch
+from ..supported_devices import DEVICE_TYPE_MAP
+from .header_parser import EcoFlowHeader
 from .field_map import FieldMap
 from .utils import flatten_dict
-from .header_parser import EcoFlowHeader
-from ..supported_devices import DEVICE_TYPE_MAP
 
 _LOGGER = logging.getLogger(__name__)
 
+PROTO_MSG_MAP = {
+    (254, 21): "display",
+    (254, 22): "runtime",
+    (254, 17): "set_cmd",
+    (254, 18): "set_reply",
+    (32, 2): "cms",
+    (32, 3): "bms",
+}
 
-# ----------------------------------------------------------------------
-# PROTO LOADER
-# ----------------------------------------------------------------------
-def load_proto_messages(pb2_module: Any):
-    display = None
-    runtime = None
-    set_cmd = None
-    set_reply = None
-    cms = None
-    bms = None
+
+def load_proto_messages(pb2_module: Any) -> dict[str, Any]:
+    messages = {
+        "display": None,
+        "runtime": None,
+        "set_cmd": None,
+        "set_reply": None,
+        "cms": None,
+        "bms": None,
+    }
 
     if not pb2_module:
-        return {
-            "display": None,
-            "runtime": None,
-            "set_cmd": None,
-            "set_reply": None,
-            "cms": None,
-            "bms": None,
-        }
+        return messages
 
     for name in dir(pb2_module):
         obj = getattr(pb2_module, name)
@@ -50,56 +49,43 @@ def load_proto_messages(pb2_module: Any):
             continue
 
         if name.endswith("DisplayPropertyUpload"):
-            display = obj
+            messages["display"] = obj
         elif name.endswith("RuntimePropertyUpload"):
-            runtime = obj
+            messages["runtime"] = obj
         elif name.endswith("SetCommand"):
-            set_cmd = obj
+            messages["set_cmd"] = obj
         elif name.endswith("SetReply"):
-            set_reply = obj
+            messages["set_reply"] = obj
         elif name.endswith("CMSHeartBeatReport"):
-            cms = obj
+            messages["cms"] = obj
         elif name.endswith("BMSHeartBeatReport"):
-            bms = obj
+            messages["bms"] = obj
 
-    return {
-        "display": display,
-        "runtime": runtime,
-        "set_cmd": set_cmd,
-        "set_reply": set_reply,
-        "cms": cms,
-        "bms": bms,
-    }
+    return messages
 
 
-# ----------------------------------------------------------------------
-# UNIVERSĀLS PROTO MESSAGE MAP
-# ----------------------------------------------------------------------
-PROTO_MSG_MAP = {
-    (254, 21): "display",
-    (254, 22): "runtime",
-    (254, 17): "set_cmd",
-    (254, 18): "set_reply",
-
-    (32, 2): "cms",
-    (32, 3): "bms",
-}
-
-
-# ----------------------------------------------------------------------
-# ENTITY GENERATOR
-# ----------------------------------------------------------------------
 class EntityGenerator:
-    CONTROL_REGEX = (
-        "ac_.*on",
-        "dc_.*on",
-        "xboost",
-        "force",
-        "restart",
-        "output",
-        "inverter",
-        "charger",
+    CONTROL_SWITCH_HINTS = (
+        "flag",
+        "enable",
+        "enabled",
+        "open",
+        "beep",
+        "alarm",
+        "warn",
+        "fault",
         "power_off",
+        "on",
+        "off",
+    )
+
+    CONTROL_SELECT_HINTS = (
+        "mode",
+        "type",
+        "level",
+        "charge_type",
+        "chg_type",
+        "led_mode",
     )
 
     def __init__(self, manager, hass, device_sn: str, device_type: str, pb2_module: Any):
@@ -112,88 +98,129 @@ class EntityGenerator:
 
         self.entities: dict[str, object] = {}
         self._field_meta: dict[str, dict] = {}
+        self._field_index: dict[str, list[str]] = {}
         self.raw_json: dict = {}
         self.add_entities_callback: AddEntitiesCallback | None = None
+        self._last_msg_type: str | None = None
+        self._last_proto_key: str | None = None
 
         if self.pb2:
             self._load_proto_definitions()
 
-    # ------------------------------------------------------------------
-    # LOAD PROTO DEFINITIONS (ONLY FOR CONTROLS)
-    # ------------------------------------------------------------------
+    def _entity_key(self, source: str, field_path: str) -> str:
+        return f"{source}:{field_path}"
+
+    def _add_index(self, field_path: str, entity_key: str):
+        self._field_index.setdefault(field_path, [])
+        if entity_key not in self._field_index[field_path]:
+            self._field_index[field_path].append(entity_key)
+
+    def _resolve_nested_message(self, field: FieldDescriptor):
+        nested_name = getattr(field.message_type, "name", None)
+        if not nested_name:
+            return None
+
+        return getattr(self.pb2, nested_name, None)
+
     def _load_proto_definitions(self):
-        msgs = load_proto_messages(self.pb2)
-        set_cmd = msgs["set_cmd"]
+        messages = load_proto_messages(self.pb2)
 
-        if not set_cmd:
-            _LOGGER.warning("No SetCommand message found in pb2 module for %s", self.device_type)
-            return
+        for source in ("display", "runtime", "cms", "bms", "set_reply"):
+            message_cls = messages.get(source)
+            if message_cls:
+                self._register_message_fields(message_cls, source=source, is_control=False)
 
-        for field in set_cmd.DESCRIPTOR.fields:
-            self._register_control_field(field)
+        set_cmd = messages.get("set_cmd")
+        if set_cmd:
+            self._register_message_fields(set_cmd, source="set_cmd", is_control=True)
 
-    # ------------------------------------------------------------------
-    # REGISTER CONTROL FIELD
-    # ------------------------------------------------------------------
-    def _register_control_field(self, field: FieldDescriptor):
-        field_name = field.name
+    def _register_message_fields(self, message_cls, source: str, is_control: bool, parent_path: str = ""):
+        for field in message_cls.DESCRIPTOR.fields:
+            if field.label == FieldDescriptor.LABEL_REPEATED and field.type != FieldDescriptor.TYPE_MESSAGE:
+                continue
 
-        if field.type == FieldDescriptor.TYPE_MESSAGE:
-            return
+            field_path = f"{parent_path}.{field.name}" if parent_path else field.name
+
+            if field.type == FieldDescriptor.TYPE_MESSAGE:
+                nested_cls = self._resolve_nested_message(field)
+                if nested_cls:
+                    self._register_message_fields(nested_cls, source=source, is_control=is_control, parent_path=field_path)
+                continue
+
+            entity_key = self._entity_key(source, field_path)
+            if entity_key in self._field_meta:
+                continue
+
+            meta = self._build_field_meta(field, field_path, source, is_control)
+            self._field_meta[entity_key] = meta
+            self._add_index(field_path, entity_key)
+
+    def _build_field_meta(self, field: FieldDescriptor, field_path: str, source: str, is_control: bool) -> dict:
+        name = self.field_map.get_name(field_path)
+        unit = self.field_map.get_unit(field_path)
+        icon = self.field_map.get_icon(field_path)
+        device_class = self.field_map.get_device_class(field_path)
+        state_class = self.field_map.get_state_class(field_path)
+        entity_category = self.field_map.get_category(field_path, is_control)
 
         meta: dict[str, Any] = {
-            "name": self.field_map.get_name(field_name),
-            "unit": None,
-            "icon": self.field_map.get_icon(field_name),
+            "name": name,
+            "unit": unit,
+            "icon": icon,
+            "device_class": device_class,
+            "state_class": state_class,
+            "entity_category": entity_category,
             "enabled": True,
-            "is_control": True,
+            "field_path": field_path,
+            "source": source,
+            "is_control": is_control,
+            "unique_id": self._entity_key(source, field_path),
         }
 
-        if field.type == FieldDescriptor.TYPE_BOOL:
-            meta["type"] = "switch"
-            if any(r in field_name for r in self.CONTROL_REGEX):
-                meta["entity_category"] = None
+        if is_control:
+            options = self.field_map.get_options(field_path)
+            if options:
+                meta["type"] = "select"
+                meta["options"] = options
+            elif self._looks_like_toggle(field_path):
+                meta["type"] = "switch"
             else:
-                meta["entity_category"] = EntityCategory.CONFIG
+                meta["type"] = "number"
+                guessed_min, guessed_max, guessed_step = self.field_map.guess_range(field_path)
+                meta["min"] = self.field_map.get_min(field_path) or guessed_min
+                meta["max"] = self.field_map.get_max(field_path) or guessed_max
+                meta["step"] = self.field_map.get_step(field_path) or guessed_step
+        else:
+            if field.type == FieldDescriptor.TYPE_STRING:
+                meta["type"] = "sensor"
+            elif self._looks_like_toggle(field_path):
+                meta["type"] = "binary_sensor"
+            else:
+                meta["type"] = "sensor"
 
-        elif field.type in (
-            FieldDescriptor.TYPE_INT32,
-            FieldDescriptor.TYPE_UINT32,
-            FieldDescriptor.TYPE_INT64,
-            FieldDescriptor.TYPE_UINT64,
-            FieldDescriptor.TYPE_FLOAT,
-            FieldDescriptor.TYPE_DOUBLE,
-        ):
-            meta["type"] = "number"
-            meta["entity_category"] = EntityCategory.CONFIG
-            meta["min"] = self.field_map.get_min(field_name) or 0
-            meta["max"] = self.field_map.get_max(field_name) or 100
-            meta["step"] = self.field_map.get_step(field_name) or 1
+        return meta
 
-        elif field.type == FieldDescriptor.TYPE_ENUM:
-            meta["type"] = "select"
-            meta["entity_category"] = EntityCategory.CONFIG
-            meta["options"] = self.field_map.get_options(field_name)
+    def _looks_like_toggle(self, field_path: str) -> bool:
+        field_name = field_path.split(".")[-1].lower()
+        return any(
+            field_name.endswith(f"_{hint}") or f"_{hint}_" in field_name or field_name == hint
+            for hint in self.CONTROL_SWITCH_HINTS
+        )
 
-        self._field_meta[field_name] = meta
+    def _looks_like_select(self, field_path: str) -> bool:
+        field_name = field_path.split(".")[-1].lower()
+        return any(hint in field_name for hint in self.CONTROL_SELECT_HINTS)
 
-    # ------------------------------------------------------------------
-    # DECODE MQTT MESSAGE (SMART MODE)
-    # ------------------------------------------------------------------
-    def decode_message(self, payload: bytes) -> dict:
-        """Universāls PROTO dekoders display/runtime/set/cms/bms ziņām."""
+    def _decode_proto_payload(self, payload: bytes) -> tuple[str | None, dict]:
         if not self.pb2:
-            return {}
+            return None, {}
 
-        # 0) Base64 decode (ja vajag)
         try:
             payload = base64.b64decode(payload, validate=True)
         except Exception:
             pass
 
-        # ------------------------------------------------------------------
-        # 1) PROTO-FIRST HEADER PARSER (ar proto_prefix)
-        # ------------------------------------------------------------------
+        prefix = None
         try:
             prefix = DEVICE_TYPE_MAP[self.manager.entry.data["device_label"]]["proto_prefix"]
         except Exception:
@@ -201,52 +228,38 @@ class EntityGenerator:
 
         if prefix:
             HeaderMessage = getattr(self.pb2, f"{prefix}HeaderMessage", None)
-
             if HeaderMessage:
                 try:
                     header_msg = HeaderMessage()
                     header_msg.ParseFromString(payload)
-
                     header = header_msg.header[-1]
-
                     pdata = header.pdata
-                    cmd_func = header.cmd_func
-                    cmd_id = header.cmd_id
 
-                    module = self.pb2
-
-                    def cls(name: str):
-                        return getattr(module, f"{prefix}{name}", None)
-
-                    # Mēģinām visas zināmās ziņu klases pēc kārtas
-                    for suffix in [
+                    for suffix in (
                         "DisplayPropertyUpload",
                         "RuntimePropertyUpload",
                         "CMSHeartBeatReport",
                         "BMSHeartBeatReport",
                         "SetCommand",
                         "SetReply",
-                    ]:
-                        c = cls(suffix)
-                        if not c:
+                    ):
+                        message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
+                        if not message_cls:
                             continue
+
                         try:
-                            msg = c()
+                            msg = message_cls()
                             msg.ParseFromString(pdata)
                             raw = MessageToDict(msg, preserving_proto_field_name=True)
-                            return flatten_dict(raw)
+                            return suffix, flatten_dict(raw)
                         except Exception:
                             continue
+                except Exception as exc:
+                    _LOGGER.debug("PROTO-first decode failed: %s", exc)
 
-                except Exception as e:
-                    _LOGGER.debug("PROTO-first decode failed: %s", e)
-
-        # ------------------------------------------------------------------
-        # 2) UNIVERSĀLAIS HEADER PARSER (fallback)
-        # ------------------------------------------------------------------
         header = EcoFlowHeader(payload)
         if not header.valid:
-            return {}
+            return None, {}
 
         try:
             prefix = DEVICE_TYPE_MAP[self.manager.entry.data["device_label"]]["proto_prefix"]
@@ -254,217 +267,142 @@ class EntityGenerator:
             prefix = None
 
         if not prefix:
-            return {}
-
-        module = self.pb2
-
-        def cls(name: str):
-            return getattr(module, f"{prefix}{name}", None)
+            return None, {}
 
         pdata = header.pdata
-
-        # XOR decode, ja vajag
         if header.enc_type == 1 and header.src != 32:
             pdata = bytes([(b ^ header.seq) & 0xFF for b in pdata])
 
-        for suffix in [
+        for suffix in (
             "DisplayPropertyUpload",
             "RuntimePropertyUpload",
             "CMSHeartBeatReport",
             "BMSHeartBeatReport",
             "SetCommand",
             "SetReply",
-        ]:
-            c = cls(suffix)
-            if not c:
+        ):
+            message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
+            if not message_cls:
                 continue
+
             try:
-                msg = c()
+                msg = message_cls()
                 msg.ParseFromString(pdata)
                 raw = MessageToDict(msg, preserving_proto_field_name=True)
-                return flatten_dict(raw)
+                return suffix, flatten_dict(raw)
             except Exception:
                 continue
 
-        return {}
+        return None, {}
 
-    # ------------------------------------------------------------------
-    # CREATE ENTITIES
-    # ------------------------------------------------------------------
+    def decode_message(self, payload: bytes) -> dict:
+        """Decode MQTT payload to a flattened proto dictionary."""
+        msg_type, decoded = self._decode_proto_payload(payload)
+        if msg_type:
+            self._last_msg_type = msg_type
+            self._last_proto_key = msg_type
+        return decoded
+
     def create_entities(self, platform: str):
         entities = []
 
-        for field, meta in self._field_meta.items():
+        for meta in self._field_meta.values():
             if meta.get("type") != platform:
                 continue
 
-            if field in self.entities:
+            field_path = meta["field_path"]
+            entity_key = meta["unique_id"]
+
+            if entity_key in self.entities:
                 continue
 
-            ent = self._create_entity(field, meta)
+            if not meta.get("is_control") and platform in ("sensor", "binary_sensor"):
+                if field_path not in self.raw_json:
+                    continue
+
+            ent = self._create_entity(field_path, meta)
             if ent:
-                self.entities[field] = ent
+                self.entities[entity_key] = ent
                 entities.append(ent)
 
-        # Diagnostics only once
-        if platform == "sensor" and self.add_entities_callback:
-            if "diagnostics" not in self.entities:
-                diag = Diagnostics(self, self.device_sn, self.device_type)
-                self.entities["diagnostics"] = diag
-                entities.append(diag)
+        if platform == "sensor" and self.add_entities_callback and "diagnostics" not in self.entities:
+            diag = Diagnostics(self, self.device_sn, self.device_type)
+            self.entities["diagnostics"] = diag
+            entities.append(diag)
 
         return entities
-    # ------------------------------------------------------------------
-    # UPDATE ENTITIES
-    # ------------------------------------------------------------------
-    def update_entities(self, decoded: dict):
-        """Universāla entītiju ģenerēšana no jebkura PROTO decoded dict."""
-        self.raw_json = decoded
 
-        if not self.add_entities_callback:
+    def update_entities(self, decoded: dict):
+        """Update entity states from a flattened proto payload."""
+        if not decoded:
             return
 
-        # ---------------------------------------------------------
-        # EXTRA BATTERY SUPPORT (BMS modules with num > 0)
-        # ---------------------------------------------------------
-        if "num" in decoded and isinstance(decoded["num"], int):
-            num = decoded["num"]
+        self.raw_json = decoded
 
-            # 0 = main battery, 1..n = extra batteries
-            if num > 0:
-                prefix = f"extra_battery_{num}"
+        diag = self.entities.get("diagnostics")
+        if diag and hasattr(diag, "set_last_message_type"):
+            diag.set_last_message_type(self._last_msg_type, self._last_proto_key)
 
-                mapping = {
-                    "soc": "soc",
-                    "temp": "temperature",
-                    "vol": "voltage",
-                    "remain_cap": "remaining_capacity",
-                    "full_cap": "full_capacity",
-                    "soh": "soh",
-                }
+        if self.add_entities_callback:
+            for field_path, value in decoded.items():
+                if isinstance(value, (dict, list)):
+                    continue
 
-                for src, dst in mapping.items():
-                    if src in decoded:
-                        field = f"{prefix}_{dst}"
-                        self.raw_json[field] = decoded[src]
+                for entity_key in self._field_index.get(field_path, []):
+                    meta = self._field_meta.get(entity_key)
+                    if not meta:
+                        continue
 
-                        if field not in self._field_meta:
-                            self._field_meta[field] = {
-                                "name": f"Extra Battery {num} {dst.replace('_',' ').title()}",
-                                "unit": self.field_map.get_unit(dst),
-                                "icon": self.field_map.get_icon(dst),
-                                "device_class": self.field_map.get_device_class(dst),
-                                "state_class": self.field_map.get_state_class(dst),
-                                "type": "sensor",
-                                "enabled": True,
-                                "is_control": False,
-                                "device_override": f"{self.device_sn}_bms_{num}",
-                            }
+                    if entity_key not in self.entities:
+                        ent = self._create_entity(field_path, meta)
+                        if ent:
+                            self.entities[entity_key] = ent
+                            self.add_entities_callback([ent])
 
-        # ---------------------------------------------------------
-        # NORMAL SENSOR + CONTROL FIELD HANDLING
-        # ---------------------------------------------------------
-        for field, value in decoded.items():
-            if isinstance(value, (dict, list)):
+        for entity_key, ent in self.entities.items():
+            meta = getattr(ent, "_meta", {})
+            field_path = meta.get("field_path")
+            if not field_path or field_path not in decoded:
                 continue
 
-            # Normalizē lauka vārdu (noņem proto prefiksus)
-            normalized = field
-            for prefix in (
-                "display.",
-                "runtime.",
-                "set_cmd.",
-                "setcmd.",
-                "set_reply.",
-                "cms.",
-                "bms.",
-                "msg32_2_1.",
-                "msg32_2_2.",
-                "msg254_21_1.",
-                "msg254_22_1.",
-            ):
-                if normalized.startswith(prefix):
-                    normalized = normalized[len(prefix):]
-                    break
+            val = decoded[field_path]
 
-            # Ja normalized lauks ir kontrole → izmanto kontroles meta
-            if normalized in self._field_meta and self._field_meta[normalized].get("is_control"):
-                self.raw_json[normalized] = value
-                continue
+            if isinstance(val, float):
+                val = round(val, 2)
 
-            # Ja normalized lauks jau ir meta → ejam tālāk
-            if normalized in self._field_meta:
-                self.raw_json[normalized] = value
-                continue
-
-            # Automātiska tipa noteikšana
-            if isinstance(value, bool):
-                ent_type = "binary_sensor"
-            elif isinstance(value, (int, float)):
-                ent_type = "sensor"
-            elif isinstance(value, str):
-                ent_type = "sensor"
+            if hasattr(ent, "_attr_is_on"):
+                ent._attr_is_on = self._coerce_bool(val)
+            elif hasattr(ent, "_attr_current_option"):
+                ent._attr_current_option = self._coerce_option(ent, val)
             else:
-                continue
-
-            # FieldMap device_class → vienmēr sensor
-            if self.field_map.get_device_class(normalized):
-                ent_type = "sensor"
-
-            # Izveido meta
-            self._field_meta[normalized] = {
-                "name": self.field_map.get_name(normalized),
-                "unit": self.field_map.get_unit(normalized),
-                "icon": self.field_map.get_icon(normalized),
-                "device_class": self.field_map.get_device_class(normalized),
-                "state_class": self.field_map.get_state_class(normalized),
-                "entity_category": self.field_map.get_category(normalized, False),
-                "type": ent_type,
-                "enabled": True,
-                "is_control": False,
-            }
-
-            self.raw_json[normalized] = value
-
-        # ---------------------------------------------------------
-        # CREATE MISSING ENTITIES
-        # ---------------------------------------------------------
-        for fname, meta in self._field_meta.items():
-            if fname not in self.entities:
-                ent = self._create_entity(fname, meta)
-                if ent:
-                    self.entities[fname] = ent
-                    self.add_entities_callback([ent])
-
-        # ---------------------------------------------------------
-        # UPDATE ENTITY VALUES
-        # ---------------------------------------------------------
-        for fname, ent in self.entities.items():
-            if fname in self.raw_json:
-                val = self.raw_json[fname]
-
-                # Noapaļošana skaitļiem
-                if isinstance(val, float):
-                    val = round(val, 2)
-
-                # Switch / BinarySensor
-                if hasattr(ent, "_attr_is_on"):
-                    if isinstance(val, bool):
-                        ent._attr_is_on = val
-                    elif isinstance(val, (int, float)):
-                        ent._attr_is_on = val != 0
-                    elif isinstance(val, str):
-                        v = val.strip().lower()
-                        ent._attr_is_on = v in ("1", "true", "on")
-                else:
-                    ent._attr_native_value = val
+                ent._attr_native_value = val
 
             if ent.hass:
                 ent.async_write_ha_state()
 
-    # ------------------------------------------------------------------
-    # ENTITY FACTORY
-    # ------------------------------------------------------------------
+    def _coerce_bool(self, value):
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return value != 0
+        if isinstance(value, str):
+            return value.strip().lower() in ("1", "true", "on", "yes")
+        return None
+
+    def _coerce_option(self, ent, value):
+        options = getattr(ent, "_attr_options", []) or []
+        if isinstance(value, str):
+            if value in options:
+                return value
+            return value
+
+        if isinstance(value, (int, float)) and options:
+            index = int(value)
+            if 0 <= index < len(options):
+                return options[index]
+
+        return str(value) if value is not None else None
+
     def _create_entity(self, field: str, meta: dict):
         t = meta.get("type")
 
@@ -481,9 +419,9 @@ class EntityGenerator:
 
         return None
 
-    # ------------------------------------------------------------------
-    # VALUE ACCESSORS
-    # ------------------------------------------------------------------
+    def has_field(self, field_path: str) -> bool:
+        return field_path in self._field_index
+
     def get_field_value(self, field: str):
         return self.raw_json.get(field)
 

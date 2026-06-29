@@ -31,6 +31,16 @@ class FieldMap:
     STEP_MAP = {}
     OPTIONS_MAP = {}
 
+    _PREFIX_RE = re.compile(r"^(?:display|runtime|set_cmd|setcmd|set_reply|cms|bms)\.")
+    _MSG_PREFIX_RE = re.compile(r"^msg\d+_\d+_\d+\.")
+
+    def _normalize_field(self, field: str) -> str:
+        clean = self._PREFIX_RE.sub("", field)
+        clean = self._MSG_PREFIX_RE.sub("", clean)
+        if "." in clean:
+            clean = clean.split(".")[-1]
+        return clean
+
     # ------------------------------------------------------------------
     # AUTO NAME
     # ------------------------------------------------------------------
@@ -38,12 +48,11 @@ class FieldMap:
         if field in self.NAME_MAP:
             return self.NAME_MAP[field]
 
-        # Noņem PROTO prefiksus (msg1_2_3.)
-        clean = re.sub(r"msg\d+_\d+_\d+\.", "", field)
+        normalized = self._normalize_field(field)
+        if normalized in self.NAME_MAP:
+            return self.NAME_MAP[normalized]
 
-        # Noņem nested prefix (cfg_energy_backup.energy_backup_en → energy_backup_en)
-        if "." in clean:
-            clean = clean.split(".", 1)[1]
+        clean = normalized
 
         # Noņem vienību sufiksus
         clean = re.sub(r"(_mv|_ma|_v|_a|_w)$", "", clean)
@@ -61,7 +70,11 @@ class FieldMap:
         if field in self.UNIT_MAP:
             return self.UNIT_MAP[field]
 
-        f = field.lower()
+        normalized = self._normalize_field(field)
+        if normalized in self.UNIT_MAP:
+            return self.UNIT_MAP[normalized]
+
+        f = normalized.lower()
 
         if f.endswith("_mv"):
             return "mV"
@@ -87,7 +100,11 @@ class FieldMap:
         if field in self.ICON_MAP:
             return self.ICON_MAP[field]
 
-        f = field.lower()
+        normalized = self._normalize_field(field)
+        if normalized in self.ICON_MAP:
+            return self.ICON_MAP[normalized]
+
+        f = normalized.lower()
 
         if "batt" in f or "battery" in f:
             return "mdi:battery"
@@ -115,7 +132,11 @@ class FieldMap:
         if field in self.DEVICE_CLASS_MAP:
             return self.DEVICE_CLASS_MAP[field]
 
-        f = field.lower()
+        normalized = self._normalize_field(field)
+        if normalized in self.DEVICE_CLASS_MAP:
+            return self.DEVICE_CLASS_MAP[normalized]
+
+        f = normalized.lower()
 
         if "temp" in f:
             return "temperature"
@@ -141,7 +162,11 @@ class FieldMap:
         if field in self.STATE_CLASS_MAP:
             return self.STATE_CLASS_MAP[field]
 
-        f = field.lower()
+        normalized = self._normalize_field(field)
+        if normalized in self.STATE_CLASS_MAP:
+            return self.STATE_CLASS_MAP[normalized]
+
+        f = normalized.lower()
 
         if any(x in f for x in ["pow", "volt", "amp", "temp", "soc", "soh", "freq"]):
             return "measurement"
@@ -158,10 +183,14 @@ class FieldMap:
         if field in self.CATEGORY_MAP:
             return self.CATEGORY_MAP[field]
 
+        normalized = self._normalize_field(field)
+        if normalized in self.CATEGORY_MAP:
+            return self.CATEGORY_MAP[normalized]
+
         if is_control:
             return EntityCategory.CONFIG
 
-        f = field.lower()
+        f = normalized.lower()
 
         if any(x in f for x in ["err", "fault", "warn", "state", "flag"]):
             return EntityCategory.DIAGNOSTIC
@@ -172,7 +201,7 @@ class FieldMap:
     # AUTO RANGE (min/max/step)
     # ------------------------------------------------------------------
     def guess_range(self, field: str):
-        f = field.lower()
+        f = self._normalize_field(field).lower()
 
         if "soc" in f:
             return (0, 100, 1)
@@ -188,13 +217,13 @@ class FieldMap:
         return (0, 100, 1)
 
     def get_min(self, field):
-        return self.MIN_MAP.get(field)
+        return self.MIN_MAP.get(field, self.MIN_MAP.get(self._normalize_field(field)))
 
     def get_max(self, field):
-        return self.MAX_MAP.get(field)
+        return self.MAX_MAP.get(field, self.MAX_MAP.get(self._normalize_field(field)))
 
     def get_step(self, field):
-        return self.STEP_MAP.get(field)
+        return self.STEP_MAP.get(field, self.STEP_MAP.get(self._normalize_field(field)))
 
     # ------------------------------------------------------------------
     # AUTO ENUM OPTIONS
@@ -228,7 +257,14 @@ class FieldMap:
         if field in self.OPTIONS_MAP:
             return self.OPTIONS_MAP[field]
 
+        normalized = self._normalize_field(field)
+        if normalized in self.OPTIONS_MAP:
+            return self.OPTIONS_MAP[normalized]
+
         if field in self.AUTO_ENUMS:
             return list(self.AUTO_ENUMS[field].values())
+
+        if normalized in self.AUTO_ENUMS:
+            return list(self.AUTO_ENUMS[normalized].values())
 
         return None

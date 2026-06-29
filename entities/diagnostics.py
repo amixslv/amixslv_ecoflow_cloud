@@ -56,7 +56,7 @@ class Diagnostics(EcoFlowBaseEntity):
         # Unknown fields
         unknown = []
         for field in raw:
-            if field not in self.generator._field_meta:
+            if not self.generator.has_field(field):
                 unknown.append(field)
         attrs["unknown_fields"] = unknown
 

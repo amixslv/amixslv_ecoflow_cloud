@@ -74,29 +74,28 @@ class CloudClient(EcoflowApiBase):
 
         return self.mqtt_info
 
-async def list_devices(self):
-    """Atgriež visas ierīces no EcoFlow Cloud (App API)."""
-    url = f"https://{API_HOST}/iot-open/user/device/list"
-    headers = {
-        "lang": "en_US",
-        "authorization": f"Bearer {self.token}",
-        "content-type": "application/json",
-    }
+    async def list_devices(self):
+        """Atgriež visas ierīces no EcoFlow Cloud (App API)."""
+        url = f"https://{API_HOST}/iot-open/user/device/list"
+        headers = {
+            "lang": "en_US",
+            "authorization": f"Bearer {self.token}",
+            "content-type": "application/json",
+        }
 
-    data = {"pageSize": 100, "pageNum": 1}
+        data = {"pageSize": 100, "pageNum": 1}
 
-    async with aiohttp.ClientSession() as session:
-        resp = await session.post(url, headers=headers, json=data)
-        js = await self._get_json_response(resp)
+        async with aiohttp.ClientSession() as session:
+            resp = await session.post(url, headers=headers, json=data)
+            js = await self._get_json_response(resp)
 
-        if js.get("code") != 0 or "data" not in js:
-            raise EcoflowException(f"Device list error: {js}")
+            if js.get("code") != 0 or "data" not in js:
+                raise EcoflowException(f"Device list error: {js}")
 
-        devices = js["data"].get("list", js["data"])
-        if not isinstance(devices, list):
-            raise EcoflowException(f"Unexpected device list format: {js}")
+            devices = js["data"].get("list", js["data"])
+            if not isinstance(devices, list):
+                raise EcoflowException(f"Unexpected device list format: {js}")
 
-        _LOGGER.info(f"Fetched {len(devices)} devices from EcoFlow Cloud")
-        return devices
-
+            _LOGGER.info(f"Fetched {len(devices)} devices from EcoFlow Cloud")
+            return devices
 
