@@ -221,6 +221,13 @@ class EntityGenerator:
             else:
                 meta["type"] = "sensor"
 
+        if is_control:
+            # Controls: switch/button only. Number/select should be in Configuration.
+            if meta.get("type") in ("number", "select"):
+                meta["entity_category"] = "config"
+            else:
+                meta["entity_category"] = None
+
         return meta
 
     def _looks_like_toggle(self, field_path: str) -> bool:
