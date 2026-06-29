@@ -104,6 +104,9 @@ class EntityGenerator:
         self._last_msg_type: str | None = None
         self._last_proto_key: str | None = None
 
+        if self.pb2:
+            self._load_proto_definitions()
+
     # Keep backward compat: legacy single callback assignment from platform files
     @property
     def add_entities_callback(self):
@@ -112,9 +115,6 @@ class EntityGenerator:
     @add_entities_callback.setter
     def add_entities_callback(self, value):
         pass  # no-op; platforms must use set_platform_callback()
-
-        if self.pb2:
-            self._load_proto_definitions()
 
     def set_platform_callback(self, platform: str, callback: AddEntitiesCallback):
         self._platform_callbacks[platform] = callback
