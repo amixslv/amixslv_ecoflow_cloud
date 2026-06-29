@@ -39,8 +39,8 @@ class EcoFlowBaseEntity(Entity):
     # ------------------------------------------------------------------
     @property
     def unique_id(self):
-        # SN + field = stabils, nemainīgs, drošs
-        return f"{self.device_sn}_{self._field}"
+        # SN + proto source + field = stabils, nemainīgs, drošs
+        return self._meta.get("unique_id", f"{self.device_sn}_{self._field}")
 
     # ------------------------------------------------------------------
     # DEVICE INFO

@@ -49,6 +49,7 @@ class DeviceManager:
         self._last_update_time = 0.0
         self._update_interval = 0.5  # seconds
         self._pending_decoded: dict | None = None
+        self._update_scheduled = False
 
     # ----------------------------------------------------------------------
     # MAIN SETUP
@@ -74,15 +75,7 @@ class DeviceManager:
             _LOGGER.error("DM: Cloud login FAILED: %s", e)
             raise
 
-        # 2. Setup MQTT FIRST
-        try:
-            await self._setup_mqtt(mqtt_info)
-            _LOGGER.info("DM: MQTT setup OK")
-        except Exception as e:
-            _LOGGER.error("DM: MQTT setup FAILED: %s", e)
-            raise
-
-        # 3. Load pb2 module dynamically
+        # 2. Load pb2 module dynamically
         try:
             await self._load_pb2()
             _LOGGER.info("DM: PB2 loaded OK")
@@ -90,7 +83,7 @@ class DeviceManager:
             _LOGGER.error("DM: PB2 load FAILED: %s", e)
             raise
 
-        # 4. Create EntityGenerator ONCE
+        # 3. Create EntityGenerator ONCE
         try:
             self.entity_generator = EntityGenerator(
                 manager=self,
@@ -102,6 +95,14 @@ class DeviceManager:
             _LOGGER.info("DM: EntityGenerator initialized")
         except Exception as e:
             _LOGGER.error("DM: EntityGenerator init FAILED: %s", e)
+            raise
+
+        # 4. Setup MQTT after generator exists
+        try:
+            await self._setup_mqtt(mqtt_info)
+            _LOGGER.info("DM: MQTT setup OK")
+        except Exception as e:
+            _LOGGER.error("DM: MQTT setup FAILED: %s", e)
             raise
 
         # 5. Register device in HA
@@ -188,11 +189,10 @@ class DeviceManager:
 
         self._pending_decoded = decoded
 
-        # Rate-limit entity updates
-        if now - self._last_update_time < self._update_interval:
+        if self._update_scheduled:
             return
 
-        self._last_update_time = now
+        self._update_scheduled = True
         self.hass.loop.call_soon_threadsafe(self._apply_pending_update)
 
     # ----------------------------------------------------------------------
@@ -200,17 +200,26 @@ class DeviceManager:
     # ----------------------------------------------------------------------
     def _apply_pending_update(self):
         """Apply the latest decoded message on HA event loop."""
-        if not self._pending_decoded:
+        payload = self._pending_decoded
+        if not payload:
+            self._update_scheduled = False
             return
 
         if not self.entity_generator:
             _LOGGER.error("DM: EntityGenerator not initialized in _apply_pending_update")
+            self._update_scheduled = False
             return
 
         try:
-            self.entity_generator.update_entities(self._pending_decoded)
+            self._pending_decoded = None
+            self.entity_generator.update_entities(payload)
         except Exception as e:
             _LOGGER.error("DM: update_entities FAILED: %s", e)
+        finally:
+            self._update_scheduled = False
+            if self._pending_decoded is not None:
+                self._update_scheduled = True
+                self.hass.loop.call_soon(self._apply_pending_update)
 
     # ----------------------------------------------------------------------
     # DEVICE REGISTRATION
