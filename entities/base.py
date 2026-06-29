@@ -42,6 +42,13 @@ class EcoFlowBaseEntity(Entity):
         # SN + proto source + field = stabils, nemainīgs, drošs
         return self._meta.get("unique_id", f"{self.device_sn}_{self._field}")
 
+    @property
+    def suggested_object_id(self):
+        # Keep entity_id deterministic and short: <device_type>_<field_path>
+        field_path = (self._meta.get("field_path") or self._field).replace(".", "_").lower()
+        device_key = (self.device_type or "ecoflow").replace(" ", "_").lower()
+        return f"{device_key}_{field_path}"
+
     # ------------------------------------------------------------------
     # DEVICE INFO
     # ------------------------------------------------------------------
