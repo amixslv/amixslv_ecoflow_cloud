@@ -20,149 +20,16 @@ class FieldMap:
     # ------------------------------------------------------------------
     # MANUĀLIE OVERRIDES
     # ------------------------------------------------------------------
-    NAME_MAP = {
-        "pow_in_sum_w": "Total Input Power",
-        "pow_out_sum_w": "Total Output Power",
-        "pow_get_ac_in": "AC In Power",
-        "pow_get_pv": "Solar/Car 1 In Power",
-        "pow_get_dcp2": "Solar/Car 2 In Power",
-        "pow_get_ac_out": "AC Out Power",
-        "pow_get_12v": "DC 12V Out Power",
-        "pow_get_typec1": "USB-C 1 Power",
-        "pow_get_typec2": "USB-C 2 Power",
-        "pow_get_qcusb1": "USB-A 1 Power",
-        "pow_get_qcusb2": "USB-A 2 Power",
-        "pow_get_bms": "Extra Battery Power",
-        "bms_batt_soc": "Station Battery Level",
-        "cms_batt_soc": "Extra Battery Level",
-        "bms_chg_rem_time": "Charge Remaining Time",
-        "bms_dsg_rem_time": "Discharge Remaining Time",
-        "temp_pcs_ac": "PCS AC Temperature",
-        "temp_pcs_dc": "PCS DC Temperature",
-        "en_beep": "Beep",
-        "xboost_en": "X-Boost",
-        "cfg_ac_out_open": "AC Out Enabled",
-        "cfg_dc12v_out_open": "DC 12V Out Enabled",
-        "plug_in_info_ac_in_chg_pow_max": "AC Charge Power Limit",
-        "cms_max_chg_soc": "Max Charge Limit",
-        "cms_min_dsg_soc": "Min Discharge Limit",
-        "pv_chg_type": "PV Charge Type",
-        "screen_off_time": "Screen Off Time",
-        "ac_standby_time": "AC Standby Time",
-        "dc_standby_time": "DC Standby Time",
-        "dev_standby_time": "Unit Standby Time",
-        "output_power_off_memory": "Output Power-Off Memory",
-    }
+    NAME_MAP = {}
     UNIT_MAP = {}
-    ICON_MAP = {
-        "pow_in_sum_w": "mdi:transmission-tower-import",
-        "pow_out_sum_w": "mdi:transmission-tower-export",
-        "pow_get_ac_in": "mdi:power-plug",
-        "pow_get_ac_out": "mdi:power-plug-outline",
-        "pow_get_pv": "mdi:solar-power",
-        "pow_get_dcp2": "mdi:solar-power-variant",
-        "pow_get_12v": "mdi:car-electric",
-        "pow_get_typec1": "mdi:usb-c-port",
-        "pow_get_typec2": "mdi:usb-c-port",
-        "pow_get_qcusb1": "mdi:usb-port",
-        "pow_get_qcusb2": "mdi:usb-port",
-        "pow_get_bms": "mdi:battery-sync",
-    }
-    DEVICE_CLASS_MAP = {
-        "bms_chg_rem_time": "duration",
-        "bms_dsg_rem_time": "duration",
-    }
-    STATE_CLASS_MAP = {
-        "pow_in_sum_w": "measurement",
-        "pow_out_sum_w": "measurement",
-        "pow_get_ac_in": "measurement",
-        "pow_get_pv": "measurement",
-        "pow_get_dcp2": "measurement",
-        "pow_get_ac_out": "measurement",
-        "pow_get_12v": "measurement",
-        "pow_get_typec1": "measurement",
-        "pow_get_typec2": "measurement",
-        "pow_get_qcusb1": "measurement",
-        "pow_get_qcusb2": "measurement",
-        "pow_get_bms": "measurement",
-    }
-    CATEGORY_MAP = {
-        "en_beep": EntityCategory.CONFIG,
-        "cms_max_chg_soc": EntityCategory.CONFIG,
-        "cms_min_dsg_soc": EntityCategory.CONFIG,
-        "plug_in_info_ac_in_chg_pow_max": EntityCategory.CONFIG,
-        "screen_off_time": EntityCategory.CONFIG,
-        "ac_standby_time": EntityCategory.CONFIG,
-        "dc_standby_time": EntityCategory.CONFIG,
-        "dev_standby_time": EntityCategory.CONFIG,
-        "pv_chg_type": EntityCategory.CONFIG,
-    }
-    MIN_MAP = {
-        "cms_max_chg_soc": 0,
-        "cms_min_dsg_soc": 0,
-        "plug_in_info_ac_in_chg_pow_max": 100,
-    }
-    MAX_MAP = {
-        "cms_max_chg_soc": 100,
-        "cms_min_dsg_soc": 100,
-        "plug_in_info_ac_in_chg_pow_max": 1500,
-    }
-    STEP_MAP = {
-        "cms_max_chg_soc": 1,
-        "cms_min_dsg_soc": 1,
-        "plug_in_info_ac_in_chg_pow_max": 10,
-    }
+    ICON_MAP = {}
+    DEVICE_CLASS_MAP = {}
+    STATE_CLASS_MAP = {}
+    CATEGORY_MAP = {}
+    MIN_MAP = {}
+    MAX_MAP = {}
+    STEP_MAP = {}
     OPTIONS_MAP = {}
-    CONTROL_TYPE_MAP = {
-        "en_beep": "switch",
-        "xboost_en": "switch",
-        "cfg_ac_out_open": "switch",
-        "cfg_dc12v_out_open": "switch",
-        "output_power_off_memory": "switch",
-    }
-    DEFAULT_ENABLED_SENSOR_FIELDS = {
-        "pow_in_sum_w",
-        "pow_out_sum_w",
-        "pow_get_ac_in",
-        "pow_get_pv",
-        "pow_get_dcp2",
-        "pow_get_ac_out",
-        "pow_get_12v",
-        "pow_get_typec1",
-        "pow_get_typec2",
-        "pow_get_qcusb1",
-        "pow_get_qcusb2",
-        "pow_get_bms",
-        "bms_batt_soc",
-        "cms_batt_soc",
-        "bms_batt_soh",
-        "cms_batt_soh",
-        "bms_chg_rem_time",
-        "bms_dsg_rem_time",
-        "temp_pcs_ac",
-        "temp_pcs_dc",
-        "cycles",
-        "soc",
-        "remain_time",
-        "input_watts",
-        "output_watts",
-    }
-    DEFAULT_ENABLED_CONTROL_FIELDS = {
-        "en_beep",
-        "xboost_en",
-        "cfg_ac_out_open",
-        "cfg_dc12v_out_open",
-        "cms_max_chg_soc",
-        "cms_min_dsg_soc",
-        "plug_in_info_ac_in_chg_pow_max",
-        "pv_chg_type",
-        "cfg_energy_backup",
-        "screen_off_time",
-        "ac_standby_time",
-        "dc_standby_time",
-        "dev_standby_time",
-        "output_power_off_memory",
-    }
     TOKEN_LABELS = {
         "ac": "AC",
         "dc": "DC",
@@ -357,22 +224,15 @@ class FieldMap:
     # AUTO CATEGORY
     # ------------------------------------------------------------------
     def get_category(self, field: str, is_control: bool):
-        if field in self.CATEGORY_MAP:
-            return self.CATEGORY_MAP[field]
-
         normalized = self._normalize_field(field)
-        if normalized in self.CATEGORY_MAP:
-            return self.CATEGORY_MAP[normalized]
+        f = normalized.lower()
 
         if is_control:
-            if "cfg_" in normalized:
+            if normalized.startswith("cfg_"):
                 return EntityCategory.CONFIG
-            _SKW = ("timeout","standby_time","off_time","utc_time","utc_zone","timezone","lcd_","_light","backup_soc","min_dsg","max_chg","screen_off")
-            if any(kw in normalized for kw in _SKW):
+            if any(x in f for x in ("timeout", "standby", "screen_off", "utc_", "timezone", "limit", "mode", "type", "beep", "xboost", "memory")):
                 return EntityCategory.CONFIG
             return None
-
-        f = normalized.lower()
 
         if any(x in f for x in ["err", "fault", "warn", "state", "flag"]):
             return EntityCategory.DIAGNOSTIC
@@ -408,22 +268,20 @@ class FieldMap:
         return self.STEP_MAP.get(field, self.STEP_MAP.get(self._normalize_field(field)))
 
     def get_control_type(self, field: str):
-        normalized = self._normalize_field(field)
-        return self.CONTROL_TYPE_MAP.get(field, self.CONTROL_TYPE_MAP.get(normalized))
+        normalized = self._normalize_field(field).lower()
+
+        if normalized.endswith(("_en", "_enable", "_enabled", "_flag", "_switch", "_open", "_close")):
+            return "switch"
+        if any(x in normalized for x in ("beep", "xboost", "memory")):
+            return "switch"
+        if any(x in normalized for x in ("time", "timeout", "soc", "limit", "amp", "volt", "watt", "power")):
+            return "number"
+        if self.get_options(field):
+            return "select"
+        return None
 
     def is_default_enabled(self, field: str, is_control: bool, source: str | None = None):
-        normalized = self._normalize_field(field)
-
-        if is_control:
-            return normalized in self.DEFAULT_ENABLED_CONTROL_FIELDS
-
-        if source in ("display", "runtime"):
-            return normalized in self.DEFAULT_ENABLED_SENSOR_FIELDS
-
-        if source in ("bms", "cms"):
-            return normalized in self.DEFAULT_ENABLED_SENSOR_FIELDS
-
-        return normalized in self.DEFAULT_ENABLED_SENSOR_FIELDS
+        return bool(is_control)
 
     # ------------------------------------------------------------------
     # AUTO ENUM OPTIONS
