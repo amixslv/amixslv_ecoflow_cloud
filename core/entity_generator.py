@@ -182,7 +182,7 @@ class EntityGenerator:
             "device_class": device_class,
             "state_class": state_class,
             "entity_category": entity_category,
-            "enabled": True,
+            "enabled": self.field_map.is_default_enabled(field_path, is_control, source),
             "field_path": field_path,
             "source": source,
             "is_control": is_control,
@@ -190,8 +190,17 @@ class EntityGenerator:
         }
 
         if is_control:
+            forced_control_type = self.field_map.get_control_type(field_path)
             options = self.field_map.get_options(field_path)
-            if options:
+            if forced_control_type == "switch":
+                meta["type"] = "switch"
+            elif forced_control_type == "number":
+                meta["type"] = "number"
+                guessed_min, guessed_max, guessed_step = self.field_map.guess_range(field_path)
+                meta["min"] = self.field_map.get_min(field_path) or guessed_min
+                meta["max"] = self.field_map.get_max(field_path) or guessed_max
+                meta["step"] = self.field_map.get_step(field_path) or guessed_step
+            elif options:
                 meta["type"] = "select"
                 meta["options"] = options
             elif field.type == FieldDescriptor.TYPE_BOOL:
