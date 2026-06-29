@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
@@ -14,6 +15,74 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for amixslv_ecoflow_cloud."""
 
     VERSION = 1
+
+    def __init__(self) -> None:
+        self._cloud_devices: dict[str, dict] = {}
+
+    def _normalize_name(self, value: str) -> str:
+        return re.sub(r"[^a-z0-9]", "", value.lower())
+
+    def _extract_device_sn(self, payload: dict) -> str | None:
+        for key in ("sn", "deviceSn", "device_sn", "snCode", "serialNumber", "snNumber"):
+            value = payload.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return None
+
+    def _extract_device_name(self, payload: dict) -> str | None:
+        for key in ("deviceName", "device_name", "name", "productName", "product_name", "model"):
+            value = payload.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return None
+
+    def _guess_device_label(self, raw_name: str | None) -> str | None:
+        if not raw_name:
+            return None
+
+        normalized_name = self._normalize_name(raw_name)
+        for label, meta in DEVICE_TYPE_MAP.items():
+            candidates = {
+                label,
+                meta.get("name", ""),
+                meta.get("id", ""),
+                meta.get("device_type", ""),
+            }
+            if any(
+                (
+                    self._normalize_name(candidate) == normalized_name
+                    or self._normalize_name(candidate) in normalized_name
+                    or normalized_name in self._normalize_name(candidate)
+                )
+                for candidate in candidates
+                if candidate
+            ):
+                return meta.get("name", label)
+        return None
+
+    async def _load_cloud_devices(self) -> None:
+        devices = await self._client.list_devices()
+
+        choices: dict[str, dict] = {}
+        for payload in devices:
+            if not isinstance(payload, dict):
+                continue
+
+            sn = self._extract_device_sn(payload)
+            if not sn:
+                continue
+
+            raw_name = self._extract_device_name(payload) or "Unknown device"
+            display = f"{raw_name} ({sn})"
+            guessed_label = self._guess_device_label(raw_name)
+
+            choices[display] = {
+                "sn": sn,
+                "raw_name": raw_name,
+                "device_label": guessed_label,
+            }
+
+        self._cloud_devices = choices
 
     async def async_step_user(self, user_input=None) -> FlowResult:
         """Step 1: Ask for username/password and VALIDATE login."""
@@ -39,6 +108,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 password=self._password,
             )
             await self._client.login()
+            await self._load_cloud_devices()
         except Exception:
             errors["base"] = "invalid_auth"
             return self.async_show_form(
@@ -55,22 +125,54 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return await self.async_step_device()
 
     async def async_step_device(self, user_input=None) -> FlowResult:
-        """Step 2: Select device label + SN."""
+        """Step 2: Select account device (SN is not entered manually)."""
         if user_input is None:
+            if not self._cloud_devices:
+                return self.async_show_form(
+                    step_id="device",
+                    data_schema=vol.Schema({}),
+                    errors={"base": "unknown"},
+                )
+
             return self.async_show_form(
                 step_id="device",
                 data_schema=vol.Schema(
                     {
+                        vol.Required("account_device"): vol.In(sorted(self._cloud_devices.keys())),
+                    }
+                ),
+            )
+
+        selected = user_input["account_device"]
+        selected_device = self._cloud_devices[selected]
+        self._device_sn = selected_device["sn"]
+        self._device_label = selected_device.get("device_label")
+
+        if not self._device_label:
+            return await self.async_step_device_type()
+
+        # Check if device already exists in registry
+        device_registry = dr.async_get(self.hass)
+        for dev in device_registry.devices.values():
+            if (DOMAIN, self._device_sn) in dev.identifiers:
+                return await self.async_step_device_exists()
+
+        return self._create_entry()
+
+    async def async_step_device_type(self, user_input=None) -> FlowResult:
+        """Step 3: Manual device type mapping when cloud name is unknown."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="device_type",
+                data_schema=vol.Schema(
+                    {
                         vol.Required("device_label"): vol.In(SUPPORTED_DEVICE_LABELS),
-                        vol.Required("device_sn"): str,
                     }
                 ),
             )
 
         self._device_label = user_input["device_label"]
-        self._device_sn = user_input["device_sn"]
 
-        # Check if device already exists in registry
         device_registry = dr.async_get(self.hass)
         for dev in device_registry.devices.values():
             if (DOMAIN, self._device_sn) in dev.identifiers:

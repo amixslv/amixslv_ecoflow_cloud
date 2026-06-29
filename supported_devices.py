@@ -46,7 +46,7 @@ def _normalize_proto_name(filename: str):
 
 
 def _load_supported_devices():
-    labels = []
+    labels = set()
     mapping = {}
 
     if not os.path.isdir(PROTO_PATH):
@@ -59,9 +59,7 @@ def _load_supported_devices():
 
         label, internal, base, name_clean, device_type, proto_prefix = _normalize_proto_name(file)
 
-        labels.append(label)
-
-        mapping[label] = {
+        payload = {
             "id": internal,                 # DELTA_3_PLUS
             "proto_file": file,             # ef_delta3_plus.proto
             "proto": f"{base}_pb2",         # ef_delta3_plus_pb2
@@ -69,9 +67,14 @@ def _load_supported_devices():
             "device_type": device_type,     # delta_3_plus
             "proto_prefix": proto_prefix,   # Delta3Plus
         }
+        # Primary key: human-readable English label
+        mapping[name_clean] = payload
+        # Backward compatibility for already saved entries using uppercase label
+        mapping[label] = payload
 
-    labels.sort()
-    return labels, mapping
+        labels.add(name_clean)
+
+    return sorted(labels), mapping
 
 
 SUPPORTED_DEVICE_LABELS, DEVICE_TYPE_MAP = _load_supported_devices()
