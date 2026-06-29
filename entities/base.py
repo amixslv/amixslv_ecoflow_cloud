@@ -57,7 +57,7 @@ class EcoFlowBaseEntity(Entity):
             "identifiers": {("amixslv_ecoflow_cloud", self.device_sn)},
             "manufacturer": "EcoFlow",
             "model": human_name,
-            "name": f"{human_name} ({self.device_sn})",
+            "name": human_name,
             "serial_number": self.device_sn,
         }
 

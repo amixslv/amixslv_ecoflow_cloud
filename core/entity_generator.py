@@ -69,14 +69,14 @@ class EntityGenerator:
         "flag",
         "enable",
         "enabled",
+        "switch",
         "open",
+        "close",
         "beep",
         "alarm",
         "warn",
         "fault",
-        "power_off",
-        "on",
-        "off",
+        "xboost_en",
     )
 
     CONTROL_SELECT_HINTS = (
@@ -137,7 +137,7 @@ class EntityGenerator:
     def _load_proto_definitions(self):
         messages = load_proto_messages(self.pb2)
 
-        for source in ("display", "runtime", "cms", "bms", "set_reply"):
+        for source in ("display", "runtime", "cms", "bms"):
             message_cls = messages.get(source)
             if message_cls:
                 self._register_message_fields(message_cls, source=source, is_control=False)
@@ -194,6 +194,8 @@ class EntityGenerator:
             if options:
                 meta["type"] = "select"
                 meta["options"] = options
+            elif field.type == FieldDescriptor.TYPE_BOOL:
+                meta["type"] = "switch"
             elif self._looks_like_toggle(field_path):
                 meta["type"] = "switch"
             else:
@@ -214,6 +216,8 @@ class EntityGenerator:
 
     def _looks_like_toggle(self, field_path: str) -> bool:
         field_name = field_path.split(".")[-1].lower()
+        if field_name.endswith(("_en", "_enable", "_enabled", "_switch", "_open", "_close", "_flag")):
+            return True
         return any(
             field_name.endswith(f"_{hint}") or f"_{hint}_" in field_name or field_name == hint
             for hint in self.CONTROL_SWITCH_HINTS
@@ -326,11 +330,6 @@ class EntityGenerator:
             field_path = meta["field_path"]
 
             if entity_key in self.entities:
-                continue
-
-            # Controls are created up-front. Telemetry entities are added lazily
-            # when first data arrives to avoid hundreds of permanently unavailable entities.
-            if not meta.get("is_control") and platform in ("sensor", "binary_sensor"):
                 continue
 
             ent = self._create_entity(field_path, meta)
