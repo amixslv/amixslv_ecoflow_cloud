@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import re
 import voluptuous as vol
 from homeassistant import config_entries
@@ -10,6 +11,8 @@ from .cont import DOMAIN
 from .supported_devices import SUPPORTED_DEVICE_LABELS, DEVICE_TYPE_MAP
 from .api.cloud_client import CloudClient
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for amixslv_ecoflow_cloud."""
@@ -18,6 +21,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._cloud_devices: dict[str, dict] = {}
+        self._device_list_unavailable = False
 
     def _normalize_name(self, value: str) -> str:
         return re.sub(r"[^a-z0-9]", "", value.lower())
@@ -102,13 +106,13 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # --- LOGIN VALIDATION ---
         errors = {}
+        self._device_list_unavailable = False
         try:
             self._client = CloudClient(
                 username=self._username,
                 password=self._password,
             )
             await self._client.login()
-            await self._load_cloud_devices()
         except Exception:
             errors["base"] = "invalid_auth"
             return self.async_show_form(
@@ -122,6 +126,13 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors=errors,
             )
 
+        try:
+            await self._load_cloud_devices()
+        except Exception as exc:
+            _LOGGER.warning("EcoFlow device list fetch failed, fallback to manual device entry: %s", exc)
+            self._cloud_devices = {}
+            self._device_list_unavailable = True
+
         return await self.async_step_device()
 
     async def async_step_device(self, user_input=None) -> FlowResult:
@@ -130,8 +141,13 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not self._cloud_devices:
                 return self.async_show_form(
                     step_id="device",
-                    data_schema=vol.Schema({}),
-                    errors={"base": "unknown"},
+                    data_schema=vol.Schema(
+                        {
+                            vol.Required("device_label"): vol.In(SUPPORTED_DEVICE_LABELS),
+                            vol.Required("device_sn"): str,
+                        }
+                    ),
+                    errors={"base": "cannot_connect"} if self._device_list_unavailable else {},
                 )
 
             return self.async_show_form(
@@ -142,6 +158,29 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     }
                 ),
             )
+
+        if "account_device" not in user_input:
+            self._device_label = user_input["device_label"]
+            self._device_sn = user_input["device_sn"].strip()
+
+            if not self._device_sn:
+                return self.async_show_form(
+                    step_id="device",
+                    data_schema=vol.Schema(
+                        {
+                            vol.Required("device_label", default=self._device_label): vol.In(SUPPORTED_DEVICE_LABELS),
+                            vol.Required("device_sn"): str,
+                        }
+                    ),
+                    errors={"base": "unknown"},
+                )
+
+            device_registry = dr.async_get(self.hass)
+            for dev in device_registry.devices.values():
+                if (DOMAIN, self._device_sn) in dev.identifiers:
+                    return await self.async_step_device_exists()
+
+            return self._create_entry()
 
         selected = user_input["account_device"]
         selected_device = self._cloud_devices[selected]
