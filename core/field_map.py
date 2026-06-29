@@ -30,6 +30,21 @@ class FieldMap:
     MAX_MAP = {}
     STEP_MAP = {}
     OPTIONS_MAP = {}
+    TOKEN_LABELS = {
+        "ac": "AC",
+        "dc": "DC",
+        "bms": "BMS",
+        "cms": "CMS",
+        "soc": "SOC",
+        "soh": "SOH",
+        "pv": "PV",
+        "usb": "USB",
+        "wifi": "Wi-Fi",
+        "cfg": "Config",
+        "eps": "EPS",
+        "inv": "Inverter",
+        "chg": "Charge",
+    }
 
     _PREFIX_RE = re.compile(r"^(?:display|runtime|set_cmd|setcmd|set_reply|cms|bms)\.")
     _MSG_PREFIX_RE = re.compile(r"^msg\d+_\d+_\d+\.")
@@ -53,12 +68,19 @@ class FieldMap:
             return self.NAME_MAP[normalized]
 
         clean = normalized
+        clean = re.sub(r"^cfg_", "", clean)
 
         # Noņem vienību sufiksus
         clean = re.sub(r"(_mv|_ma|_v|_a|_w)$", "", clean)
 
-        # Cilvēcīgs nosaukums
-        name = clean.replace("_", " ").title()
+        # Cilvēcīgs nosaukums ar saīsinājumu normalizāciju
+        words = clean.split("_")
+        pretty_words = []
+        for word in words:
+            if not word:
+                continue
+            pretty_words.append(self.TOKEN_LABELS.get(word.lower(), word.capitalize()))
+        name = " ".join(pretty_words)
 
         self.NAME_MAP[field] = name
         return name
@@ -86,9 +108,29 @@ class FieldMap:
             return "W"
         if "freq" in f:
             return "Hz"
+        if f.endswith("_kwh"):
+            return "kWh"
+        if "energy" in f or f.endswith("_wh"):
+            return "Wh"
+        if f.endswith("_mah"):
+            return "mAh"
+        if f.endswith("_ah"):
+            return "Ah"
+        if f.endswith("_ma"):
+            return "mA"
+        if f.endswith("_kw"):
+            return "kW"
+        if f.endswith("_ms"):
+            return "ms"
+        if f.endswith("_sec") or f.endswith("_s"):
+            return "s"
+        if f.endswith("_min"):
+            return "min"
+        if f.endswith("_hour") or f.endswith("_hr") or f.endswith("_h"):
+            return "h"
         if "temp" in f:
             return "°C"
-        if f.endswith("_soc") or f.endswith("_soh"):
+        if f.endswith("_soc") or f.endswith("_soh") or f.endswith("_pct") or "percent" in f:
             return "%"
 
         return None
@@ -188,7 +230,9 @@ class FieldMap:
             return self.CATEGORY_MAP[normalized]
 
         if is_control:
-            return EntityCategory.CONFIG
+            if normalized.startswith("cfg_") or "cfg_" in normalized:
+                return EntityCategory.CONFIG
+            return None
 
         f = normalized.lower()
 
