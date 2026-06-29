@@ -104,7 +104,7 @@ class FieldMap:
             return "V"
         if f.endswith("_a") or "amp" in f:
             return "A"
-        if f.endswith("_w") or "pow" in f:
+        if f.endswith("_w") or (("pow" in f or "power" in f) and not f.endswith(("_off","_on","_flag","_en","_enable"))):
             return "W"
         if "freq" in f:
             return "Hz"
@@ -186,11 +186,13 @@ class FieldMap:
             return "voltage"
         if "amp" in f or "current" in f:
             return "current"
-        if "pow" in f or f.endswith("_w"):
+        if f.endswith("_w") or (("pow" in f or "power" in f) and not f.endswith(("_off","_on","_flag","_en","_enable"))):
             return "power"
         if "freq" in f:
             return "frequency"
-        if "soc" in f or "soh" in f:
+        if f.endswith("_soc") and not any(x in f for x in ("min_","mini_","max_","backup","always_on","reserve","alarm","protect")):
+            return "battery"
+        if f in ("soc","soh","batt_soh","bms_batt_soh"):
             return "battery"
         if "time" in f:
             return "duration"
@@ -230,7 +232,10 @@ class FieldMap:
             return self.CATEGORY_MAP[normalized]
 
         if is_control:
-            if normalized.startswith("cfg_") or "cfg_" in normalized:
+            if "cfg_" in normalized:
+                return EntityCategory.CONFIG
+            _SKW = ("timeout","standby_time","off_time","utc_time","utc_zone","timezone","lcd_","_light","backup_soc","min_dsg","max_chg","screen_off")
+            if any(kw in normalized for kw in _SKW):
                 return EntityCategory.CONFIG
             return None
 

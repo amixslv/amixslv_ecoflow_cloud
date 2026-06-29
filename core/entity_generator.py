@@ -251,6 +251,7 @@ class EntityGenerator:
                     header = header_msg.header[-1]
                     pdata = header.pdata
 
+                    _bsh, _bdh, _bsc = None, {}, -1
                     for suffix in (
                         "DisplayPropertyUpload",
                         "RuntimePropertyUpload",
@@ -267,9 +268,16 @@ class EntityGenerator:
                             msg = message_cls()
                             msg.ParseFromString(pdata)
                             raw = MessageToDict(msg, preserving_proto_field_name=True)
-                            return suffix, flatten_dict(raw)
+                            _dd = flatten_dict(raw)
+                            if not _dd:
+                                continue
+                            _sc = sum(1 for k in _dd if k in self._field_index)
+                            if _sc > _bsc:
+                                _bsc, _bsh, _bdh = _sc, suffix, _dd
                         except Exception:
                             continue
+                    if _bdh:
+                        return _bsh, _bdh
                 except Exception as exc:
                     _LOGGER.debug("PROTO-first decode failed: %s", exc)
 
@@ -289,6 +297,7 @@ class EntityGenerator:
         if header.enc_type == 1 and header.src != 32:
             pdata = bytes([(b ^ header.seq) & 0xFF for b in pdata])
 
+        _bsb, _bdb, _bscb = None, {}, -1
         for suffix in (
             "DisplayPropertyUpload",
             "RuntimePropertyUpload",
@@ -305,11 +314,16 @@ class EntityGenerator:
                 msg = message_cls()
                 msg.ParseFromString(pdata)
                 raw = MessageToDict(msg, preserving_proto_field_name=True)
-                return suffix, flatten_dict(raw)
+                _dd = flatten_dict(raw)
+                if not _dd:
+                    continue
+                _sc = sum(1 for k in _dd if k in self._field_index)
+                if _sc > _bscb:
+                    _bscb, _bsb, _bdb = _sc, suffix, _dd
             except Exception:
                 continue
 
-        return None, {}
+        return (_bsb, _bdb) if _bdb else (None, {})
 
     def decode_message(self, payload: bytes) -> dict:
         """Decode MQTT payload to a flattened proto dictionary."""
