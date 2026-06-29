@@ -328,6 +328,11 @@ class EntityGenerator:
             if entity_key in self.entities:
                 continue
 
+            # Controls are created up-front. Telemetry entities are added lazily
+            # when first data arrives to avoid hundreds of permanently unavailable entities.
+            if not meta.get("is_control") and platform in ("sensor", "binary_sensor"):
+                continue
+
             ent = self._create_entity(field_path, meta)
             if ent:
                 self.entities[entity_key] = ent
