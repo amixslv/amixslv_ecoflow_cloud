@@ -100,12 +100,24 @@ class EntityGenerator:
         self._field_meta: dict[str, dict] = {}
         self._field_index: dict[str, list[str]] = {}
         self.raw_json: dict = {}
-        self.add_entities_callback: AddEntitiesCallback | None = None
+        self._platform_callbacks: dict[str, AddEntitiesCallback] = {}
         self._last_msg_type: str | None = None
         self._last_proto_key: str | None = None
 
+    # Keep backward compat: legacy single callback assignment from platform files
+    @property
+    def add_entities_callback(self):
+        return None
+
+    @add_entities_callback.setter
+    def add_entities_callback(self, value):
+        pass  # no-op; platforms must use set_platform_callback()
+
         if self.pb2:
             self._load_proto_definitions()
+
+    def set_platform_callback(self, platform: str, callback: AddEntitiesCallback):
+        self._platform_callbacks[platform] = callback
 
     def _entity_key(self, source: str, field_path: str) -> str:
         return f"{source}:{field_path}"
@@ -310,22 +322,18 @@ class EntityGenerator:
             if meta.get("type") != platform:
                 continue
 
-            field_path = meta["field_path"]
             entity_key = meta["unique_id"]
+            field_path = meta["field_path"]
 
             if entity_key in self.entities:
                 continue
-
-            if not meta.get("is_control") and platform in ("sensor", "binary_sensor"):
-                if field_path not in self.raw_json:
-                    continue
 
             ent = self._create_entity(field_path, meta)
             if ent:
                 self.entities[entity_key] = ent
                 entities.append(ent)
 
-        if platform == "sensor" and self.add_entities_callback and "diagnostics" not in self.entities:
+        if platform == "sensor" and "diagnostics" not in self.entities:
             diag = Diagnostics(self, self.device_sn, self.device_type)
             self.entities["diagnostics"] = diag
             entities.append(diag)
@@ -343,7 +351,7 @@ class EntityGenerator:
         if diag and hasattr(diag, "set_last_message_type"):
             diag.set_last_message_type(self._last_msg_type, self._last_proto_key)
 
-        if self.add_entities_callback:
+        if self._platform_callbacks:
             for field_path, value in decoded.items():
                 if isinstance(value, (dict, list)):
                     continue
@@ -357,7 +365,9 @@ class EntityGenerator:
                         ent = self._create_entity(field_path, meta)
                         if ent:
                             self.entities[entity_key] = ent
-                            self.add_entities_callback([ent])
+                            cb = self._platform_callbacks.get(meta.get("type"))
+                            if cb:
+                                cb([ent])
 
         for entity_key, ent in self.entities.items():
             meta = getattr(ent, "_meta", {})
