@@ -76,7 +76,10 @@ class CloudClient(EcoflowApiBase):
 
     async def list_devices(self):
         """Atgriež visas ierīces no EcoFlow Cloud (App API)."""
-        url = f"https://{API_HOST}/iot-open/user/device/list"
+        candidate_urls = (
+            f"https://{API_HOST}/iot-open/user/device/list",
+            f"https://{API_HOST}/user/device/list",
+        )
         headers = {
             "lang": "en_US",
             "authorization": f"Bearer {self.token}",
@@ -86,16 +89,23 @@ class CloudClient(EcoflowApiBase):
         data = {"pageSize": 100, "pageNum": 1}
 
         async with aiohttp.ClientSession() as session:
-            resp = await session.post(url, headers=headers, json=data)
-            js = await self._get_json_response(resp)
+            last_error = None
 
-            if js.get("code") != 0 or "data" not in js:
-                raise EcoflowException(f"Device list error: {js}")
+            for url in candidate_urls:
+                try:
+                    resp = await session.post(url, headers=headers, json=data)
+                    js = await self._get_json_response(resp)
 
-            devices = js["data"].get("list", js["data"])
-            if not isinstance(devices, list):
-                raise EcoflowException(f"Unexpected device list format: {js}")
+                    if js.get("code") != 0 or "data" not in js:
+                        raise EcoflowException(f"Device list error: {js}")
 
-            _LOGGER.info(f"Fetched {len(devices)} devices from EcoFlow Cloud")
-            return devices
+                    devices = js["data"].get("list", js["data"])
+                    if not isinstance(devices, list):
+                        raise EcoflowException(f"Unexpected device list format: {js}")
 
+                    _LOGGER.info("Fetched %s devices from EcoFlow Cloud (%s)", len(devices), url)
+                    return devices
+                except Exception as exc:
+                    last_error = exc
+
+            raise EcoflowException(f"Device list fetch failed for all known endpoints: {last_error}")

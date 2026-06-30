@@ -6,6 +6,7 @@ from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.json_format import MessageToDict
 
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from ..entities.binary_sensor import BinarySensor
 from ..entities.button import Button
@@ -242,7 +243,7 @@ class EntityGenerator:
         if is_control:
             # Controls: switch/button only. Number/select should be in Configuration.
             if meta.get("type") in ("number", "select"):
-                meta["entity_category"] = "config"
+                meta["entity_category"] = EntityCategory.CONFIG
             else:
                 meta["entity_category"] = None
 
