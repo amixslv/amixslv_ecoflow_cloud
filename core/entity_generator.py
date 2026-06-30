@@ -8,6 +8,7 @@ from google.protobuf.json_format import MessageToDict
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from ..entities.binary_sensor import BinarySensor
+from ..entities.button import Button
 from ..entities.diagnostics import Diagnostics
 from ..entities.number import Number
 from ..entities.select import Select
@@ -175,6 +176,20 @@ class EntityGenerator:
         state_class = self.field_map.get_state_class(field_path)
         entity_category = self.field_map.get_category(field_path, is_control)
 
+        state_field_paths = [field_path]
+        if is_control:
+            alias = field_path
+            if field_path.startswith("cfg_energy_backup."):
+                alias = field_path.split(".", 1)[1]
+            elif field_path == "cfg_dc12v_out_open":
+                alias = "dc_out_open"
+            elif field_path == "cfg_led_mode":
+                alias = "led_mode"
+            elif field_path.startswith("cfg_"):
+                alias = field_path.removeprefix("cfg_")
+            if alias not in state_field_paths:
+                state_field_paths.append(alias)
+
         meta: dict[str, Any] = {
             "name": name,
             "unit": unit,
@@ -184,6 +199,7 @@ class EntityGenerator:
             "entity_category": entity_category,
             "enabled": self.field_map.is_default_enabled(field_path, is_control, source),
             "field_path": field_path,
+            "state_field_paths": state_field_paths,
             "source": source,
             "is_control": is_control,
             "unique_id": self._entity_key(source, field_path),
@@ -192,7 +208,9 @@ class EntityGenerator:
         if is_control:
             forced_control_type = self.field_map.get_control_type(field_path)
             options = self.field_map.get_options(field_path)
-            if forced_control_type == "switch":
+            if forced_control_type == "button":
+                meta["type"] = "button"
+            elif forced_control_type == "switch":
                 meta["type"] = "switch"
             elif forced_control_type == "number":
                 meta["type"] = "number"
@@ -405,11 +423,19 @@ class EntityGenerator:
 
         for entity_key, ent in self.entities.items():
             meta = getattr(ent, "_meta", {})
-            field_path = meta.get("field_path")
-            if not field_path or field_path not in decoded:
+            state_paths = meta.get("state_field_paths") or [meta.get("field_path")]
+            if not state_paths:
                 continue
 
-            val = decoded[field_path]
+            val = None
+            found = False
+            for candidate in state_paths:
+                if candidate and candidate in decoded:
+                    val = decoded[candidate]
+                    found = True
+                    break
+            if not found:
+                continue
 
             if isinstance(val, float):
                 val = round(val, 2)
@@ -458,6 +484,8 @@ class EntityGenerator:
             return Select(self, self.device_sn, self.device_type, field, meta)
         if t == "switch":
             return Switch(self, self.device_sn, self.device_type, field, meta)
+        if t == "button":
+            return Button(self, self.device_sn, self.device_type, field, meta)
         if t == "binary_sensor":
             return BinarySensor(self, self.device_sn, self.device_type, field, meta)
 

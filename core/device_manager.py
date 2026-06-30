@@ -237,7 +237,29 @@ class DeviceManager:
 
         _LOGGER.debug("DM: Registered device %s (%s)", self.device_type, self.device_sn)
 
+
+    def _build_set_params(self, field: str, value):
+        """Build nested params dict from dotted proto field path."""
+        parts = [p for p in field.split(".") if p]
+        if not parts:
+            return {}
+
+        payload = value
+        for part in reversed(parts):
+            payload = {part: payload}
+        return payload
+
     # ----------------------------------------------------------------------
+    def _set_proto_field_value(self, msg, field_path: str, value):
+        parts = [part for part in field_path.split(".") if part]
+        if not parts:
+            raise ValueError("empty proto field path")
+
+        current = msg
+        for part in parts[:-1]:
+            current = getattr(current, part)
+        setattr(current, parts[-1], value)
+
     # SEND SET COMMAND
     # ----------------------------------------------------------------------
     async def send_set_command(self, field: str, value):
@@ -247,19 +269,50 @@ class DeviceManager:
 
         data = {
             "sn": self.device_sn,
-            "params": {
-                field: value,
-            },
+            "params": self._build_set_params(field, value),
         }
 
-        msg = JSONMessage(data)
-        payload = msg.to_mqtt_payload()
+        payload = b""
+        used_proto = False
+
+        try:
+            proto_prefix = DEVICE_TYPE_MAP[self.device_label]["proto_prefix"]
+            cmd_cls = getattr(self.pb2_module, f"{proto_prefix}SetCommand", None) if self.pb2_module else None
+            header_cls = getattr(self.pb2_module, f"{proto_prefix}Header", None) if self.pb2_module else None
+            send_cls = getattr(self.pb2_module, f"{proto_prefix}SendHeaderMsg", None) if self.pb2_module else None
+
+            if cmd_cls and header_cls and send_cls:
+                cmd_msg = cmd_cls()
+                self._set_proto_field_value(cmd_msg, field, value)
+
+                header = header_cls()
+                header.pdata = cmd_msg.SerializeToString()
+                header.cmd_func = 254
+                header.cmd_id = 17
+                header.seq = int(time.time()) & 0xFFFF
+                header.is_rw_cmd = 1
+                header.need_ack = 1
+
+                wrapper = send_cls()
+                wrapper.msg.append(header)
+                payload = wrapper.SerializeToString()
+                used_proto = True
+        except Exception as e:
+            _LOGGER.debug("DM: Proto command build failed, falling back to JSON: %s", e)
 
         if not payload:
-            _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
-            return
+            if not data["params"]:
+                _LOGGER.error("DM: Invalid set command field: %s", field)
+                return
+
+            msg = JSONMessage(data)
+            payload = msg.to_mqtt_payload()
+
+            if not payload:
+                _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
+                return
 
         topic = "/app/device/control"
 
-        _LOGGER.debug("DM: SEND SET %s=%s → topic=%s payload=%s", field, value, topic, data)
+        _LOGGER.debug("DM: SEND SET %s=%s ? topic=%s proto=%s payload=%s", field, value, topic, used_proto, data)
         self.mqtt.publish(topic, payload)

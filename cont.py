@@ -6,4 +6,5 @@ PLATFORMS = [
     "number",
     "select",
     "binary_sensor",
+    "button",
 ]
