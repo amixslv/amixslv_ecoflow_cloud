@@ -270,14 +270,16 @@ class FieldMap:
     def get_control_type(self, field: str):
         normalized = self._normalize_field(field).lower()
 
+        if any(x in normalized for x in ("power_off", "reconnect", "reset", "clear", "restart", "shutdown")):
+            return "button"
         if normalized.endswith(("_en", "_enable", "_enabled", "_flag", "_switch", "_open", "_close")):
             return "switch"
         if any(x in normalized for x in ("beep", "xboost", "memory")):
             return "switch"
-        if any(x in normalized for x in ("time", "timeout", "soc", "limit", "amp", "volt", "watt", "power")):
-            return "number"
         if self.get_options(field):
             return "select"
+        if any(x in normalized for x in ("time", "timeout", "soc", "limit", "amp", "volt", "watt", "power")):
+            return "number"
         return None
 
     def is_default_enabled(self, field: str, is_control: bool, source: str | None = None):
