@@ -129,7 +129,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             await self._load_cloud_devices()
         except Exception as exc:
-            _LOGGER.warning("EcoFlow device list fetch failed, fallback to manual device entry: %s", exc)
+            _LOGGER.debug("EcoFlow device list fetch failed, using manual device entry: %s", exc)
             self._cloud_devices = {}
             self._device_list_unavailable = True
 
@@ -273,3 +273,4 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "device_sn": self._device_sn,
             },
         )
+

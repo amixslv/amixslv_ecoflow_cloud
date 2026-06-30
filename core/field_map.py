@@ -132,6 +132,8 @@ class FieldMap:
             return "min"
         if "temp" in f:
             return "°C"
+        if f in ("soc", "soh", "batt_soc", "batt_soh", "bms_soc", "bms_soh"):
+            return "%"
         if f.endswith("_soc") or f.endswith("_soh") or f.endswith("_pct") or "percent" in f:
             return "%"
 
@@ -330,3 +332,4 @@ class FieldMap:
             return list(self.AUTO_ENUMS[normalized].values())
 
         return None
+
