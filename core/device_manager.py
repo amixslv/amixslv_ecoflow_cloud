@@ -318,6 +318,11 @@ class DeviceManager:
                 header.is_rw_cmd = 1
                 header.need_ack = 1
                 header.time_snap = int(time.time())
+                # Module routing: src=32 (cloud/IoT), dest=5 (PD/main controller)
+                header.src = 32
+                header.dest = 5
+                header.d_src = 0
+                header.d_dest = 0
                 if self.device_sn:
                     header.device_sn = self.device_sn
                 if self.client_id:
@@ -330,6 +335,11 @@ class DeviceManager:
                 wrapper.msg.append(header)
                 payload = wrapper.SerializeToString()
                 used_proto = True
+                _LOGGER.debug(
+                    "DM: PROTO CMD header src=%s dest=%s cmd_func=%s cmd_id=%s seq=%s field=%s val=%s payload_hex=%s",
+                    header.src, header.dest, header.cmd_func, header.cmd_id, header.seq,
+                    field, value, payload.hex()[:80],
+                )
         except Exception as e:
             _LOGGER.debug("DM: Proto command build failed, falling back to JSON: %s", e)
 
