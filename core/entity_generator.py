@@ -285,6 +285,11 @@ class EntityGenerator:
                     header_msg.ParseFromString(payload)
                     header = header_msg.header[-1]
                     pdata = header.pdata
+                    _LOGGER.debug(
+                        "PROTO header: src=%s dest=%s cmd_func=%s cmd_id=%s enc=%s seq=%s",
+                        header.src, header.dest, header.cmd_func, header.cmd_id,
+                        header.enc_type, header.seq,
+                    )
 
                     _bsh, _bdh, _bsc = None, {}, -1
                     for suffix in (
