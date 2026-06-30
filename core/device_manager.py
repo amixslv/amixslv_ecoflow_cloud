@@ -40,6 +40,8 @@ class DeviceManager:
         self.entity_generator: EntityGenerator | None = None
         self.pb2_module = None
         self.mqtt: MQTTClient | None = None
+        self.user_id: str | None = None
+        self.client_id: str | None = None
 
         # RATE-LIMIT LOGGING
         self._last_log_time = 0.0
@@ -65,11 +67,13 @@ class DeviceManager:
         )
         try:
             mqtt_info = await self.client.login()
+            self.user_id = self.client.user_id
+            self.client_id = mqtt_info.client_id
             _LOGGER.info(
                 "DM: Cloud login OK: host=%s port=%s user_id=%s",
                 mqtt_info.host,
                 mqtt_info.port,
-                self.client.user_id,
+                self.user_id,
             )
         except Exception as e:
             _LOGGER.error("DM: Cloud login FAILED: %s", e)
@@ -251,6 +255,8 @@ class DeviceManager:
 
     # ----------------------------------------------------------------------
     def _set_proto_field_value(self, msg, field_path: str, value):
+        from google.protobuf.descriptor import FieldDescriptor
+
         parts = [part for part in field_path.split(".") if part]
         if not parts:
             raise ValueError("empty proto field path")
@@ -258,7 +264,26 @@ class DeviceManager:
         current = msg
         for part in parts[:-1]:
             current = getattr(current, part)
-        setattr(current, parts[-1], value)
+
+        # Cast value to match the proto field type
+        last = parts[-1]
+        field_desc = current.DESCRIPTOR.fields_by_name.get(last)
+        if field_desc:
+            int_types = {
+                FieldDescriptor.TYPE_INT32, FieldDescriptor.TYPE_INT64,
+                FieldDescriptor.TYPE_UINT32, FieldDescriptor.TYPE_UINT64,
+                FieldDescriptor.TYPE_SINT32, FieldDescriptor.TYPE_SINT64,
+                FieldDescriptor.TYPE_FIXED32, FieldDescriptor.TYPE_FIXED64,
+                FieldDescriptor.TYPE_SFIXED32, FieldDescriptor.TYPE_SFIXED64,
+                FieldDescriptor.TYPE_BOOL,
+            }
+            float_types = {FieldDescriptor.TYPE_FLOAT, FieldDescriptor.TYPE_DOUBLE}
+            if field_desc.type in int_types:
+                value = int(value)
+            elif field_desc.type in float_types:
+                value = float(value)
+
+        setattr(current, last, value)
 
     # SEND SET COMMAND
     # ----------------------------------------------------------------------
@@ -292,6 +317,14 @@ class DeviceManager:
                 header.seq = int(time.time()) & 0xFFFF
                 header.is_rw_cmd = 1
                 header.need_ack = 1
+                header.time_snap = int(time.time())
+                if self.device_sn:
+                    header.device_sn = self.device_sn
+                if self.client_id:
+                    try:
+                        setattr(header, "from", self.client_id)
+                    except (AttributeError, TypeError):
+                        pass
 
                 wrapper = send_cls()
                 wrapper.msg.append(header)
@@ -312,7 +345,10 @@ class DeviceManager:
                 _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
                 return
 
-        topic = "/app/device/control"
+        if self.user_id:
+            topic = f"/app/{self.user_id}/device/property/{self.device_sn}"
+        else:
+            topic = f"/app/device/property/{self.device_sn}"
 
-        _LOGGER.debug("DM: SEND SET %s=%s ? topic=%s proto=%s payload=%s", field, value, topic, used_proto, data)
+        _LOGGER.debug("DM: SEND SET %s=%s ? topic=%s proto=%s", field, value, topic, used_proto)
         self.mqtt.publish(topic, payload)
