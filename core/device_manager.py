@@ -345,10 +345,13 @@ class DeviceManager:
                 _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
                 return
 
-        if self.user_id:
-            topic = f"/app/{self.user_id}/device/property/{self.device_sn}"
-        else:
-            topic = f"/app/device/property/{self.device_sn}"
+        # Primary topic same as telemetry topic (App API community-verified).
+        # Also send to userId-prefixed topic as fallback in case broker routing differs.
+        topic = f"/app/device/property/{self.device_sn}"
+        topic_alt = f"/app/{self.user_id}/device/property/{self.device_sn}" if self.user_id else None
 
-        _LOGGER.debug("DM: SEND SET %s=%s ? topic=%s proto=%s", field, value, topic, used_proto)
-        self.mqtt.publish(topic, payload)
+        _LOGGER.debug("DM: SEND SET %s=%s topic=%s proto=%s", field, value, topic, used_proto)
+        self.mqtt.publish(topic, payload, qos=0)
+        if topic_alt and topic_alt != topic:
+            self.mqtt.publish(topic_alt, payload, qos=0)
+
