@@ -128,6 +128,8 @@ class FieldMap:
             return "min"
         if f.endswith("_hour") or f.endswith("_hr") or f.endswith("_h"):
             return "h"
+        if "time" in f:
+            return "min"
         if "temp" in f:
             return "°C"
         if f.endswith("_soc") or f.endswith("_soh") or f.endswith("_pct") or "percent" in f:
