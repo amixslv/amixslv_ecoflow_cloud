@@ -1,6 +1,7 @@
 import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.device_registry import async_get as async_get_device_registry
 
 from .cont import DOMAIN, PLATFORMS
 from .core.device_manager import DeviceManager
@@ -39,3 +40,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN].pop(entry.entry_id, None)
 
     return True
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Remove integration and clean up entities."""
+    dev_registry = async_get_device_registry(hass)
+
+    # Find and remove all devices associated with this config entry
+    devices_to_remove = [
+        device for device in dev_registry.devices.values()
+        if entry.entry_id in device.config_entries
+    ]
+
+    for device in devices_to_remove:
+        dev_registry.async_remove_device(device.id)
