@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud-indstillinger",
         "description": "Rediger integrationsindstillinger."
+      },
+      "device_exists": {
+        "title": "Enheden er allerede konfigureret",
+        "description": "Enhed med serienummer {sn} eksisterer allerede. Hvad vil du g?re?",
+        "data": {
+          "action": "Handling"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Eksisterende konfiguration blev gemt",
+    "reconfigure_failed": "Omkonfigurering mislykkedes"
   }
 }

@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud beállítások",
         "description": "Szerkessze az integráció beállításait."
+      },
+      "device_exists": {
+        "title": "Az eszk?z m?r konfigur?lva van",
+        "description": "Az eszk?z sorozatsz?mmal {sn} m?r l?tezik. Mit szeretne tenni?",
+        "data": {
+          "action": "Oper?ci?"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "A megl?v? konfigur?ci? mentve lett",
+    "reconfigure_failed": "Az ?jrakonfigur?l?s sikertelen volt"
   }
 }

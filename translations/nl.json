@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud-opties",
         "description": "Bewerk integratie-instellingen."
+      },
+      "device_exists": {
+        "title": "Apparaat is al geconfigureerd",
+        "description": "Apparaat met serienummer {sn} bestaat al. Wat wilt u doen?",
+        "data": {
+          "action": "Actie"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Bestaande configuratie is opgeslagen",
+    "reconfigure_failed": "Herconfiguratie mislukt"
   }
 }

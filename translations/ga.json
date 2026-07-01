@@ -44,7 +44,18 @@
       "init": {
         "title": "Roghanna EcoFlow Cloud",
         "description": "Cuir in eagar socruithe an chomhtháthú."
+      },
+      "device_exists": {
+        "title": "Gl?as ar cheangailte cheana",
+        "description": "T? gl?as le huimhir sraithe {sn} ann cheana. Cad ba bhre? leat a dh?anamh?",
+        "data": {
+          "action": "Gn?omh"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "S?bh?ladh an socr? at? ann",
+    "reconfigure_failed": "Theip ar athsocr?"
   }
 }

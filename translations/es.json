@@ -44,7 +44,18 @@
       "init": {
         "title": "Opciones de EcoFlow Cloud",
         "description": "Editar configuración de integración."
+      },
+      "device_exists": {
+        "title": "El dispositivo ya est? configurado",
+        "description": "El dispositivo con n?mero de serie {sn} ya existe. ?Qu? desea hacer?",
+        "data": {
+          "action": "Acci?n"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "La configuraci?n existente ha sido guardada",
+    "reconfigure_failed": "La reconfiguraci?n fall?"
   }
 }

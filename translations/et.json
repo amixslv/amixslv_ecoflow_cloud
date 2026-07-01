@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud suvandid",
         "description": "Muutke integreerimise seadeid."
+      },
+      "device_exists": {
+        "title": "Seade on juba konfigureeritud",
+        "description": "Seade seerianumbriga {sn} on juba olemas. Mida soovite teha?",
+        "data": {
+          "action": "Tegevus"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Olemasolev konfiguratsiooni salvestatud",
+    "reconfigure_failed": "?mberkonfigureerimine eba?nnestus"
   }
 }
