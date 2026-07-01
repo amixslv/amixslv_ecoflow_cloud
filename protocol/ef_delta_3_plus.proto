@@ -592,3 +592,7 @@ message Delta3PlusBMSHeartBeatReport {
 
   optional uint32 water_in_flag = 82;      // Ūdens detektēts (0/1)
 }
+// Header Message Wrapper
+message Delta3PlusHeaderMessage {
+  repeated Delta3PlusHeader header = 1;
+}
