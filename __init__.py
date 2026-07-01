@@ -33,7 +33,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     manager: DeviceManager = hass.data[DOMAIN].get(entry.entry_id)
 
     if manager and hasattr(manager, "mqtt"):
-        await manager.mqtt.async_unload()
+        await manager.mqtt.async_unload(hass)
 
     await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
