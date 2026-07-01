@@ -1,6 +1,8 @@
 import logging
 from homeassistant.helpers.entity import Entity
 
+from ..cont import DOMAIN
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -56,7 +58,7 @@ class EcoFlowBaseEntity(Entity):
             human_name = self.device_type
 
         info = {
-            "identifiers": {("amixslv_ecoflow_cloud", self.device_sn)},
+            "identifiers": {(DOMAIN, self.device_sn)},
             "manufacturer": "EcoFlow",
             "model": human_name,
             "name": human_name,
@@ -72,7 +74,7 @@ class EcoFlowBaseEntity(Entity):
             info["hw_version"] = rd["hw_version"]
 
         if "bms_version" in rd:
-            info["via_device"] = ("amixslv_ecoflow_cloud", f"{self.device_sn}_bms")
+            info["via_device"] = (DOMAIN, f"{self.device_sn}_bms")
 
         if "ip" in rd:
             info["connections"] = {("ip", rd["ip"])}
@@ -80,11 +82,11 @@ class EcoFlowBaseEntity(Entity):
         if hasattr(self, "_meta") and "device_override" in self._meta:
             dev_id = self._meta["device_override"]
             return {
-                "identifiers": {("amixslv_ecoflow_cloud", dev_id)},
+                "identifiers": {(DOMAIN, dev_id)},
                 "manufacturer": "EcoFlow",
                 "model": "Extra Battery",
                 "name": f"Extra Battery {dev_id.split('_')[-1]}",
-                "via_device": ("amixslv_ecoflow_cloud", self.device_sn),
+                "via_device": (DOMAIN, self.device_sn),
             }
 
         return info
@@ -108,6 +110,5 @@ class EcoFlowBaseEntity(Entity):
             return self._attr_is_on is not None
 
         return True
-
 
 
