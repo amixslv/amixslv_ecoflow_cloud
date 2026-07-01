@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class MQTTClient:
     """
-    Clean, modern MQTT client for ecoflow_cloud.
+    Clean, modern MQTT client for ecoflow_cloud_amixslv.
     """
 
     def __init__(

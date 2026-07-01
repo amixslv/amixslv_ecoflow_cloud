@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for ecoflow_cloud."""
+    """Config flow for ecoflow_cloud_amixslv."""
 
     VERSION = 1
 
