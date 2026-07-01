@@ -10,6 +10,19 @@ from ..api.mqtt_client import MQTTClient
 from ..core.entity_generator import EntityGenerator
 from ..supported_devices import DEVICE_TYPE_MAP
 from ..api.message import JSONMessage
+from ..cont import (
+    MQTT_TOPIC_DEVICE_PROP_LEGACY,
+    MQTT_TOPIC_DEVICE_PROPERTY,
+    MQTT_TOPIC_USER_DEVICE_PROPERTY,
+    PROTO_HEADER_D_DEST,
+    PROTO_HEADER_D_SRC,
+    PROTO_HEADER_DEST_MAIN,
+    PROTO_HEADER_IS_RW_CMD,
+    PROTO_HEADER_NEED_ACK,
+    PROTO_HEADER_SRC_CLOUD,
+    PROTO_SET_CMD_FUNC,
+    PROTO_SET_CMD_ID,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -158,8 +171,8 @@ class DeviceManager:
         await self.mqtt.async_setup(self.hass)
         _LOGGER.debug("DM: MQTT async_setup completed")
 
-        topic1 = f"/app/device/property/{self.device_sn}"
-        topic2 = f"/app/device/prop/{self.device_sn}"
+        topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
+        topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
 
         self.mqtt.subscribe([topic1, topic2])
         _LOGGER.info("DM: Subscribed to topics %s and %s", topic1, topic2)
@@ -312,17 +325,17 @@ class DeviceManager:
 
                 header = header_cls()
                 header.pdata = cmd_msg.SerializeToString()
-                header.cmd_func = 254
-                header.cmd_id = 17
+                header.cmd_func = PROTO_SET_CMD_FUNC
+                header.cmd_id = PROTO_SET_CMD_ID
                 header.seq = int(time.time()) & 0xFFFF
-                header.is_rw_cmd = 1
-                header.need_ack = 1
+                header.is_rw_cmd = PROTO_HEADER_IS_RW_CMD
+                header.need_ack = PROTO_HEADER_NEED_ACK
                 header.time_snap = int(time.time())
                 # Module routing: src=32 (cloud/IoT), dest=5 (PD/main controller)
-                header.src = 32
-                header.dest = 5
-                header.d_src = 0
-                header.d_dest = 0
+                header.src = PROTO_HEADER_SRC_CLOUD
+                header.dest = PROTO_HEADER_DEST_MAIN
+                header.d_src = PROTO_HEADER_D_SRC
+                header.d_dest = PROTO_HEADER_D_DEST
                 if self.device_sn:
                     header.device_sn = self.device_sn
                 if self.client_id:
@@ -357,11 +370,17 @@ class DeviceManager:
 
         # Primary topic same as telemetry topic (App API community-verified).
         # Also send to userId-prefixed topic as fallback in case broker routing differs.
-        topic = f"/app/device/property/{self.device_sn}"
-        topic_alt = f"/app/{self.user_id}/device/property/{self.device_sn}" if self.user_id else None
+        topic = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
+        topic_alt = (
+            MQTT_TOPIC_USER_DEVICE_PROPERTY.format(
+                user_id=self.user_id,
+                sn=self.device_sn,
+            )
+            if self.user_id
+            else None
+        )
 
         _LOGGER.debug("DM: SEND SET %s=%s topic=%s proto=%s", field, value, topic, used_proto)
         self.mqtt.publish(topic, payload, qos=0)
         if topic_alt and topic_alt != topic:
             self.mqtt.publish(topic_alt, payload, qos=0)
-

@@ -4,10 +4,14 @@ import aiohttp
 from homeassistant.util import uuid
 
 from .base import EcoflowApiBase, EcoflowException
+from ..cont import (
+    API_CERTIFICATION_PATH,
+    API_DEVICE_LIST_PATHS,
+    API_HOST,
+    API_LOGIN_PATH,
+)
 
 _LOGGER = logging.getLogger(__name__)
-
-API_HOST = "api.ecoflow.com"
 
 
 class CloudClient(EcoflowApiBase):
@@ -28,7 +32,7 @@ class CloudClient(EcoflowApiBase):
         """Login uz Cloud API (App API)."""
         encoded_pw = base64.b64encode(self.password.encode()).decode()
 
-        url = f"https://{API_HOST}/auth/login"
+        url = f"https://{API_HOST}{API_LOGIN_PATH}"
         headers = {"lang": "en_US", "content-type": "application/json"}
         data = {
             "email": self.username,
@@ -56,7 +60,7 @@ class CloudClient(EcoflowApiBase):
 
     async def _fetch_mqtt_credentials(self, session):
         """Iegūst MQTT credentials no Cloud API."""
-        url = f"https://{API_HOST}/iot-auth/app/certification"
+        url = f"https://{API_HOST}{API_CERTIFICATION_PATH}"
         headers = {
             "lang": "en_US",
             "authorization": f"Bearer {self.token}",
@@ -76,9 +80,8 @@ class CloudClient(EcoflowApiBase):
 
     async def list_devices(self):
         """Atgriež visas ierīces no EcoFlow Cloud (App API)."""
-        candidate_urls = (
-            f"https://{API_HOST}/iot-open/user/device/list",
-            f"https://{API_HOST}/user/device/list",
+        candidate_urls = tuple(
+            f"https://{API_HOST}{path}" for path in API_DEVICE_LIST_PATHS
         )
         headers = {
             "lang": "en_US",
