@@ -15,6 +15,11 @@ from ..entities.number import Number
 from ..entities.select import Select
 from ..entities.sensor import Sensor
 from ..entities.switch import Switch
+from ..cont import (
+    PROTO_HEADER_SRC_CLOUD,
+    PROTO_MESSAGE_SOURCE_BY_SUFFIX,
+    PROTO_MESSAGE_SUFFIXES,
+)
 from ..supported_devices import DEVICE_TYPE_MAP
 from .header_parser import EcoFlowHeader
 from .field_map import FieldMap
@@ -50,18 +55,10 @@ def load_proto_messages(pb2_module: Any) -> dict[str, Any]:
         if not hasattr(obj, "DESCRIPTOR"):
             continue
 
-        if name.endswith("DisplayPropertyUpload"):
-            messages["display"] = obj
-        elif name.endswith("RuntimePropertyUpload"):
-            messages["runtime"] = obj
-        elif name.endswith("SetCommand"):
-            messages["set_cmd"] = obj
-        elif name.endswith("SetReply"):
-            messages["set_reply"] = obj
-        elif name.endswith("CMSHeartBeatReport"):
-            messages["cms"] = obj
-        elif name.endswith("BMSHeartBeatReport"):
-            messages["bms"] = obj
+        for suffix, source in PROTO_MESSAGE_SOURCE_BY_SUFFIX.items():
+            if name.endswith(suffix):
+                messages[source] = obj
+                break
 
     return messages
 
@@ -292,14 +289,7 @@ class EntityGenerator:
                     )
 
                     _bsh, _bdh, _bsc = None, {}, -1
-                    for suffix in (
-                        "DisplayPropertyUpload",
-                        "RuntimePropertyUpload",
-                        "CMSHeartBeatReport",
-                        "BMSHeartBeatReport",
-                        "SetCommand",
-                        "SetReply",
-                    ):
+                    for suffix in PROTO_MESSAGE_SUFFIXES:
                         message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
                         if not message_cls:
                             continue
@@ -334,18 +324,11 @@ class EntityGenerator:
             return None, {}
 
         pdata = header.pdata
-        if header.enc_type == 1 and header.src != 32:
+        if header.enc_type == 1 and header.src != PROTO_HEADER_SRC_CLOUD:
             pdata = bytes([(b ^ header.seq) & 0xFF for b in pdata])
 
         _bsb, _bdb, _bscb = None, {}, -1
-        for suffix in (
-            "DisplayPropertyUpload",
-            "RuntimePropertyUpload",
-            "CMSHeartBeatReport",
-            "BMSHeartBeatReport",
-            "SetCommand",
-            "SetReply",
-        ):
+        for suffix in PROTO_MESSAGE_SUFFIXES:
             message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
             if not message_cls:
                 continue
