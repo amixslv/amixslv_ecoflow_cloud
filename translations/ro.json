@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conectare EcoFlow",
+        "description": "Introduceți acreditările contului EcoFlow Cloud.",
+        "data": {
+          "username": "Adresă de e-mail",
+          "password": "Parolă"
+        }
+      },
+      "device": {
+        "title": "Selectați dispozitivul",
+        "description": "Selectați un dispozitiv din contul EcoFlow Cloud sau introduceți informații manual.",
+        "data": {
+          "account_device": "Dispozitiv pe cont",
+          "device_label": "Tip de dispozitiv",
+          "device_sn": "Numărul de serie (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Maparea tipului de dispozitiv",
+        "description": "Selectați tipul de dispozitiv deoarece nu poate fi determinat din numele norului.",
+        "data": {
+          "device_label": "Tip de dispozitiv"
+        }
+      },
+      "device_exists": {
+        "title": "Dispozitivul este deja configurat",
+        "description": "Dispozitivul cu numărul de serie {sn} există deja. Ce doriți să faceți?",
+        "data": {
+          "action": "Acțiune"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Conectarea a eșuat. Verificați adresa de e-mail și parola.",
+      "unknown": "Eroare necunoscută. Încercați din nou.",
+      "device_list_unavailable": "Nu s-a putut prelua lista dispozitivelor din EcoFlow Cloud. Puteți introduce informații manual."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni EcoFlow Cloud",
+        "description": "Editați setările de integrare."
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Logħin EcoFlow",
+        "description": "Ikkiteb l-kredenzjali tal-kont EcoFlow Cloud.",
+        "data": {
+          "username": "Indirizz tal-email",
+          "password": "Password"
+        }
+      },
+      "device": {
+        "title": "Agħżel tagħmir",
+        "description": "Agħżel tagħmir mill-kont EcoFlow Cloud tiegħek jew ikkiteb l-informazzjoni manwalment.",
+        "data": {
+          "account_device": "Tagħmir tal-kont",
+          "device_label": "Tip ta' tagħmir",
+          "device_sn": "Numru Serjali (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mapping ta' tip ta' tagħmir",
+        "description": "Agħżel it-tip ta' tagħmir peress li ma jistax jiġi determinat mill-isem tal-cloud.",
+        "data": {
+          "device_label": "Tip ta' tagħmir"
+        }
+      },
+      "device_exists": {
+        "title": "Tagħmir diġà kkonfigurat",
+        "description": "Tagħmir bin-numru serjali {sn} diġà jeżisti. X'inti tixtieq tagħmel?",
+        "data": {
+          "action": "Azzjoni"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Il-logħin falliet. Ikkontrolla l-indirizz tal-email u l-password tiegħek.",
+      "unknown": "Żball mhux magħruf. Jekk jogħbok, ipprova għal darb' oħra.",
+      "device_list_unavailable": "Ma stat possibbli li tinkiseb il-lista tal-tagħmir minn EcoFlow Cloud. Tista' tikkiteb l-informazzjoni manwalment."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Għażliet EcoFlow Cloud",
+        "description": "Immodifika l-issettings tal-integrazzjoni."
+      }
+    }
+  }
+}

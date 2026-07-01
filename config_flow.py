@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for ecoflow_cloud."""
+    """Config flow for amixslv_ecoflow_cloud."""
 
     VERSION = 1
 
@@ -147,7 +147,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             vol.Required("device_sn"): str,
                         }
                     ),
-                    errors={"base": "cannot_connect"} if self._device_list_unavailable else {},
+                    errors={"base": "???"} if self._device_list_unavailable else {},
                 )
 
             return self.async_show_form(

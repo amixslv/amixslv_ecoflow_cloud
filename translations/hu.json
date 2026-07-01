@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow bejelentkezés",
+        "description": "Adja meg az EcoFlow Cloud-fiók hitelesítő adatait.",
+        "data": {
+          "username": "E-mail cím",
+          "password": "Jelszó"
+        }
+      },
+      "device": {
+        "title": "Eszköz kiválasztása",
+        "description": "Válasszon egy eszközt az EcoFlow Cloud-fiókjából, vagy adja meg az információkat manuálisan.",
+        "data": {
+          "account_device": "Fiók eszköze",
+          "device_label": "Eszköz típusa",
+          "device_sn": "Sorozatszám (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Eszköztípus leképezés",
+        "description": "Válassza ki az eszköz típusát, mivel nem határozható meg a felhő nevéből.",
+        "data": {
+          "device_label": "Eszköz típusa"
+        }
+      },
+      "device_exists": {
+        "title": "Az eszköz már konfigurálva van",
+        "description": "Az eszköz sorozatszámmal {sn} már létezik. Mit szeretne tenni?",
+        "data": {
+          "action": "Operáció"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "A bejelentkezés sikertelen. Ellenőrizze az e-mail címét és jelszavát.",
+      "unknown": "Ismeretlen hiba. Kérjük, próbálja újra.",
+      "device_list_unavailable": "Az eszközlista nem tölthető le az EcoFlow Cloud-ből. Az információkat manuálisan is megadhatja."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud beállítások",
+        "description": "Szerkessze az integráció beállításait."
+      }
+    }
+  }
+}

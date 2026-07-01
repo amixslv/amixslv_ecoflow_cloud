@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow prisijungimas",
+        "description": "Įveskite EcoFlow Cloud paskyros kredencialus.",
+        "data": {
+          "username": "El. pašto adresas",
+          "password": "Slaptažodis"
+        }
+      },
+      "device": {
+        "title": "Pasirinkite įrenginį",
+        "description": "Pasirinkite įrenginį iš savo EcoFlow Cloud paskyros arba rankiniu būdu įveskite informaciją.",
+        "data": {
+          "account_device": "Paskyros įrenginys",
+          "device_label": "Įrenginio tipas",
+          "device_sn": "Serijinis numeris (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Įrenginio tipo susiejimas",
+        "description": "Pasirinkite įrenginio tipą, nes jo negalima nustatyti iš debesies pavadinimo.",
+        "data": {
+          "device_label": "Įrenginio tipas"
+        }
+      },
+      "device_exists": {
+        "title": "Įrenginys jau sukonfigūruotas",
+        "description": "Įrenginys su serijauiniu numeriu {sn} jau yra. Ką norėtumėte daryti?",
+        "data": {
+          "action": "Veiksmas"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Prisijungimas nepavyko. Patikrinkite savo el. pašto adresą ir slaptažodį.",
+      "unknown": "Nežinoma klaida. Bandykite dar kartą.",
+      "device_list_unavailable": "Nepavyko gauti įrenginių sąrašo iš EcoFlow Cloud. Informaciją galite įvesti rankiniu būdu."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud parinktys",
+        "description": "Redaguokite integracijos nustatymus."
+      }
+    }
+  }
+}

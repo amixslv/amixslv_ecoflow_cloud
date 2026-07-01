@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow-kirjautuminen",
+        "description": "Syötä EcoFlow Cloud -tiliesi tunnistetiedot.",
+        "data": {
+          "username": "Sähköpostiosoite",
+          "password": "Salasana"
+        }
+      },
+      "device": {
+        "title": "Valitse laite",
+        "description": "Valitse laite EcoFlow Cloud -tililtäsi tai syötä tiedot manuaalisesti.",
+        "data": {
+          "account_device": "Tilin laite",
+          "device_label": "Laitteen tyyppi",
+          "device_sn": "Sarjanumero (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Laitteen tyypin yhdistäminen",
+        "description": "Valitse laitteen tyyppi, koska sitä ei voida määrittää pilvipalvelun nimestä.",
+        "data": {
+          "device_label": "Laitteen tyyppi"
+        }
+      },
+      "device_exists": {
+        "title": "Laite on jo konfiguroitu",
+        "description": "Laite, jonka sarjanumero on {sn}, on jo olemassa. Mitä haluat tehdä?",
+        "data": {
+          "action": "Toiminto"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Kirjautuminen epäonnistui. Tarkista sähköpostiosoitteesi ja salasanasi.",
+      "unknown": "Tuntematon virhe. Yritä uudelleen.",
+      "device_list_unavailable": "EcoFlow Cloud -palvelusta ei voitu noutaa laitettäluetteloa. Voit syöttää tiedot manuaalisesti."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud -asetukset",
+        "description": "Muokkaa integraation asetuksia."
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow pierakstīšanās",
+        "description": "Ievadiet EcoFlow Cloud konts akreditācijas datus.",
+        "data": {
+          "username": "E-pasta adrese",
+          "password": "Parole"
+        }
+      },
+      "device": {
+        "title": "Izvēlieties ierīci",
+        "description": "Atlasiet ierīci no sava EcoFlow Cloud konta vai manuāli ievadiet informāciju.",
+        "data": {
+          "account_device": "Kontos ierīce",
+          "device_label": "Ierīces tips",
+          "device_sn": "Sērijas numurs (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Ierīces tipa kartēšana",
+        "description": "Atlasiet ierīces tipu, jo pēc mākoņa nosaukuma to nevar noteikt.",
+        "data": {
+          "device_label": "Ierīces tips"
+        }
+      },
+      "device_exists": {
+        "title": "Ierīce jau konfigurēta",
+        "description": "Ierīce ar sērijas numuru {sn} jau eksistē. Ko vēlaties darīt?",
+        "data": {
+          "action": "Darbība"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Pierakstīšanās neizdevās. Pārbaudiet e-pasta adresi un paroli.",
+      "unknown": "Nezināma kļūda. Lūdzu, mēģiniet vēlreiz.",
+      "device_list_unavailable": "Nevarēja iegūt ierīču sarakstu no EcoFlow Cloud. Varat manuāli ievadīt informāciju."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud opcijas",
+        "description": "Rediģējiet integrācijas iestatījumus."
+      }
+    }
+  }
+}
