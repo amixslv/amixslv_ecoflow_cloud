@@ -1,0 +1,299 @@
+syntax = "proto3";
+
+message EventPush {
+  message LogItem {
+    optional uint32 unix_time = 1;
+    optional uint32 ms = 2;
+    optional uint32 event_no = 3;
+    repeated float event_detail = 4;
+  }
+
+  optional uint32 event_ver = 1;
+  optional uint32 event_seq = 2;
+  repeated .EventPush.LogItem event_item = 3;
+}
+
+message EventAck {
+  optional uint32 result = 1;
+  optional uint32 event_seq = 2;
+  optional uint32 event_item_num = 3;
+}
+
+message DevErrcodeList {
+  repeated uint32 dev_errcode = 1;
+}
+
+message PropertyUploadPeriod {
+  optional int32 display_property_full_upload_period = 1;
+  optional int32 display_property_incremental_upload_period = 2;
+  optional int32 runtime_property_full_upload_period = 3;
+  optional int32 runtime_property_incremental_upload_period = 4;
+}
+
+message GridConnectionDataRecord {
+  optional float today_active_L1 = 1;
+  optional float today_active_L2 = 2;
+  optional float today_active_L3 = 3;
+  optional float today_active = 4;
+  optional float today_reactive = 5;
+  optional float total_reactive_energy = 6;
+  optional float total_active_energy = 7;
+}
+
+message ConfigWrite {
+  oneof _cfg_power_off {
+    bool cfg_power_off = 3;
+  }
+  oneof _cfg_power_on {
+    bool cfg_power_on = 4;
+  }
+  oneof _reset_factory_setting {
+    uint32 reset_factory_setting = 5;
+  }
+  oneof _cfg_utc_time {
+    uint32 cfg_utc_time = 6;
+  }
+  oneof _cfg_utc_timezone {
+    int32 cfg_utc_timezone = 7;
+  }
+  oneof _cfg_display_property_full_upload_period {
+    int32 cfg_display_property_full_upload_period = 67;
+  }
+  oneof _cfg_display_property_incremental_upload_period {
+    int32 cfg_display_property_incremental_upload_period = 68;
+  }
+  oneof _cfg_runtime_property_full_upload_period {
+    int32 cfg_runtime_property_full_upload_period = 69;
+  }
+  oneof _cfg_runtime_property_incremental_upload_period {
+    int32 cfg_runtime_property_incremental_upload_period = 70;
+  }
+  oneof _active_display_property_full_upload {
+    bool active_display_property_full_upload = 71;
+  }
+  oneof _active_runtime_property_full_upload {
+    bool active_runtime_property_full_upload = 72;
+  }
+  oneof _cfg_utc_timezone_id {
+    string cfg_utc_timezone_id = 135;
+  }
+  oneof _cfg_utc_set_mode {
+    bool cfg_utc_set_mode = 136;
+  }
+  oneof _cfg_country_code {
+    string cfg_country_code = 211;
+  }
+  oneof _cfg_town_code {
+    uint32 cfg_town_code = 212;
+  }
+  oneof _cfg_factory_mode_enable {
+    bool cfg_factory_mode_enable = 222;
+  }
+  oneof _cfg_debug_mode_enable {
+    bool cfg_debug_mode_enable = 223;
+  }
+}
+
+message ConfigWriteAck {
+  oneof _cfg_power_off {
+    uint32 action_id = 1;
+    bool config_ok = 2;
+    bool cfg_power_off = 3;
+  }
+  oneof _cfg_power_on {
+    bool cfg_power_on = 4;
+  }
+  oneof _reset_factory_setting {
+    uint32 reset_factory_setting = 5;
+  }
+  oneof _cfg_utc_time {
+    uint32 cfg_utc_time = 6;
+  }
+  oneof _cfg_utc_timezone {
+    int32 cfg_utc_timezone = 7;
+  }
+  oneof _cfg_display_property_full_upload_period {
+    int32 cfg_display_property_full_upload_period = 67;
+  }
+  oneof _cfg_display_property_incremental_upload_period {
+    int32 cfg_display_property_incremental_upload_period = 68;
+  }
+  oneof _cfg_runtime_property_full_upload_period {
+    int32 cfg_runtime_property_full_upload_period = 69;
+  }
+  oneof _cfg_runtime_property_incremental_upload_period {
+    int32 cfg_runtime_property_incremental_upload_period = 70;
+  }
+  oneof _active_display_property_full_upload {
+    bool active_display_property_full_upload = 71;
+  }
+  oneof _active_runtime_property_full_upload {
+    bool active_runtime_property_full_upload = 72;
+  }
+  oneof _cfg_utc_timezone_id {
+    string cfg_utc_timezone_id = 135;
+  }
+  oneof _cfg_utc_set_mode {
+    bool cfg_utc_set_mode = 136;
+  }
+  oneof _cfg_country_code {
+    string cfg_country_code = 211;
+  }
+  oneof _cfg_town_code {
+    uint32 cfg_town_code = 212;
+  }
+  oneof _cfg_factory_mode_enable {
+    bool cfg_factory_mode_enable = 222;
+  }
+  oneof _cfg_debug_mode_enable {
+    bool cfg_debug_mode_enable = 223;
+  }
+}
+
+message ConfigRead {
+  repeated uint32 action_id = 1;
+}
+
+message ConfigReadAck {
+  oneof _cfg_utc_time {
+    uint32 cfg_utc_time = 6;
+  }
+  oneof _cfg_utc_timezone {
+    int32 cfg_utc_timezone = 7;
+  }
+  oneof _cfg_utc_timezone_id {
+    string cfg_utc_timezone_id = 135;
+  }
+}
+
+message DisplayPropertyUpload {
+  oneof _country_code {
+    string country_code = 728;
+  }
+  oneof _town_code {
+    uint32 town_code = 729;
+  }
+  oneof _factory_mode_enable {
+    bool factory_mode_enable = 732;
+  }
+  oneof _debug_mode_enable {
+    bool debug_mode_enable = 733;
+  }
+  oneof _utc_timezone {
+    int32 utc_timezone = 133;
+  }
+  oneof _utc_timezone_id {
+    string utc_timezone_id = 134;
+  }
+  oneof _utc_set_mode {
+    bool utc_set_mode = 135;
+  }
+  oneof _dev_errcode_list {
+    .DevErrcodeList dev_errcode_list = 627;
+  }
+  oneof _pow_get_sys_grid {
+    float pow_get_sys_grid = 515;
+  }
+  oneof _temp_ambient {
+    float temp_ambient = 484;
+  }
+  oneof _grid_connection_vol_L1 {
+    float grid_connection_vol_L1 = 956;
+  }
+  oneof _grid_connection_vol_L2 {
+    float grid_connection_vol_L2 = 957;
+  }
+  oneof _grid_connection_vol_L3 {
+    float grid_connection_vol_L3 = 771;
+  }
+  oneof _grid_connection_amp_L1 {
+    float grid_connection_amp_L1 = 958;
+  }
+  oneof _grid_connection_amp_L2 {
+    float grid_connection_amp_L2 = 959;
+  }
+  oneof _grid_connection_amp_L3 {
+    float grid_connection_amp_L3 = 784;
+  }
+  oneof _grid_connection_power {
+    float grid_connection_power = 616;
+  }
+  oneof _grid_connection_power_L1 {
+    float grid_connection_power_L1 = 962;
+  }
+  oneof _grid_connection_power_L2 {
+    float grid_connection_power_L2 = 963;
+  }
+  oneof _grid_connection_power_L3 {
+    float grid_connection_power_L3 = 772;
+  }
+  oneof _grid_connection_reactive_power {
+    float grid_connection_reactive_power = 617;
+  }
+  oneof _grid_connection_power_factor {
+    float grid_connection_power_factor = 618;
+  }
+  oneof _grid_connection_sta {
+    .PANEL_GRID_STA grid_connection_sta = 619;
+  }
+  oneof _grid_connection_data_record {
+    .GridConnectionDataRecord grid_connection_data_record = 773;
+  }
+  oneof _grid_connection_flag_L1 {
+    bool grid_connection_flag_L1 = 762;
+  }
+  oneof _grid_connection_flag_L2 {
+    bool grid_connection_flag_L2 = 763;
+  }
+  oneof _grid_connection_flag_L3 {
+    bool grid_connection_flag_L3 = 764;
+  }
+  oneof _module_wifi_snr {
+    float module_wifi_snr = 601;
+  }
+  oneof _module_wifi_rssi {
+    float module_wifi_rssi = 602;
+  }
+}
+
+message RuntimePropertyUpload {
+  oneof _display_property_full_upload_period {
+    int32 display_property_full_upload_period = 293;
+  }
+  oneof _display_property_incremental_upload_period {
+    int32 display_property_incremental_upload_period = 294;
+  }
+  oneof _runtime_property_full_upload_period {
+    int32 runtime_property_full_upload_period = 295;
+  }
+  oneof _runtime_property_incremental_upload_period {
+    int32 runtime_property_incremental_upload_period = 296;
+  }
+}
+
+message DevRequest {
+  oneof _require_property_upload_period {
+    uint32 dev_utc_time = 1;
+    float dev_utc_timezone = 2;
+    bool require_property_upload_period = 3;
+  }
+  oneof _require_time_service {
+    bool require_time_service = 5;
+  }
+}
+
+message DevRequestAck {
+  oneof _property_upload_period {
+    uint32 request_id = 1;
+    uint32 require_ok = 2;
+    .PropertyUploadPeriod property_upload_period = 3;
+  }
+}
+
+enum PANEL_GRID_STA {
+  PANEL_GRID_STA_NO_VAILD = 0;
+  PANEL_GRID_IN = 1;
+  PANEL_GRID_NOT_ONLINE = 2;
+  PANEL_FEED_GRID = 3;
+}
+

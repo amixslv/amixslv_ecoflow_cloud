@@ -1,13 +1,13 @@
 ﻿syntax = "proto3";
 
 //
-//  DELTA 3 — HEADER STRUCTURES
+//  DELTA PRO ULTRA — HEADER STRUCTURES
 //
 
 // ─────────────────────────────────────────────────────────────
-//  Delta3Header
+//  DeltaProUltraHeader
 // ─────────────────────────────────────────────────────────────
-message Delta3Header
+message DeltaProUltraHeader
 {
   optional bytes pdata = 1;          // Iekapsulētais binārais payload
   optional int32 src = 2;            // Avota modulis
@@ -36,73 +36,73 @@ message Delta3Header
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Delta3SendHeaderMsg
+//  DeltaProUltraSendHeaderMsg
 // ─────────────────────────────────────────────────────────────
-message Delta3SendHeaderMsg
+message DeltaProUltraSendHeaderMsg
 {
-  repeated Delta3Header msg = 1;   // Saraksts ar header ziņojumiem
+  repeated DeltaProUltraHeader msg = 1;   // Saraksts ar header ziņojumiem
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Delta3HeaderMessage
+//  DeltaProUltraHeaderMessage
 // ─────────────────────────────────────────────────────────────
-message Delta3HeaderMessage
+message DeltaProUltraHeaderMessage
 {
-  repeated Delta3Header header = 1; // Header masīvs
+  repeated DeltaProUltraHeader header = 1; // Header masīvs
 }
 
 // -----------------------------------------------------------------
 // Time task / TOU structures (ņemts no DP3 iobroker mapējuma)
 // -----------------------------------------------------------------
-enum Delta3TimeTaskMode {
-  DELTA_3_TIME_TASK_MODE_RESV = 0;
-  DELTA_3_TIME_TASK_MODE_PER_WEEK = 1;
-  DELTA_3_TIME_TASK_MODE_ONCE = 2;
+enum DeltaProUltraTimeTaskMode {
+  DELTA_PRO_ULTRA_TIME_TASK_MODE_RESV = 0;
+  DELTA_PRO_ULTRA_TIME_TASK_MODE_PER_WEEK = 1;
+  DELTA_PRO_ULTRA_TIME_TASK_MODE_ONCE = 2;
 }
 
-enum Delta3TimeTaskType {
-  DELTA_3_TIME_TASK_TYPE_AC_CHG = 0;
-  DELTA_3_TIME_TASK_TYPE_AC_DSG = 1;
-  DELTA_3_TIME_TASK_TYPE_AC2_DSG = 2;
-  DELTA_3_TIME_TASK_TYPE_DC_CHG = 3;
-  DELTA_3_TIME_TASK_TYPE_DC2_CHG = 4;
-  DELTA_3_TIME_TASK_TYPE_DC_DSG = 5;
-  DELTA_3_TIME_TASK_TYPE_OIL_ON = 6;
-  DELTA_3_TIME_TASK_TYPE_OIL_OFF = 7;
-  DELTA_3_TIME_TASK_TYPE_USB_CHG = 8;
-  DELTA_3_TIME_TASK_TYPE_USB_DSG = 9;
+enum DeltaProUltraTimeTaskType {
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_AC_CHG = 0;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_AC_DSG = 1;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_AC2_DSG = 2;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_DC_CHG = 3;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_DC2_CHG = 4;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_DC_DSG = 5;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_OIL_ON = 6;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_OIL_OFF = 7;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_USB_CHG = 8;
+  DELTA_PRO_ULTRA_TIME_TASK_TYPE_USB_DSG = 9;
 }
 
-enum Delta3TimeTaskDetailType {
-  DELTA_3_TIME_TASK_DETAIL_IDLE = 0;
-  DELTA_3_TIME_TASK_DETAIL_POW = 1;
-  DELTA_3_TIME_TASK_DETAIL_TEMP = 2;
-  DELTA_3_TIME_TASK_DETAIL_LEVEL = 3;
+enum DeltaProUltraTimeTaskDetailType {
+  DELTA_PRO_ULTRA_TIME_TASK_DETAIL_IDLE = 0;
+  DELTA_PRO_ULTRA_TIME_TASK_DETAIL_POW = 1;
+  DELTA_PRO_ULTRA_TIME_TASK_DETAIL_TEMP = 2;
+  DELTA_PRO_ULTRA_TIME_TASK_DETAIL_LEVEL = 3;
 }
 
-message Delta3TimeTaskParamDetail {
-  optional Delta3TimeTaskDetailType type = 1;
+message DeltaProUltraTimeTaskParamDetail {
+  optional DeltaProUltraTimeTaskDetailType type = 1;
   optional float val = 2;
 }
 
-message Delta3TimeTaskItemV2 {
+message DeltaProUltraTimeTaskItemV2 {
   optional uint32 task_index = 1;
   optional bool is_cfg = 2;
   optional bool is_enable = 3;
   optional uint32 conflict_flag = 4;
-  optional Delta3TimeTaskMode time_mode = 5;
+  optional DeltaProUltraTimeTaskMode time_mode = 5;
   optional uint32 time_param = 6;
   optional uint32 time_table = 7;
-  optional Delta3TimeTaskType task_type = 8;
+  optional DeltaProUltraTimeTaskType task_type = 8;
   optional uint32 task_param = 9;
-  repeated Delta3TimeTaskParamDetail task_param_detail = 10;
+  repeated DeltaProUltraTimeTaskParamDetail task_param_detail = 10;
 }
 //
-//  DELTA 3 — DISPLAY PROPERTY UPLOAD
+//  DELTA PRO ULTRA — DISPLAY PROPERTY UPLOAD
 //  (cmdFunc = 254, cmdId = 21)
 // 
 
-message Delta3DisplayPropertyUpload {
+message DeltaProUltraDisplayPropertyUpload {
 
   optional uint32 errcode = 1;                     // Kļūdas kods (0 = OK)
   optional float pow_in_sum_w = 3;                 // Kopējā ievades jauda (W)
@@ -204,7 +204,7 @@ message Delta3DisplayPropertyUpload {
   optional uint32 cms_chg_dsg_state = 282;         // Kombinētais uzlādes/izlādes stāvoklis
   optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
   optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
-  optional Delta3TimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
+  optional DeltaProUltraTimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
   optional int32 utc_timezone = 133;              // UTC timezone offset (min)
   optional string utc_timezone_id = 134;          // UTC timezone ID
   optional uint32 utc_set_mode = 135;             // UTC set mode (0/1)
@@ -241,13 +241,13 @@ message Delta3DisplayPropertyUpload {
   optional uint32 plug_in_info_ac_in_chg_hal_pow_max = 458; // AC half‑power max (W)
 }
 //
-//  DELTA 3 — RUNTIME PROPERTY UPLOAD
+//  DELTA PRO ULTRA — RUNTIME PROPERTY UPLOAD
 //  (cmdFunc = 254, cmdId = 22)
 //  Šie lauki tiek sūtīti biežāk nekā DisplayPropertyUpload,
 //  un satur iekšējo elektronikas stāvokli, temperatūras,
 //  spriegumus, strāvas un kļūdu indikatorus.
 //
-message Delta3RuntimePropertyUpload {
+message DeltaProUltraRuntimePropertyUpload {
 
   optional uint32 ac_phase_type = 21;             // AC fāzes tips (1F/3F)
   optional uint32 pcs_work_mode = 24;             // PCS darba režīms
@@ -337,13 +337,13 @@ message Delta3RuntimePropertyUpload {
 }
 
 //
-//  DELTA 3 — SET COMMAND
+//  DELTA PRO ULTRA — SET COMMAND
 //  (cmdFunc = 254, cmdId = 17)
 //  Šis ziņojums tiek sūtīts no lietotāja → ierīcei,
 //  lai mainītu konfigurāciju, iestatījumus un režīmus.
 //  Visi lauki saglabāti no Delta3, pievienoti Delta3 Plus lauki.
 //
-message Delta3SetCommand {
+message DeltaProUltraSetCommand {
 
     optional int32 cfg_power_off = 3;                 // Izslēgt ierīci (1 = power off)
     optional uint32 cfg_utc_time = 6;                 // UTC timestamp (sekundēs)
@@ -364,7 +364,7 @@ message Delta3SetCommand {
     optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
     optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
 
-    optional Delta3CfgEnergyBackup cfg_energy_backup = 43;  
+    optional DeltaProUltraCfgEnergyBackup cfg_energy_backup = 43;  
         // Rezerves enerģijas konfigurācija:
         //   energy_backup_en (0/1)
         //   energy_backup_start_soc (%)
@@ -400,12 +400,12 @@ message Delta3SetCommand {
     optional int32 output_power_off_memory = 141;     // Power‑off memory (0/1)
 }
 //
-//  DELTA 3 — SET REPLY
+//  DELTA PRO ULTRA — SET REPLY
 //  (cmdFunc = 254, cmdId = 18)
 //  Ierīces atbilde uz SetCommand.
 //  Satur gan apstiprinājumu, gan atjauninātos iestatījumus.
 //
-message Delta3SetReply {
+message DeltaProUltraSetReply {
 
     optional int32 action_id = 1;                     // Darbības ID (atkārto SetCommand)
     optional bool config_ok = 2;                      // Vai konfigurācija veiksmīga (true/false)
@@ -428,7 +428,7 @@ message Delta3SetReply {
     optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
     optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
 
-    optional Delta3CfgEnergyBackup cfg_energy_backup = 43;
+    optional DeltaProUltraCfgEnergyBackup cfg_energy_backup = 43;
         // Rezerves enerģijas konfigurācija:
         //   energy_backup_en (0/1)
         //   energy_backup_start_soc (%)
@@ -472,27 +472,27 @@ message Delta3SetReply {
     optional int32 output_power_off_memory = 141;     // Power‑off memory (0/1)
 }
 
-message Delta3CfgEnergyBackup {
+message DeltaProUltraCfgEnergyBackup {
   optional uint32 energy_backup_en = 1;
   optional uint32 energy_backup_start_soc = 2;
 }
 
 //
-//  DELTA 3 — CMS HEARTBEAT REPORT
+//  DELTA PRO ULTRA — CMS HEARTBEAT REPORT
 //  (cmdFunc = 32, cmdId = 2)
 //  CMS = Cell Management System.
 //  Šis ziņojums tiek sūtīts ļoti bieži (ik ~1 sekundi),
 //  un satur apvienoto BMS/CMS stāvokli.
 //
-message Delta3CMSHeartBeatReport {
-  optional Delta3CMSStatus1 msg32_2_1 = 1;   // CMS statusa bloks 1
-  optional Delta3CMSStatus2 msg32_2_2 = 2;   // CMS statusa bloks 2
+message DeltaProUltraCMSHeartBeatReport {
+  optional DeltaProUltraCMSStatus1 msg32_2_1 = 1;   // CMS statusa bloks 1
+  optional DeltaProUltraCMSStatus2 msg32_2_2 = 2;   // CMS statusa bloks 2
 }
 //
-//  DELTA 3 — CMS STATUS 1
+//  DELTA PRO ULTRA — CMS STATUS 1
 //  Galvenie CMS parametri: SOC, spriegumi, laiki, stāvokļi.
 //
-message Delta3CMSStatus1 {
+message DeltaProUltraCMSStatus1 {
 
   optional sint32 cms_status_misc1 = 1;          // Iekšējais CMS statuss (nenorādīts)
   optional sint32 cms_status_misc2 = 2;          // Rezervēts / nenorādīts
@@ -544,10 +544,10 @@ message Delta3CMSStatus1 {
                                                  // (Smart Generator integrācija)
 }
 //
-//  DELTA 3 — CMS STATUS 2
+//  DELTA PRO ULTRA — CMS STATUS 2
 //  Papildu CMS statusa lauki (reti izmantoti).
 //
-message Delta3CMSStatus2 {
+message DeltaProUltraCMSStatus2 {
   optional sint32 cms_status_misc13 = 1;         // Rezervēts / nenorādīts
   optional sint32 cms_status_misc14 = 2;         // Rezervēts
   optional sint32 cms_status_misc15 = 3;         // Rezervēts
@@ -555,13 +555,13 @@ message Delta3CMSStatus2 {
   optional sint32 cms_status_misc17 = 5;         // Rezervēts
 }
 //
-//  DELTA 3 — BMS HEARTBEAT REPORT
+//  DELTA PRO ULTRA — BMS HEARTBEAT REPORT
 //  (cmdFunc = 32, cmdId = 3)
 //  Pilns akumulatora BMS statuss. Sūtās regulāri (ik 1–2 sek).
 //  Satur šūnu spriegumus, temperatūras, kļūdas, kapacitāti,
 //  balansēšanu, MOS stāvokļus, enerģijas uzskaiti un BMS versijas.
 //
-message Delta3BMSHeartBeatReport {
+message DeltaProUltraBMSHeartBeatReport {
 
   optional uint32 num = 1;                 // Baterijas modulis (0 = iekšējais, 1..n = papildu)
   optional uint32 type = 2;                // Baterijas tips (modelis)

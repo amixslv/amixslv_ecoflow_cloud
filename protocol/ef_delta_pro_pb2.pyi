@@ -7,50 +7,50 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
-class Delta3PlusTimeTaskMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+class DeltaProTimeTaskMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    DELTA3_PLUS_TIME_TASK_MODE_RESV: _ClassVar[Delta3PlusTimeTaskMode]
-    DELTA3_PLUS_TIME_TASK_MODE_PER_WEEK: _ClassVar[Delta3PlusTimeTaskMode]
-    DELTA3_PLUS_TIME_TASK_MODE_ONCE: _ClassVar[Delta3PlusTimeTaskMode]
+    DELTA_PRO_TIME_TASK_MODE_RESV: _ClassVar[DeltaProTimeTaskMode]
+    DELTA_PRO_TIME_TASK_MODE_PER_WEEK: _ClassVar[DeltaProTimeTaskMode]
+    DELTA_PRO_TIME_TASK_MODE_ONCE: _ClassVar[DeltaProTimeTaskMode]
 
-class Delta3PlusTimeTaskType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+class DeltaProTimeTaskType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    DELTA3_PLUS_TIME_TASK_TYPE_AC_CHG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_AC_DSG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_AC2_DSG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_DC_CHG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_DC2_CHG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_DC_DSG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_OIL_ON: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_OIL_OFF: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_USB_CHG: _ClassVar[Delta3PlusTimeTaskType]
-    DELTA3_PLUS_TIME_TASK_TYPE_USB_DSG: _ClassVar[Delta3PlusTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_AC_CHG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_AC_DSG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_AC2_DSG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_DC_CHG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_DC2_CHG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_DC_DSG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_OIL_ON: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_OIL_OFF: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_USB_CHG: _ClassVar[DeltaProTimeTaskType]
+    DELTA_PRO_TIME_TASK_TYPE_USB_DSG: _ClassVar[DeltaProTimeTaskType]
 
-class Delta3PlusTimeTaskDetailType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+class DeltaProTimeTaskDetailType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    DELTA3_PLUS_TIME_TASK_DETAIL_IDLE: _ClassVar[Delta3PlusTimeTaskDetailType]
-    DELTA3_PLUS_TIME_TASK_DETAIL_POW: _ClassVar[Delta3PlusTimeTaskDetailType]
-    DELTA3_PLUS_TIME_TASK_DETAIL_TEMP: _ClassVar[Delta3PlusTimeTaskDetailType]
-    DELTA3_PLUS_TIME_TASK_DETAIL_LEVEL: _ClassVar[Delta3PlusTimeTaskDetailType]
-DELTA3_PLUS_TIME_TASK_MODE_RESV: Delta3PlusTimeTaskMode
-DELTA3_PLUS_TIME_TASK_MODE_PER_WEEK: Delta3PlusTimeTaskMode
-DELTA3_PLUS_TIME_TASK_MODE_ONCE: Delta3PlusTimeTaskMode
-DELTA3_PLUS_TIME_TASK_TYPE_AC_CHG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_AC_DSG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_AC2_DSG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_DC_CHG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_DC2_CHG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_DC_DSG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_OIL_ON: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_OIL_OFF: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_USB_CHG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_TYPE_USB_DSG: Delta3PlusTimeTaskType
-DELTA3_PLUS_TIME_TASK_DETAIL_IDLE: Delta3PlusTimeTaskDetailType
-DELTA3_PLUS_TIME_TASK_DETAIL_POW: Delta3PlusTimeTaskDetailType
-DELTA3_PLUS_TIME_TASK_DETAIL_TEMP: Delta3PlusTimeTaskDetailType
-DELTA3_PLUS_TIME_TASK_DETAIL_LEVEL: Delta3PlusTimeTaskDetailType
+    DELTA_PRO_TIME_TASK_DETAIL_IDLE: _ClassVar[DeltaProTimeTaskDetailType]
+    DELTA_PRO_TIME_TASK_DETAIL_POW: _ClassVar[DeltaProTimeTaskDetailType]
+    DELTA_PRO_TIME_TASK_DETAIL_TEMP: _ClassVar[DeltaProTimeTaskDetailType]
+    DELTA_PRO_TIME_TASK_DETAIL_LEVEL: _ClassVar[DeltaProTimeTaskDetailType]
+DELTA_PRO_TIME_TASK_MODE_RESV: DeltaProTimeTaskMode
+DELTA_PRO_TIME_TASK_MODE_PER_WEEK: DeltaProTimeTaskMode
+DELTA_PRO_TIME_TASK_MODE_ONCE: DeltaProTimeTaskMode
+DELTA_PRO_TIME_TASK_TYPE_AC_CHG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_AC_DSG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_AC2_DSG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_DC_CHG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_DC2_CHG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_DC_DSG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_OIL_ON: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_OIL_OFF: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_USB_CHG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_TYPE_USB_DSG: DeltaProTimeTaskType
+DELTA_PRO_TIME_TASK_DETAIL_IDLE: DeltaProTimeTaskDetailType
+DELTA_PRO_TIME_TASK_DETAIL_POW: DeltaProTimeTaskDetailType
+DELTA_PRO_TIME_TASK_DETAIL_TEMP: DeltaProTimeTaskDetailType
+DELTA_PRO_TIME_TASK_DETAIL_LEVEL: DeltaProTimeTaskDetailType
 
-class Delta3PlusHeader(_message.Message):
+class DeltaProHeader(_message.Message):
     __slots__ = ("pdata", "src", "dest", "d_src", "d_dest", "enc_type", "check_type", "cmd_func", "cmd_id", "data_len", "need_ack", "is_ack", "seq", "product_id", "version", "payload_ver", "time_snap", "is_rw_cmd", "is_queue", "ack_type", "code", "module_sn", "device_sn")
     PDATA_FIELD_NUMBER: _ClassVar[int]
     SRC_FIELD_NUMBER: _ClassVar[int]
@@ -101,27 +101,27 @@ class Delta3PlusHeader(_message.Message):
     device_sn: str
     def __init__(self, pdata: _Optional[bytes] = ..., src: _Optional[int] = ..., dest: _Optional[int] = ..., d_src: _Optional[int] = ..., d_dest: _Optional[int] = ..., enc_type: _Optional[int] = ..., check_type: _Optional[int] = ..., cmd_func: _Optional[int] = ..., cmd_id: _Optional[int] = ..., data_len: _Optional[int] = ..., need_ack: _Optional[int] = ..., is_ack: _Optional[int] = ..., seq: _Optional[int] = ..., product_id: _Optional[int] = ..., version: _Optional[int] = ..., payload_ver: _Optional[int] = ..., time_snap: _Optional[int] = ..., is_rw_cmd: _Optional[int] = ..., is_queue: _Optional[int] = ..., ack_type: _Optional[int] = ..., code: _Optional[str] = ..., module_sn: _Optional[str] = ..., device_sn: _Optional[str] = ..., **kwargs) -> None: ...
 
-class Delta3PlusSendHeaderMsg(_message.Message):
+class DeltaProSendHeaderMsg(_message.Message):
     __slots__ = ("msg",)
     MSG_FIELD_NUMBER: _ClassVar[int]
-    msg: _containers.RepeatedCompositeFieldContainer[Delta3PlusHeader]
-    def __init__(self, msg: _Optional[_Iterable[_Union[Delta3PlusHeader, _Mapping]]] = ...) -> None: ...
+    msg: _containers.RepeatedCompositeFieldContainer[DeltaProHeader]
+    def __init__(self, msg: _Optional[_Iterable[_Union[DeltaProHeader, _Mapping]]] = ...) -> None: ...
 
-class Delta3PlusHeaderMessage(_message.Message):
+class DeltaProHeaderMessage(_message.Message):
     __slots__ = ("header",)
     HEADER_FIELD_NUMBER: _ClassVar[int]
-    header: _containers.RepeatedCompositeFieldContainer[Delta3PlusHeader]
-    def __init__(self, header: _Optional[_Iterable[_Union[Delta3PlusHeader, _Mapping]]] = ...) -> None: ...
+    header: _containers.RepeatedCompositeFieldContainer[DeltaProHeader]
+    def __init__(self, header: _Optional[_Iterable[_Union[DeltaProHeader, _Mapping]]] = ...) -> None: ...
 
-class Delta3PlusTimeTaskParamDetail(_message.Message):
+class DeltaProTimeTaskParamDetail(_message.Message):
     __slots__ = ("type", "val")
     TYPE_FIELD_NUMBER: _ClassVar[int]
     VAL_FIELD_NUMBER: _ClassVar[int]
-    type: Delta3PlusTimeTaskDetailType
+    type: DeltaProTimeTaskDetailType
     val: float
-    def __init__(self, type: _Optional[_Union[Delta3PlusTimeTaskDetailType, str]] = ..., val: _Optional[float] = ...) -> None: ...
+    def __init__(self, type: _Optional[_Union[DeltaProTimeTaskDetailType, str]] = ..., val: _Optional[float] = ...) -> None: ...
 
-class Delta3PlusTimeTaskItemV2(_message.Message):
+class DeltaProTimeTaskItemV2(_message.Message):
     __slots__ = ("task_index", "is_cfg", "is_enable", "conflict_flag", "time_mode", "time_param", "time_table", "task_type", "task_param", "task_param_detail")
     TASK_INDEX_FIELD_NUMBER: _ClassVar[int]
     IS_CFG_FIELD_NUMBER: _ClassVar[int]
@@ -137,15 +137,15 @@ class Delta3PlusTimeTaskItemV2(_message.Message):
     is_cfg: bool
     is_enable: bool
     conflict_flag: int
-    time_mode: Delta3PlusTimeTaskMode
+    time_mode: DeltaProTimeTaskMode
     time_param: int
     time_table: int
-    task_type: Delta3PlusTimeTaskType
+    task_type: DeltaProTimeTaskType
     task_param: int
-    task_param_detail: _containers.RepeatedCompositeFieldContainer[Delta3PlusTimeTaskParamDetail]
-    def __init__(self, task_index: _Optional[int] = ..., is_cfg: _Optional[bool] = ..., is_enable: _Optional[bool] = ..., conflict_flag: _Optional[int] = ..., time_mode: _Optional[_Union[Delta3PlusTimeTaskMode, str]] = ..., time_param: _Optional[int] = ..., time_table: _Optional[int] = ..., task_type: _Optional[_Union[Delta3PlusTimeTaskType, str]] = ..., task_param: _Optional[int] = ..., task_param_detail: _Optional[_Iterable[_Union[Delta3PlusTimeTaskParamDetail, _Mapping]]] = ...) -> None: ...
+    task_param_detail: _containers.RepeatedCompositeFieldContainer[DeltaProTimeTaskParamDetail]
+    def __init__(self, task_index: _Optional[int] = ..., is_cfg: _Optional[bool] = ..., is_enable: _Optional[bool] = ..., conflict_flag: _Optional[int] = ..., time_mode: _Optional[_Union[DeltaProTimeTaskMode, str]] = ..., time_param: _Optional[int] = ..., time_table: _Optional[int] = ..., task_type: _Optional[_Union[DeltaProTimeTaskType, str]] = ..., task_param: _Optional[int] = ..., task_param_detail: _Optional[_Iterable[_Union[DeltaProTimeTaskParamDetail, _Mapping]]] = ...) -> None: ...
 
-class Delta3PlusDisplayPropertyUpload(_message.Message):
+class DeltaProDisplayPropertyUpload(_message.Message):
     __slots__ = ("errcode", "pow_in_sum_w", "pow_out_sum_w", "energy_backup_en", "energy_backup_start_soc", "pow_get_qcusb1", "pow_get_qcusb2", "pow_get_typec1", "pow_get_typec2", "flow_info_qcusb1", "flow_info_qcusb2", "flow_info_typec1", "flow_info_typec2", "dev_standby_time", "screen_off_time", "ac_standby_time", "ac_always_on_flag", "ac_always_on_mini_soc", "xboost_en", "pcs_fan_level", "flow_info_pv_h", "flow_info_pv_l", "flow_info_24v", "pow_get_pv_h", "pow_get_pv_l", "pow_get_24v", "plug_in_info_pv_h_flag", "plug_in_info_pv_h_type", "plug_in_info_pv_l_flag", "plug_in_info_pv_l_type", "flow_info_12v", "pow_get_12v", "flow_info_ac2dc", "flow_info_dc2ac", "flow_info_ac_in", "pow_get_ac", "pow_get_ac_in", "plug_in_info_ac_in_flag", "plug_in_info_ac_in_feq", "dc_out_open", "cfg_ac_out_open", "pow_get_dcp2", "flow_info_dcp2_in", "flow_info_dcp2_out", "plug_in_info_dcp2_in_flag", "plug_in_info_dcp2_dsg_chg_type", "plug_in_info_dcp2_charger_flag", "plug_in_info_dcp2_type", "plug_in_info_dcp2_detail", "plug_in_info_dcp2_sn", "plug_in_info_dcp2_run_state", "plug_in_info_dcp2_firm_ver", "bms_err_code", "output_power_off_memory", "pv_chg_type", "flow_info_bms_dsg", "flow_info_bms_chg", "pow_get_bms", "flow_info_4p8_1_in", "flow_info_4p8_1_out", "flow_info_4p8_2_in", "flow_info_4p8_2_out", "pow_get_4p8_1", "pow_get_4p8_2", "plug_in_info_4p8_1_in_flag", "plug_in_info_4p8_1_type", "plug_in_info_4p8_1_detail", "plug_in_info_4p8_2_in_flag", "plug_in_info_4p8_2_type", "plug_in_info_4p8_2_detail", "en_beep", "plug_in_info_ac_charger_flag", "plug_in_info_ac_in_chg_pow_max", "ac_out_freq", "dev_sleep_state", "pd_err_code", "mppt_err_code", "llc_hv_lv_flag", "llc_inv_err_code", "plug_in_info_ac_out_dsg_pow_max", "bms_batt_soc", "bms_batt_soh", "bms_design_cap", "bms_dsg_rem_time", "bms_chg_rem_time", "bms_min_cell_temp", "bms_max_cell_temp", "bms_min_mos_temp", "bms_max_mos_temp", "cms_batt_soc", "cms_batt_soh", "cms_dsg_rem_time", "cms_chg_rem_time", "cms_max_chg_soc", "cms_min_dsg_soc", "cms_bms_run_state", "bms_chg_dsg_state", "cms_chg_dsg_state", "time_task_conflict_flag", "time_task_change_cnt", "current_time_task_v2_item", "utc_timezone", "utc_timezone_id", "utc_set_mode", "cms_oil_on_soc", "cms_oil_off_soc", "cms_oil_self_start", "ups_alram", "plug_in_info_pv_dc_amp_max", "led_mode", "low_power_alarm", "silence_chg_watt", "flow_info_pv", "pow_get_pv", "plug_in_info_pv_flag", "plug_in_info_pv_type", "plug_in_info_pv_charger_flag", "plug_in_info_pv_chg_amp_max", "plug_in_info_pv_chg_vol_max", "flow_info_ac_out", "pow_get_ac_out", "flow_info_dcp_in", "flow_info_dcp_out", "pow_get_dcp", "plug_in_info_dcp_in_flag", "plug_in_info_dcp_type", "plug_in_info_dcp_detail", "plug_in_info_dcp_dsg_chg_type", "plug_in_info_dcp_sn", "plug_in_info_dcp_firm_ver", "plug_in_info_dcp_charger_flag", "plug_in_info_dcp_run_state", "plug_in_info_dcp_err_code", "plug_in_info_dcp2_err_code", "plug_in_info_ac_in_chg_hal_pow_max")
     ERRCODE_FIELD_NUMBER: _ClassVar[int]
     POW_IN_SUM_W_FIELD_NUMBER: _ClassVar[int]
@@ -382,7 +382,7 @@ class Delta3PlusDisplayPropertyUpload(_message.Message):
     cms_chg_dsg_state: int
     time_task_conflict_flag: int
     time_task_change_cnt: int
-    current_time_task_v2_item: Delta3PlusTimeTaskItemV2
+    current_time_task_v2_item: DeltaProTimeTaskItemV2
     utc_timezone: int
     utc_timezone_id: str
     utc_set_mode: int
@@ -417,9 +417,9 @@ class Delta3PlusDisplayPropertyUpload(_message.Message):
     plug_in_info_dcp_err_code: int
     plug_in_info_dcp2_err_code: int
     plug_in_info_ac_in_chg_hal_pow_max: int
-    def __init__(self, errcode: _Optional[int] = ..., pow_in_sum_w: _Optional[float] = ..., pow_out_sum_w: _Optional[float] = ..., energy_backup_en: _Optional[int] = ..., energy_backup_start_soc: _Optional[int] = ..., pow_get_qcusb1: _Optional[float] = ..., pow_get_qcusb2: _Optional[float] = ..., pow_get_typec1: _Optional[float] = ..., pow_get_typec2: _Optional[float] = ..., flow_info_qcusb1: _Optional[int] = ..., flow_info_qcusb2: _Optional[int] = ..., flow_info_typec1: _Optional[int] = ..., flow_info_typec2: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., ac_always_on_flag: _Optional[int] = ..., ac_always_on_mini_soc: _Optional[int] = ..., xboost_en: _Optional[int] = ..., pcs_fan_level: _Optional[int] = ..., flow_info_pv_h: _Optional[int] = ..., flow_info_pv_l: _Optional[int] = ..., flow_info_24v: _Optional[int] = ..., pow_get_pv_h: _Optional[float] = ..., pow_get_pv_l: _Optional[float] = ..., pow_get_24v: _Optional[float] = ..., plug_in_info_pv_h_flag: _Optional[int] = ..., plug_in_info_pv_h_type: _Optional[int] = ..., plug_in_info_pv_l_flag: _Optional[int] = ..., plug_in_info_pv_l_type: _Optional[int] = ..., flow_info_12v: _Optional[int] = ..., pow_get_12v: _Optional[float] = ..., flow_info_ac2dc: _Optional[int] = ..., flow_info_dc2ac: _Optional[int] = ..., flow_info_ac_in: _Optional[int] = ..., pow_get_ac: _Optional[float] = ..., pow_get_ac_in: _Optional[float] = ..., plug_in_info_ac_in_flag: _Optional[int] = ..., plug_in_info_ac_in_feq: _Optional[int] = ..., dc_out_open: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., pow_get_dcp2: _Optional[float] = ..., flow_info_dcp2_in: _Optional[int] = ..., flow_info_dcp2_out: _Optional[int] = ..., plug_in_info_dcp2_in_flag: _Optional[int] = ..., plug_in_info_dcp2_dsg_chg_type: _Optional[int] = ..., plug_in_info_dcp2_charger_flag: _Optional[int] = ..., plug_in_info_dcp2_type: _Optional[int] = ..., plug_in_info_dcp2_detail: _Optional[int] = ..., plug_in_info_dcp2_sn: _Optional[str] = ..., plug_in_info_dcp2_run_state: _Optional[int] = ..., plug_in_info_dcp2_firm_ver: _Optional[int] = ..., bms_err_code: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., flow_info_bms_dsg: _Optional[int] = ..., flow_info_bms_chg: _Optional[int] = ..., pow_get_bms: _Optional[float] = ..., flow_info_4p8_1_in: _Optional[int] = ..., flow_info_4p8_1_out: _Optional[int] = ..., flow_info_4p8_2_in: _Optional[int] = ..., flow_info_4p8_2_out: _Optional[int] = ..., pow_get_4p8_1: _Optional[float] = ..., pow_get_4p8_2: _Optional[float] = ..., plug_in_info_4p8_1_in_flag: _Optional[int] = ..., plug_in_info_4p8_1_type: _Optional[int] = ..., plug_in_info_4p8_1_detail: _Optional[int] = ..., plug_in_info_4p8_2_in_flag: _Optional[int] = ..., plug_in_info_4p8_2_type: _Optional[int] = ..., plug_in_info_4p8_2_detail: _Optional[int] = ..., en_beep: _Optional[int] = ..., plug_in_info_ac_charger_flag: _Optional[int] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., ac_out_freq: _Optional[int] = ..., dev_sleep_state: _Optional[int] = ..., pd_err_code: _Optional[int] = ..., mppt_err_code: _Optional[int] = ..., llc_hv_lv_flag: _Optional[int] = ..., llc_inv_err_code: _Optional[int] = ..., plug_in_info_ac_out_dsg_pow_max: _Optional[int] = ..., bms_batt_soc: _Optional[float] = ..., bms_batt_soh: _Optional[float] = ..., bms_design_cap: _Optional[int] = ..., bms_dsg_rem_time: _Optional[int] = ..., bms_chg_rem_time: _Optional[int] = ..., bms_min_cell_temp: _Optional[int] = ..., bms_max_cell_temp: _Optional[int] = ..., bms_min_mos_temp: _Optional[int] = ..., bms_max_mos_temp: _Optional[int] = ..., cms_batt_soc: _Optional[float] = ..., cms_batt_soh: _Optional[float] = ..., cms_dsg_rem_time: _Optional[int] = ..., cms_chg_rem_time: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cms_bms_run_state: _Optional[int] = ..., bms_chg_dsg_state: _Optional[int] = ..., cms_chg_dsg_state: _Optional[int] = ..., time_task_conflict_flag: _Optional[int] = ..., time_task_change_cnt: _Optional[int] = ..., current_time_task_v2_item: _Optional[_Union[Delta3PlusTimeTaskItemV2, _Mapping]] = ..., utc_timezone: _Optional[int] = ..., utc_timezone_id: _Optional[str] = ..., utc_set_mode: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., ups_alram: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., led_mode: _Optional[int] = ..., low_power_alarm: _Optional[int] = ..., silence_chg_watt: _Optional[int] = ..., flow_info_pv: _Optional[int] = ..., pow_get_pv: _Optional[float] = ..., plug_in_info_pv_flag: _Optional[int] = ..., plug_in_info_pv_type: _Optional[int] = ..., plug_in_info_pv_charger_flag: _Optional[int] = ..., plug_in_info_pv_chg_amp_max: _Optional[int] = ..., plug_in_info_pv_chg_vol_max: _Optional[int] = ..., flow_info_ac_out: _Optional[int] = ..., pow_get_ac_out: _Optional[float] = ..., flow_info_dcp_in: _Optional[int] = ..., flow_info_dcp_out: _Optional[int] = ..., pow_get_dcp: _Optional[float] = ..., plug_in_info_dcp_in_flag: _Optional[int] = ..., plug_in_info_dcp_type: _Optional[int] = ..., plug_in_info_dcp_detail: _Optional[int] = ..., plug_in_info_dcp_dsg_chg_type: _Optional[int] = ..., plug_in_info_dcp_sn: _Optional[str] = ..., plug_in_info_dcp_firm_ver: _Optional[int] = ..., plug_in_info_dcp_charger_flag: _Optional[int] = ..., plug_in_info_dcp_run_state: _Optional[int] = ..., plug_in_info_dcp_err_code: _Optional[int] = ..., plug_in_info_dcp2_err_code: _Optional[int] = ..., plug_in_info_ac_in_chg_hal_pow_max: _Optional[int] = ...) -> None: ...
+    def __init__(self, errcode: _Optional[int] = ..., pow_in_sum_w: _Optional[float] = ..., pow_out_sum_w: _Optional[float] = ..., energy_backup_en: _Optional[int] = ..., energy_backup_start_soc: _Optional[int] = ..., pow_get_qcusb1: _Optional[float] = ..., pow_get_qcusb2: _Optional[float] = ..., pow_get_typec1: _Optional[float] = ..., pow_get_typec2: _Optional[float] = ..., flow_info_qcusb1: _Optional[int] = ..., flow_info_qcusb2: _Optional[int] = ..., flow_info_typec1: _Optional[int] = ..., flow_info_typec2: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., ac_always_on_flag: _Optional[int] = ..., ac_always_on_mini_soc: _Optional[int] = ..., xboost_en: _Optional[int] = ..., pcs_fan_level: _Optional[int] = ..., flow_info_pv_h: _Optional[int] = ..., flow_info_pv_l: _Optional[int] = ..., flow_info_24v: _Optional[int] = ..., pow_get_pv_h: _Optional[float] = ..., pow_get_pv_l: _Optional[float] = ..., pow_get_24v: _Optional[float] = ..., plug_in_info_pv_h_flag: _Optional[int] = ..., plug_in_info_pv_h_type: _Optional[int] = ..., plug_in_info_pv_l_flag: _Optional[int] = ..., plug_in_info_pv_l_type: _Optional[int] = ..., flow_info_12v: _Optional[int] = ..., pow_get_12v: _Optional[float] = ..., flow_info_ac2dc: _Optional[int] = ..., flow_info_dc2ac: _Optional[int] = ..., flow_info_ac_in: _Optional[int] = ..., pow_get_ac: _Optional[float] = ..., pow_get_ac_in: _Optional[float] = ..., plug_in_info_ac_in_flag: _Optional[int] = ..., plug_in_info_ac_in_feq: _Optional[int] = ..., dc_out_open: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., pow_get_dcp2: _Optional[float] = ..., flow_info_dcp2_in: _Optional[int] = ..., flow_info_dcp2_out: _Optional[int] = ..., plug_in_info_dcp2_in_flag: _Optional[int] = ..., plug_in_info_dcp2_dsg_chg_type: _Optional[int] = ..., plug_in_info_dcp2_charger_flag: _Optional[int] = ..., plug_in_info_dcp2_type: _Optional[int] = ..., plug_in_info_dcp2_detail: _Optional[int] = ..., plug_in_info_dcp2_sn: _Optional[str] = ..., plug_in_info_dcp2_run_state: _Optional[int] = ..., plug_in_info_dcp2_firm_ver: _Optional[int] = ..., bms_err_code: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., flow_info_bms_dsg: _Optional[int] = ..., flow_info_bms_chg: _Optional[int] = ..., pow_get_bms: _Optional[float] = ..., flow_info_4p8_1_in: _Optional[int] = ..., flow_info_4p8_1_out: _Optional[int] = ..., flow_info_4p8_2_in: _Optional[int] = ..., flow_info_4p8_2_out: _Optional[int] = ..., pow_get_4p8_1: _Optional[float] = ..., pow_get_4p8_2: _Optional[float] = ..., plug_in_info_4p8_1_in_flag: _Optional[int] = ..., plug_in_info_4p8_1_type: _Optional[int] = ..., plug_in_info_4p8_1_detail: _Optional[int] = ..., plug_in_info_4p8_2_in_flag: _Optional[int] = ..., plug_in_info_4p8_2_type: _Optional[int] = ..., plug_in_info_4p8_2_detail: _Optional[int] = ..., en_beep: _Optional[int] = ..., plug_in_info_ac_charger_flag: _Optional[int] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., ac_out_freq: _Optional[int] = ..., dev_sleep_state: _Optional[int] = ..., pd_err_code: _Optional[int] = ..., mppt_err_code: _Optional[int] = ..., llc_hv_lv_flag: _Optional[int] = ..., llc_inv_err_code: _Optional[int] = ..., plug_in_info_ac_out_dsg_pow_max: _Optional[int] = ..., bms_batt_soc: _Optional[float] = ..., bms_batt_soh: _Optional[float] = ..., bms_design_cap: _Optional[int] = ..., bms_dsg_rem_time: _Optional[int] = ..., bms_chg_rem_time: _Optional[int] = ..., bms_min_cell_temp: _Optional[int] = ..., bms_max_cell_temp: _Optional[int] = ..., bms_min_mos_temp: _Optional[int] = ..., bms_max_mos_temp: _Optional[int] = ..., cms_batt_soc: _Optional[float] = ..., cms_batt_soh: _Optional[float] = ..., cms_dsg_rem_time: _Optional[int] = ..., cms_chg_rem_time: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cms_bms_run_state: _Optional[int] = ..., bms_chg_dsg_state: _Optional[int] = ..., cms_chg_dsg_state: _Optional[int] = ..., time_task_conflict_flag: _Optional[int] = ..., time_task_change_cnt: _Optional[int] = ..., current_time_task_v2_item: _Optional[_Union[DeltaProTimeTaskItemV2, _Mapping]] = ..., utc_timezone: _Optional[int] = ..., utc_timezone_id: _Optional[str] = ..., utc_set_mode: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., ups_alram: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., led_mode: _Optional[int] = ..., low_power_alarm: _Optional[int] = ..., silence_chg_watt: _Optional[int] = ..., flow_info_pv: _Optional[int] = ..., pow_get_pv: _Optional[float] = ..., plug_in_info_pv_flag: _Optional[int] = ..., plug_in_info_pv_type: _Optional[int] = ..., plug_in_info_pv_charger_flag: _Optional[int] = ..., plug_in_info_pv_chg_amp_max: _Optional[int] = ..., plug_in_info_pv_chg_vol_max: _Optional[int] = ..., flow_info_ac_out: _Optional[int] = ..., pow_get_ac_out: _Optional[float] = ..., flow_info_dcp_in: _Optional[int] = ..., flow_info_dcp_out: _Optional[int] = ..., pow_get_dcp: _Optional[float] = ..., plug_in_info_dcp_in_flag: _Optional[int] = ..., plug_in_info_dcp_type: _Optional[int] = ..., plug_in_info_dcp_detail: _Optional[int] = ..., plug_in_info_dcp_dsg_chg_type: _Optional[int] = ..., plug_in_info_dcp_sn: _Optional[str] = ..., plug_in_info_dcp_firm_ver: _Optional[int] = ..., plug_in_info_dcp_charger_flag: _Optional[int] = ..., plug_in_info_dcp_run_state: _Optional[int] = ..., plug_in_info_dcp_err_code: _Optional[int] = ..., plug_in_info_dcp2_err_code: _Optional[int] = ..., plug_in_info_ac_in_chg_hal_pow_max: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusRuntimePropertyUpload(_message.Message):
+class DeltaProRuntimePropertyUpload(_message.Message):
     __slots__ = ("ac_phase_type", "pcs_work_mode", "temp_pcs_dc", "temp_pcs_ac", "plug_in_info_ac_out_type", "plug_in_info_ac_out_freq", "plug_in_info_ac_out_vol", "plug_in_info_ac_in_vol", "plug_in_info_bms_vol", "pd_mppt_comm_err", "pd_llc_comm_err", "pd_bms_comm_err", "pd_iot_comm_err", "pd_firm_ver", "iot_firm_ver", "mppt_firm_ver", "plug_in_info_ac_in_amp", "plug_in_info_ac_out_amp", "llc_inv_firm_ver", "bms_firm_ver", "bms_batt_vol", "bms_batt_amp", "bms_bal_state", "bms_full_cap", "bms_remain_cap", "bms_alm_state", "bms_pro_state", "bms_flt_state", "bms_err_code", "bms_min_cell_vol", "bms_max_cell_vol", "cms_batt_vol", "cms_batt_amp", "cms_chg_req_vol", "cms_chg_req_amp", "bms_overload_icon", "bms_warn_icon", "bms_high_temp_icon", "bms_low_temp_icon", "bms_limit_icon", "bms_alm_state_2", "bms_pro_state_2", "display_property_full_upload_period", "display_property_incremental_upload_period", "runtime_property_full_upload_period", "runtime_property_incremental_upload_period", "pv_vin_ref", "inv_main_fsmstate", "l1_main_fsmstate", "dcdc_chg_req_cur", "llc_recv_cms_chg_req_vol", "temp_pv", "plug_in_info_pv_vol", "plug_in_info_pv_amp", "plug_in_info_12v_vol", "plug_in_info_12v_amp", "llc_bat_vol", "llc_bat_cur", "llc_bus_vol", "plug_in_info_dcp_vol", "plug_in_info_dcp_amp")
     AC_PHASE_TYPE_FIELD_NUMBER: _ClassVar[int]
     PCS_WORK_MODE_FIELD_NUMBER: _ClassVar[int]
@@ -545,7 +545,7 @@ class Delta3PlusRuntimePropertyUpload(_message.Message):
     plug_in_info_dcp_amp: float
     def __init__(self, ac_phase_type: _Optional[int] = ..., pcs_work_mode: _Optional[int] = ..., temp_pcs_dc: _Optional[float] = ..., temp_pcs_ac: _Optional[float] = ..., plug_in_info_ac_out_type: _Optional[int] = ..., plug_in_info_ac_out_freq: _Optional[int] = ..., plug_in_info_ac_out_vol: _Optional[float] = ..., plug_in_info_ac_in_vol: _Optional[float] = ..., plug_in_info_bms_vol: _Optional[float] = ..., pd_mppt_comm_err: _Optional[int] = ..., pd_llc_comm_err: _Optional[int] = ..., pd_bms_comm_err: _Optional[int] = ..., pd_iot_comm_err: _Optional[int] = ..., pd_firm_ver: _Optional[int] = ..., iot_firm_ver: _Optional[int] = ..., mppt_firm_ver: _Optional[int] = ..., plug_in_info_ac_in_amp: _Optional[float] = ..., plug_in_info_ac_out_amp: _Optional[float] = ..., llc_inv_firm_ver: _Optional[int] = ..., bms_firm_ver: _Optional[int] = ..., bms_batt_vol: _Optional[float] = ..., bms_batt_amp: _Optional[float] = ..., bms_bal_state: _Optional[int] = ..., bms_full_cap: _Optional[int] = ..., bms_remain_cap: _Optional[int] = ..., bms_alm_state: _Optional[int] = ..., bms_pro_state: _Optional[int] = ..., bms_flt_state: _Optional[int] = ..., bms_err_code: _Optional[int] = ..., bms_min_cell_vol: _Optional[int] = ..., bms_max_cell_vol: _Optional[int] = ..., cms_batt_vol: _Optional[float] = ..., cms_batt_amp: _Optional[float] = ..., cms_chg_req_vol: _Optional[float] = ..., cms_chg_req_amp: _Optional[float] = ..., bms_overload_icon: _Optional[int] = ..., bms_warn_icon: _Optional[int] = ..., bms_high_temp_icon: _Optional[int] = ..., bms_low_temp_icon: _Optional[int] = ..., bms_limit_icon: _Optional[int] = ..., bms_alm_state_2: _Optional[int] = ..., bms_pro_state_2: _Optional[int] = ..., display_property_full_upload_period: _Optional[int] = ..., display_property_incremental_upload_period: _Optional[int] = ..., runtime_property_full_upload_period: _Optional[int] = ..., runtime_property_incremental_upload_period: _Optional[int] = ..., pv_vin_ref: _Optional[float] = ..., inv_main_fsmstate: _Optional[int] = ..., l1_main_fsmstate: _Optional[int] = ..., dcdc_chg_req_cur: _Optional[float] = ..., llc_recv_cms_chg_req_vol: _Optional[float] = ..., temp_pv: _Optional[float] = ..., plug_in_info_pv_vol: _Optional[float] = ..., plug_in_info_pv_amp: _Optional[float] = ..., plug_in_info_12v_vol: _Optional[float] = ..., plug_in_info_12v_amp: _Optional[float] = ..., llc_bat_vol: _Optional[float] = ..., llc_bat_cur: _Optional[float] = ..., llc_bus_vol: _Optional[float] = ..., plug_in_info_dcp_vol: _Optional[float] = ..., plug_in_info_dcp_amp: _Optional[float] = ...) -> None: ...
 
-class Delta3PlusSetCommand(_message.Message):
+class DeltaProSetCommand(_message.Message):
     __slots__ = ("cfg_power_off", "cfg_utc_time", "cfg_utc_timezone", "en_beep", "ac_standby_time", "dc_standby_time", "screen_off_time", "dev_standby_time", "lcd_light", "cfg_dc12v_out_open", "xboost_en", "cms_max_chg_soc", "cms_min_dsg_soc", "cfg_energy_backup", "plug_in_info_ac_in_chg_pow_max", "plug_in_info_5p8_chg_pow_max", "cms_oil_self_start", "cms_oil_on_soc", "cms_oil_off_soc", "llc_gfci_flag", "ac_energy_saving_open", "multi_bp_chg_dsg_mode", "low_discharge_limit_cmd", "cfg_ac_out_open", "plug_in_info_pv_dc_amp_max", "cfg_led_mode", "pv_chg_type", "output_power_off_memory")
     CFG_POWER_OFF_FIELD_NUMBER: _ClassVar[int]
     CFG_UTC_TIME_FIELD_NUMBER: _ClassVar[int]
@@ -588,7 +588,7 @@ class Delta3PlusSetCommand(_message.Message):
     xboost_en: int
     cms_max_chg_soc: int
     cms_min_dsg_soc: int
-    cfg_energy_backup: Delta3PlusCfgEnergyBackup
+    cfg_energy_backup: DeltaProCfgEnergyBackup
     plug_in_info_ac_in_chg_pow_max: int
     plug_in_info_5p8_chg_pow_max: int
     cms_oil_self_start: int
@@ -603,9 +603,9 @@ class Delta3PlusSetCommand(_message.Message):
     cfg_led_mode: int
     pv_chg_type: int
     output_power_off_memory: int
-    def __init__(self, cfg_power_off: _Optional[int] = ..., cfg_utc_time: _Optional[int] = ..., cfg_utc_timezone: _Optional[int] = ..., en_beep: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., dc_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., lcd_light: _Optional[int] = ..., cfg_dc12v_out_open: _Optional[int] = ..., xboost_en: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cfg_energy_backup: _Optional[_Union[Delta3PlusCfgEnergyBackup, _Mapping]] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., plug_in_info_5p8_chg_pow_max: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., llc_gfci_flag: _Optional[int] = ..., ac_energy_saving_open: _Optional[int] = ..., multi_bp_chg_dsg_mode: _Optional[int] = ..., low_discharge_limit_cmd: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., cfg_led_mode: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ...) -> None: ...
+    def __init__(self, cfg_power_off: _Optional[int] = ..., cfg_utc_time: _Optional[int] = ..., cfg_utc_timezone: _Optional[int] = ..., en_beep: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., dc_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., lcd_light: _Optional[int] = ..., cfg_dc12v_out_open: _Optional[int] = ..., xboost_en: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cfg_energy_backup: _Optional[_Union[DeltaProCfgEnergyBackup, _Mapping]] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., plug_in_info_5p8_chg_pow_max: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., llc_gfci_flag: _Optional[int] = ..., ac_energy_saving_open: _Optional[int] = ..., multi_bp_chg_dsg_mode: _Optional[int] = ..., low_discharge_limit_cmd: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., cfg_led_mode: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusSetReply(_message.Message):
+class DeltaProSetReply(_message.Message):
     __slots__ = ("action_id", "config_ok", "cfg_utc_time", "cfg_utc_timezone", "en_beep", "ac_standby_time", "dc_standby_time", "screen_off_time", "dev_standby_time", "lcd_light", "cfg_dc12v_out_open", "xboost_en", "cms_max_chg_soc", "cms_min_dsg_soc", "cfg_energy_backup", "plug_in_info_ac_in_chg_pow_max", "plug_in_info_5p8_chg_pow_max", "cms_oil_self_start", "cms_oil_on_soc", "cms_oil_off_soc", "llc_gfci_flag", "ac_energy_saving_open", "multi_bp_chg_dsg_mode", "low_discharge_limit_cmd", "dc_out_open", "cfg_ac_out_open", "plug_in_info_pv_dc_amp_max", "cfg_led_mode", "pv_chg_type", "output_power_off_memory")
     ACTION_ID_FIELD_NUMBER: _ClassVar[int]
     CONFIG_OK_FIELD_NUMBER: _ClassVar[int]
@@ -651,7 +651,7 @@ class Delta3PlusSetReply(_message.Message):
     xboost_en: int
     cms_max_chg_soc: int
     cms_min_dsg_soc: int
-    cfg_energy_backup: Delta3PlusCfgEnergyBackup
+    cfg_energy_backup: DeltaProCfgEnergyBackup
     plug_in_info_ac_in_chg_pow_max: int
     plug_in_info_5p8_chg_pow_max: int
     cms_oil_self_start: int
@@ -667,9 +667,9 @@ class Delta3PlusSetReply(_message.Message):
     cfg_led_mode: int
     pv_chg_type: int
     output_power_off_memory: int
-    def __init__(self, action_id: _Optional[int] = ..., config_ok: _Optional[bool] = ..., cfg_utc_time: _Optional[int] = ..., cfg_utc_timezone: _Optional[int] = ..., en_beep: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., dc_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., lcd_light: _Optional[int] = ..., cfg_dc12v_out_open: _Optional[int] = ..., xboost_en: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cfg_energy_backup: _Optional[_Union[Delta3PlusCfgEnergyBackup, _Mapping]] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., plug_in_info_5p8_chg_pow_max: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., llc_gfci_flag: _Optional[int] = ..., ac_energy_saving_open: _Optional[int] = ..., multi_bp_chg_dsg_mode: _Optional[int] = ..., low_discharge_limit_cmd: _Optional[int] = ..., dc_out_open: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., cfg_led_mode: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ...) -> None: ...
+    def __init__(self, action_id: _Optional[int] = ..., config_ok: _Optional[bool] = ..., cfg_utc_time: _Optional[int] = ..., cfg_utc_timezone: _Optional[int] = ..., en_beep: _Optional[int] = ..., ac_standby_time: _Optional[int] = ..., dc_standby_time: _Optional[int] = ..., screen_off_time: _Optional[int] = ..., dev_standby_time: _Optional[int] = ..., lcd_light: _Optional[int] = ..., cfg_dc12v_out_open: _Optional[int] = ..., xboost_en: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., cfg_energy_backup: _Optional[_Union[DeltaProCfgEnergyBackup, _Mapping]] = ..., plug_in_info_ac_in_chg_pow_max: _Optional[int] = ..., plug_in_info_5p8_chg_pow_max: _Optional[int] = ..., cms_oil_self_start: _Optional[int] = ..., cms_oil_on_soc: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ..., llc_gfci_flag: _Optional[int] = ..., ac_energy_saving_open: _Optional[int] = ..., multi_bp_chg_dsg_mode: _Optional[int] = ..., low_discharge_limit_cmd: _Optional[int] = ..., dc_out_open: _Optional[int] = ..., cfg_ac_out_open: _Optional[int] = ..., plug_in_info_pv_dc_amp_max: _Optional[int] = ..., cfg_led_mode: _Optional[int] = ..., pv_chg_type: _Optional[int] = ..., output_power_off_memory: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusCfgEnergyBackup(_message.Message):
+class DeltaProCfgEnergyBackup(_message.Message):
     __slots__ = ("energy_backup_en", "energy_backup_start_soc")
     ENERGY_BACKUP_EN_FIELD_NUMBER: _ClassVar[int]
     ENERGY_BACKUP_START_SOC_FIELD_NUMBER: _ClassVar[int]
@@ -677,15 +677,15 @@ class Delta3PlusCfgEnergyBackup(_message.Message):
     energy_backup_start_soc: int
     def __init__(self, energy_backup_en: _Optional[int] = ..., energy_backup_start_soc: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusCMSHeartBeatReport(_message.Message):
+class DeltaProCMSHeartBeatReport(_message.Message):
     __slots__ = ("msg32_2_1", "msg32_2_2")
     MSG32_2_1_FIELD_NUMBER: _ClassVar[int]
     MSG32_2_2_FIELD_NUMBER: _ClassVar[int]
-    msg32_2_1: Delta3PlusCMSStatus1
-    msg32_2_2: Delta3PlusCMSStatus2
-    def __init__(self, msg32_2_1: _Optional[_Union[Delta3PlusCMSStatus1, _Mapping]] = ..., msg32_2_2: _Optional[_Union[Delta3PlusCMSStatus2, _Mapping]] = ...) -> None: ...
+    msg32_2_1: DeltaProCMSStatus1
+    msg32_2_2: DeltaProCMSStatus2
+    def __init__(self, msg32_2_1: _Optional[_Union[DeltaProCMSStatus1, _Mapping]] = ..., msg32_2_2: _Optional[_Union[DeltaProCMSStatus2, _Mapping]] = ...) -> None: ...
 
-class Delta3PlusCMSStatus1(_message.Message):
+class DeltaProCMSStatus1(_message.Message):
     __slots__ = ("cms_status_misc1", "cms_status_misc2", "cms_status_misc3", "cms_batt_vol_mv", "cms_chg_req_amp", "cms_status_misc4", "cms_max_chg_soc", "cms_min_dsg_soc", "ac_out_freq", "cms_status_misc5", "cms_status_misc6", "cms_chg_rem_time", "cms_dsg_rem_time", "cms_chg_dsg_state", "cms_batt_soc", "bms_is_conn_state", "cms_status_misc7", "cms_status_misc8", "cms_status_misc9", "cms_status_misc10", "cms_status_misc11", "cms_status_misc12", "cms_oil_off_soc")
     CMS_STATUS_MISC1_FIELD_NUMBER: _ClassVar[int]
     CMS_STATUS_MISC2_FIELD_NUMBER: _ClassVar[int]
@@ -735,7 +735,7 @@ class Delta3PlusCMSStatus1(_message.Message):
     cms_oil_off_soc: int
     def __init__(self, cms_status_misc1: _Optional[int] = ..., cms_status_misc2: _Optional[int] = ..., cms_status_misc3: _Optional[int] = ..., cms_batt_vol_mv: _Optional[int] = ..., cms_chg_req_amp: _Optional[int] = ..., cms_status_misc4: _Optional[int] = ..., cms_max_chg_soc: _Optional[int] = ..., cms_min_dsg_soc: _Optional[int] = ..., ac_out_freq: _Optional[int] = ..., cms_status_misc5: _Optional[int] = ..., cms_status_misc6: _Optional[int] = ..., cms_chg_rem_time: _Optional[int] = ..., cms_dsg_rem_time: _Optional[int] = ..., cms_chg_dsg_state: _Optional[int] = ..., cms_batt_soc: _Optional[float] = ..., bms_is_conn_state: _Optional[_Iterable[int]] = ..., cms_status_misc7: _Optional[int] = ..., cms_status_misc8: _Optional[int] = ..., cms_status_misc9: _Optional[int] = ..., cms_status_misc10: _Optional[int] = ..., cms_status_misc11: _Optional[int] = ..., cms_status_misc12: _Optional[int] = ..., cms_oil_off_soc: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusCMSStatus2(_message.Message):
+class DeltaProCMSStatus2(_message.Message):
     __slots__ = ("cms_status_misc13", "cms_status_misc14", "cms_status_misc15", "cms_status_misc16", "cms_status_misc17")
     CMS_STATUS_MISC13_FIELD_NUMBER: _ClassVar[int]
     CMS_STATUS_MISC14_FIELD_NUMBER: _ClassVar[int]
@@ -749,7 +749,7 @@ class Delta3PlusCMSStatus2(_message.Message):
     cms_status_misc17: int
     def __init__(self, cms_status_misc13: _Optional[int] = ..., cms_status_misc14: _Optional[int] = ..., cms_status_misc15: _Optional[int] = ..., cms_status_misc16: _Optional[int] = ..., cms_status_misc17: _Optional[int] = ...) -> None: ...
 
-class Delta3PlusBMSHeartBeatReport(_message.Message):
+class DeltaProBMSHeartBeatReport(_message.Message):
     __slots__ = ("num", "type", "cell_id", "err_code", "sys_ver", "soc", "vol", "amp", "temp", "open_bms_flag", "design_cap", "remain_cap", "full_cap", "cycles", "soh", "max_cell_vol", "min_cell_vol", "max_cell_temp", "min_cell_temp", "max_mos_temp", "min_mos_temp", "bms_fault", "bq_sys_stat_reg", "tag_chg_amp", "f32_show_soc", "input_watts", "output_watts", "remain_time", "mos_state", "balance_state", "max_vol_diff", "cell_series_num", "cell_vol", "cell_ntc_num", "cell_temp", "hw_ver", "bms_heartbeat_ver", "ecloud_ocv", "bms_sn", "product_type", "product_detail", "act_soc", "diff_soc", "target_soc", "sys_loader_ver", "sys_state", "chg_dsg_state", "all_err_code", "all_bms_fault", "accu_chg_cap", "accu_dsg_cap", "real_soh", "calendar_soh", "cycle_soh", "mos_ntc_num", "mos_temp", "env_ntc_num", "env_temp", "heatfilm_ntc_num", "heatfilm_temp", "cur_sensor_ntc_num", "cur_sensor_temp", "max_env_temp", "min_env_temp", "max_heatfilm_temp", "min_heatfilm_temp", "max_cur_sensor_temp", "min_cur_sensor_temp", "balance_cmd", "remain_balance_time", "afe_sys_status", "mcu_pin_in_status", "mcu_pin_out_status", "bms_alarm_state1", "bms_alarm_state2", "bms_protect_state1", "bms_protect_state2", "bms_fault_state", "accu_chg_energy", "accu_dsg_energy", "pack_sn", "water_in_flag")
     NUM_FIELD_NUMBER: _ClassVar[int]
     TYPE_FIELD_NUMBER: _ClassVar[int]

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message CrtVersionGet {
+  optional string sys_ca_version = 1;
+  optional string use_ca1_version = 2;
+  optional string use_ca2_version = 3;
+}
+
+message crtNetworkCfg {
+  optional string ssid = 1;
+  optional string passwd = 2;
+  optional string http_url = 3;
+  optional string cert_url = 4;
+}
+
+message crtNetworkCfgAck {
+  optional uint32 ack = 1;
+}
+

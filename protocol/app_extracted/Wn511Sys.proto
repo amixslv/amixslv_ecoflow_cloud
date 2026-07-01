@@ -1,0 +1,1001 @@
+syntax = "proto3";
+
+message event_burial_point {
+  oneof _bandwith {
+    uint32 type = 1;
+    uint32 communication_channel = 2;
+    uint32 bt_state = 3;
+    uint32 bssid_count = 4;
+    uint32 bandwith = 5;
+    uint32 wifi_error_count = 15;
+    uint32 wifi_success_count = 16;
+    uint32 mqtt_error_count = 18;
+    uint32 mqtt_success_count = 19;
+    uint32 cpu = 20;
+  }
+  oneof _wifi_standard {
+    uint32 wifi_standard = 6;
+  }
+  oneof _is_hidden {
+    uint32 is_hidden = 7;
+  }
+  oneof _wifi_speed {
+    uint32 wifi_speed = 8;
+  }
+  oneof _dns_state {
+    uint32 dns_state = 9;
+  }
+  oneof _http_state {
+    uint32 http_state = 10;
+  }
+  oneof _channel_ap_count {
+    uint32 channel_ap_count = 11;
+  }
+  oneof _adjacent_ap_channel_count {
+    uint32 adjacent_ap_channel_count = 12;
+  }
+  oneof _connect_time {
+    uint32 connect_time = 13;
+  }
+  oneof _wifi_error_code {
+    uint32 wifi_error_code = 14;
+  }
+  oneof _mqtt_error_code {
+    uint32 mqtt_error_code = 17;
+  }
+}
+
+message inverter_heartbeat {
+  oneof _inv_err_code {
+    uint32 inv_err_code = 1;
+  }
+  oneof _inv_warn_code {
+    uint32 inv_warn_code = 3;
+  }
+  oneof _pv1_err_code {
+    uint32 pv1_err_code = 2;
+  }
+  oneof _pv1_warn_code {
+    uint32 pv1_warn_code = 4;
+  }
+  oneof _pv2_err_code {
+    uint32 pv2_err_code = 5;
+  }
+  oneof _pv2_warning_code {
+    uint32 pv2_warning_code = 6;
+  }
+  oneof _bat_err_code {
+    uint32 bat_err_code = 7;
+  }
+  oneof _bat_warning_code {
+    uint32 bat_warning_code = 8;
+  }
+  oneof _llc_err_code {
+    uint32 llc_err_code = 9;
+  }
+  oneof _llc_warning_code {
+    uint32 llc_warning_code = 10;
+  }
+  oneof _pv1_statue {
+    uint32 pv1_statue = 11;
+  }
+  oneof _pv2_statue {
+    uint32 pv2_statue = 12;
+  }
+  oneof _bat_statue {
+    uint32 bat_statue = 13;
+  }
+  oneof _llc_statue {
+    uint32 llc_statue = 14;
+  }
+  oneof _inv_statue {
+    uint32 inv_statue = 15;
+  }
+  oneof _pv1_input_volt {
+    int32 pv1_input_volt = 16;
+  }
+  oneof _pv1_vol_in_tag {
+    int32 pv1_vol_in_tag = 17;
+  }
+  oneof _pv1_input_cur {
+    int32 pv1_input_cur = 18;
+  }
+  oneof _pv1_input_watts {
+    int32 pv1_input_watts = 19;
+  }
+  oneof _pv1_temp {
+    int32 pv1_temp = 20;
+  }
+  oneof _pv2_input_volt {
+    int32 pv2_input_volt = 21;
+  }
+  oneof _pv2_vol_in_tag {
+    int32 pv2_vol_in_tag = 22;
+  }
+  oneof _pv2_input_cur {
+    int32 pv2_input_cur = 23;
+  }
+  oneof _pv2_input_watts {
+    int32 pv2_input_watts = 24;
+  }
+  oneof _pv2_temp {
+    int32 pv2_temp = 25;
+  }
+  oneof _bat_input_volt {
+    int32 bat_input_volt = 26;
+  }
+  oneof _bat_op_volt {
+    int32 bat_op_volt = 27;
+  }
+  oneof _bat_input_cur {
+    int32 bat_input_cur = 28;
+  }
+  oneof _bat_input_watts {
+    int32 bat_input_watts = 29;
+  }
+  oneof _bat_temp {
+    int32 bat_temp = 30;
+  }
+  oneof _bat_soc {
+    uint32 bat_soc = 31;
+  }
+  oneof _llc_input_volt {
+    int32 llc_input_volt = 32;
+  }
+  oneof _llc_op_volt {
+    int32 llc_op_volt = 33;
+  }
+  oneof _llc_temp {
+    int32 llc_temp = 34;
+  }
+  oneof _inv_input_volt {
+    int32 inv_input_volt = 35;
+  }
+  oneof _inv_op_volt {
+    int32 inv_op_volt = 36;
+  }
+  oneof _inv_output_cur {
+    int32 inv_output_cur = 37;
+  }
+  oneof _inv_output_watts {
+    int32 inv_output_watts = 38;
+  }
+  oneof _inv_temp {
+    int32 inv_temp = 39;
+  }
+  oneof _inv_freq {
+    int32 inv_freq = 40;
+  }
+  oneof _inv_dc_cur {
+    int32 inv_dc_cur = 41;
+  }
+  oneof _bp_type {
+    int32 bp_type = 42;
+  }
+  oneof _inv_relay_status {
+    int32 inv_relay_status = 43;
+  }
+  oneof _pv1_relay_status {
+    int32 pv1_relay_status = 44;
+  }
+  oneof _pv2_relay_status {
+    int32 pv2_relay_status = 45;
+  }
+  oneof _install_country {
+    uint32 install_country = 46;
+  }
+  oneof _install_town {
+    uint32 install_town = 47;
+  }
+  oneof _permanent_watts {
+    uint32 permanent_watts = 48;
+  }
+  oneof _dynamic_watts {
+    uint32 dynamic_watts = 49;
+  }
+  oneof _supply_priority {
+    uint32 supply_priority = 50;
+  }
+  oneof _lower_limit {
+    uint32 lower_limit = 51;
+  }
+  oneof _upper_limit {
+    uint32 upper_limit = 52;
+  }
+  oneof _inv_on_off {
+    uint32 inv_on_off = 53;
+  }
+  oneof _wireless_err_code {
+    uint32 wireless_err_code = 54;
+  }
+  oneof _wireless_warn_code {
+    uint32 wireless_warn_code = 55;
+  }
+  oneof _inv_brightness {
+    uint32 inv_brightness = 56;
+  }
+  oneof _heartbeat_frequency {
+    uint32 heartbeat_frequency = 57;
+  }
+  oneof _rated_power {
+    uint32 rated_power = 58;
+  }
+  oneof _chg_remain_time {
+    uint32 chg_remain_time = 59;
+  }
+  oneof _dsg_remain_time {
+    uint32 dsg_remain_time = 60;
+  }
+  oneof _feed_protect {
+    uint32 feed_protect = 61;
+  }
+  oneof _pv_to_inv_watts {
+    int32 pv_to_inv_watts = 62;
+  }
+  oneof _grid_cons_watts {
+    int32 grid_cons_watts = 63;
+  }
+  oneof _plug_total_watts {
+    int32 plug_total_watts = 64;
+  }
+  oneof _inv_to_plug_watts {
+    int32 inv_to_plug_watts = 65;
+  }
+  oneof _space_demand_watts {
+    int32 space_demand_watts = 66;
+  }
+  oneof _inv_demand_watts {
+    int32 inv_demand_watts = 67;
+  }
+  oneof _interface_conn_flag {
+    uint32 interface_conn_flag = 68;
+  }
+  oneof _pv1_ctrl_mppt_off_flag {
+    uint32 pv1_ctrl_mppt_off_flag = 69;
+  }
+  oneof _pv2_ctrl_mppt_off_flag {
+    uint32 pv2_ctrl_mppt_off_flag = 70;
+  }
+  oneof _bat_off_flag {
+    uint32 bat_off_flag = 71;
+  }
+  oneof _llc_off_flag {
+    uint32 llc_off_flag = 72;
+  }
+  oneof _ac_off_flag {
+    uint32 ac_off_flag = 73;
+  }
+  oneof _bms_req_chg_vol {
+    uint32 bms_req_chg_vol = 74;
+  }
+  oneof _bms_req_chg_amp {
+    uint32 bms_req_chg_amp = 75;
+  }
+  oneof _uwload_limit_flag {
+    uint32 uwload_limit_flag = 76;
+  }
+  oneof _inv_load_limit_flag {
+    uint32 inv_load_limit_flag = 77;
+  }
+  oneof _bat_load_limit_flag {
+    uint32 bat_load_limit_flag = 78;
+  }
+  oneof _anti_back_flow_flag {
+    uint32 anti_back_flow_flag = 79;
+  }
+  oneof _uwsoc_flag {
+    uint32 uwsoc_flag = 80;
+  }
+  oneof _uwlow_light_flag {
+    uint32 uwlow_light_flag = 81;
+  }
+  oneof _inv_to_other_watts {
+    uint32 inv_to_other_watts = 82;
+  }
+  oneof _bat_system {
+    uint32 bat_system = 84;
+  }
+  oneof _fload_limit_out {
+    uint32 fload_limit_out = 85;
+  }
+  oneof _inv_output_load_limit {
+    uint32 inv_output_load_limit = 86;
+  }
+  oneof _bat_output_load_limit {
+    uint32 bat_output_load_limit = 87;
+  }
+  oneof _pv_power_limit_ac_power {
+    uint32 pv_power_limit_ac_power = 98;
+  }
+  oneof _bat_error_inv_load_limit {
+    uint32 bat_error_inv_load_limit = 99;
+  }
+  oneof _reset_reason {
+    uint32 reset_reason = 100;
+  }
+  oneof _reset_count {
+    uint32 reset_count = 101;
+  }
+  oneof _mesh_id {
+    uint32 mesh_id = 102;
+  }
+  oneof _mesh_layel {
+    uint32 mesh_layel = 103;
+  }
+  oneof _self_mac {
+    uint32 self_mac = 104;
+  }
+  oneof _parent_mac {
+    uint32 parent_mac = 105;
+  }
+  oneof _sta_ip_addr {
+    int32 sta_ip_addr = 106;
+  }
+  oneof _gene_num {
+    int32 gene_num = 107;
+  }
+  oneof _cons_num {
+    int32 cons_num = 108;
+  }
+  oneof _gene_watt {
+    int32 gene_watt = 109;
+  }
+  oneof _cons_watt {
+    int32 cons_watt = 110;
+  }
+  oneof _wifi_rssi {
+    int32 wifi_rssi = 83;
+  }
+  oneof _wifi_err {
+    int32 wifi_err = 111;
+  }
+  oneof _wifi_err_time {
+    uint32 wifi_err_time = 112;
+  }
+  oneof _mqtt_err {
+    int32 mqtt_err = 113;
+  }
+  oneof _mqtt_err_time {
+    uint32 mqtt_err_time = 114;
+  }
+  oneof _stack_free {
+    uint32 stack_free = 115;
+  }
+  oneof _stack_min_free {
+    uint32 stack_min_free = 116;
+  }
+  oneof _mqtt_tls_last_err {
+    int32 mqtt_tls_last_err = 117;
+  }
+  oneof _mqtt_tls_stack_err {
+    int32 mqtt_tls_stack_err = 118;
+  }
+  oneof _mqtt_sock_errno {
+    int32 mqtt_sock_errno = 119;
+  }
+  oneof _mqtt_last_dis_reason {
+    uint32 mqtt_last_dis_reason = 121;
+  }
+  oneof _mqtt_connect_return_code {
+    uint32 mqtt_connect_return_code = 122;
+  }
+  oneof _wifi_firmware_version {
+    uint32 wifi_firmware_version = 123;
+  }
+  oneof _wifi_connect_channel {
+    uint32 wifi_connect_channel = 124;
+  }
+  oneof _wifi_encrypt_mode {
+    uint32 wifi_encrypt_mode = 125;
+  }
+  oneof _ac_set_watts {
+    uint32 ac_set_watts = 120;
+  }
+  oneof _fiso_rxyz {
+    float fiso_rxyz = 126;
+  }
+  oneof _history_pv_to_inv_watts {
+    int32 history_pv_to_inv_watts = 127;
+  }
+  oneof _history_bat_input_watts {
+    int32 history_bat_input_watts = 128;
+  }
+  oneof _history_inv_output_watts {
+    int32 history_inv_output_watts = 129;
+  }
+  oneof _history_grid_cons_watts {
+    int32 history_grid_cons_watts = 130;
+  }
+  oneof _history_plug_total_watts {
+    int32 history_plug_total_watts = 131;
+  }
+  oneof _history_inv_to_plug_watts {
+    int32 history_inv_to_plug_watts = 132;
+  }
+  oneof _history_permanent_watts {
+    uint32 history_permanent_watts = 133;
+  }
+  oneof _esp_tempsensor {
+    int32 esp_tempsensor = 134;
+  }
+  oneof _noise_floor {
+    int32 noise_floor = 135;
+  }
+  oneof _rssi_threshold {
+    int32 rssi_threshold = 136;
+  }
+  oneof _rssi_variance {
+    int32 rssi_variance = 137;
+  }
+  oneof _wdt_rest {
+    uint32 wdt_rest = 138;
+  }
+  oneof _grid_ovp_cnt {
+    uint32 grid_ovp_cnt = 139;
+  }
+  oneof _rst_unknow {
+    uint32 rst_unknow = 140;
+  }
+  oneof _rst_poweron {
+    uint32 rst_poweron = 141;
+  }
+  oneof _rst_ext {
+    uint32 rst_ext = 142;
+  }
+  oneof _rst_sw {
+    uint32 rst_sw = 143;
+  }
+  oneof _rst_panic {
+    uint32 rst_panic = 144;
+  }
+  oneof _rst_int_wdt {
+    uint32 rst_int_wdt = 145;
+  }
+  oneof _rst_task_wdt {
+    uint32 rst_task_wdt = 146;
+  }
+  oneof _rst_wdt {
+    uint32 rst_wdt = 147;
+  }
+  oneof _rst_deepsleep {
+    uint32 rst_deepsleep = 148;
+  }
+  oneof _rst_brownout {
+    uint32 rst_brownout = 149;
+  }
+  oneof _rst_sdio {
+    uint32 rst_sdio = 150;
+  }
+  oneof _event_info {
+    .event_burial_point event_info = 151;
+  }
+  oneof _heartbeat_type2_frequency {
+    uint32 heartbeat_type2_frequency = 152;
+  }
+  oneof _utc_time {
+    uint32 utc_time = 153;
+  }
+  oneof _time_zone {
+    int32 time_zone = 154;
+  }
+  oneof _dst_time {
+    int32 dst_time = 155;
+  }
+}
+
+message psdr_heartbeat {
+  optional uint32 inv_err_code = 1;
+  optional uint32 inv_warn_code = 3;
+  optional uint32 pv1_err_code = 2;
+  optional uint32 pv1_warn_code = 4;
+  optional uint32 pv2_err_code = 5;
+  optional uint32 pv2_warning_code = 6;
+  optional uint32 bat_err_code = 7;
+  optional uint32 bat_warning_code = 8;
+  optional uint32 llc_err_code = 9;
+  optional uint32 llc_warning_code = 10;
+  optional uint32 pv1_statue = 11;
+  optional uint32 pv2_statue = 12;
+  optional uint32 bat_statue = 13;
+  optional uint32 llc_statue = 14;
+  optional uint32 inv_statue = 15;
+  optional int32 pv1_input_volt = 16;
+  optional int32 pv1_vol_in_tag = 17;
+  optional int32 pv1_input_cur = 18;
+  optional int32 pv1_input_watts = 19;
+  optional int32 pv1_temp = 20;
+  optional int32 pv2_input_volt = 21;
+  optional int32 pv2_vol_in_tag = 22;
+  optional int32 pv2_input_cur = 23;
+  optional int32 pv2_input_watts = 24;
+  optional int32 pv2_temp = 25;
+  optional int32 bat_input_volt = 26;
+  optional int32 bat_op_volt = 27;
+  optional int32 bat_input_cur = 28;
+  optional int32 bat_input_watts = 29;
+  optional int32 bat_temp = 30;
+  optional uint32 bat_soc = 31;
+  optional int32 llc_input_volt = 32;
+  optional int32 llc_op_volt = 33;
+  optional int32 llc_temp = 34;
+  optional int32 inv_input_volt = 35;
+  optional int32 inv_op_volt = 36;
+  optional int32 inv_output_cur = 37;
+  optional int32 inv_output_watts = 38;
+  optional int32 inv_temp = 39;
+  optional int32 inv_freq = 40;
+  optional int32 inv_dc_cur = 41;
+  optional int32 bp_type = 42;
+  optional int32 inv_relay_status = 43;
+  optional int32 pv1_relay_status = 44;
+  optional int32 pv2_relay_status = 45;
+  optional uint32 rated_power = 46;
+  optional uint32 chg_remain_time = 47;
+  optional uint32 dsg_remain_time = 48;
+}
+
+message psdr_config {
+  optional uint32 install_country = 1;
+  optional uint32 install_town = 2;
+  optional uint32 permanent_watts = 3;
+  optional uint32 dynamic_watts = 4;
+  optional uint32 supply_priority = 5;
+  optional uint32 lower_limit = 6;
+  optional uint32 upper_limit = 7;
+  optional uint32 inv_on_off = 8;
+  optional uint32 rtc_time = 9;
+  optional uint32 updata_flag = 10;
+  optional uint32 feed_protect = 11;
+  optional uint32 feed_termination = 12;
+}
+
+message grid_connection_pack {
+  optional uint32 fvolt_on_grid_high = 1;
+  optional uint32 fvolt_on_grid_low = 2;
+  optional uint32 fvolt_high1EE = 3;
+  optional uint32 fvolt_high2EE = 4;
+  optional uint32 fvolt_high3EE = 5;
+  optional uint32 fvolt_high4EE = 6;
+  optional uint32 fvolt_low1EE = 7;
+  optional uint32 fvolt_low2EE = 8;
+  optional uint32 fvolt_low3EE = 9;
+  optional uint32 fvolt_low4EE = 10;
+  optional uint32 volt_uwhigh_cut_time1EE = 11;
+  optional uint32 volt_uwhigh_cut_time2EE = 12;
+  optional uint32 volt_uwhigh_cut_time3EE = 13;
+  optional uint32 volt_uwhigh_cut_time4EE = 14;
+  optional uint32 volt_uwlow_cut_time1EE = 15;
+  optional uint32 volt_uwlow_cut_time2EE = 16;
+  optional uint32 volt_uwlow_cut_time3EE = 17;
+  optional uint32 volt_uwlow_cut_time4EE = 18;
+  optional uint32 ffreq_on_grid_high = 19;
+  optional uint32 ffreq_on_grid_low = 20;
+  optional uint32 ffreq_high1EE = 21;
+  optional uint32 ffreq_high2EE = 22;
+  optional uint32 ffreq_high3EE = 23;
+  optional uint32 ffreq_high4EE = 24;
+  optional uint32 ffreq_low1EE = 25;
+  optional uint32 ffreq_low2EE = 26;
+  optional uint32 ffreq_low3EE = 27;
+  optional uint32 ffreq_low4EE = 28;
+  optional uint32 freq_uwhigh_cut_time1EE = 29;
+  optional uint32 freq_uwhigh_cut_time2EE = 30;
+  optional uint32 freq_uwhigh_cut_time3EE = 31;
+  optional uint32 freq_uwhigh_cut_time4EE = 32;
+  optional uint32 freq_uwlow_cut_time1EE = 33;
+  optional uint32 freq_uwlow_cut_time2EE = 34;
+  optional uint32 freq_uwlow_cut_time3EE = 35;
+  optional uint32 freq_uwlow_cut_time4EE = 36;
+  optional uint32 uwpower_percent = 37;
+  optional uint32 uwac_volt_load_limit_enable = 38;
+  optional uint32 fac_volt_load_limit_pu_start = 39;
+  optional uint32 fac_volt_load_limit_pu_end = 40;
+  optional uint32 fac_volt_rated = 41;
+  optional uint32 uwfreq_derating_enable = 42;
+  optional uint32 uwfreq_derating_recover_speed = 43;
+  optional uint32 uwfreq_derating_slope = 44;
+  optional uint32 ffreq_derating_start_point = 45;
+  optional uint32 ffreq_derating_recover_point = 46;
+  optional uint32 uwfreq_add_power_enable = 47;
+  optional uint32 uwfreq_add_power_recover_speed = 48;
+  optional uint32 uwfreq_add_power_slope = 49;
+  optional uint32 ffreq_add_power_start_point = 50;
+  optional uint32 ffreq_add_power_recover_point = 51;
+  optional uint32 uwspeed_limit_enable = 52;
+  optional uint32 uwload_speed = 53;
+  optional uint32 uwreact_power_ctrl_way = 54;
+  optional int32 wpower_factor_command = 55;
+  optional int32 wreact_power_per = 56;
+  optional uint32 uwqu_high_start_point = 57;
+  optional uint32 uwqu_high_end_point = 58;
+  optional int32 wqu_react_power_per_hi = 59;
+  optional uint32 uwqu_low_start_point = 60;
+  optional uint32 uwqu_low_end_point = 61;
+  optional int32 wqu_react_power_per_lo = 62;
+}
+
+message permanent_watts_pack {
+  optional uint32 permanent_watts = 1;
+}
+
+message feed_protect_pack {
+  optional uint32 feed_protect = 1;
+}
+
+message feed_termination_pack {
+  optional uint32 feed_termination = 1;
+}
+
+message supply_priority_pack {
+  optional uint32 supply_priority = 1;
+}
+
+message bat_lower_pack {
+  optional uint32 lower_limit = 1;
+}
+
+message bat_upper_pack {
+  optional uint32 upper_limit = 1;
+}
+
+message inv_brightness_message {
+  optional uint32 brightness = 1;
+}
+
+message inverter_ack_message {
+  optional uint32 ack = 1;
+}
+
+message inv_power_item {
+  optional uint32 timestamp = 1;
+  optional sint32 timezone = 2;
+  optional uint32 inv_output_watt = 3;
+  optional uint32 plug_consume_power = 4;
+  optional int32 battry_power = 5;
+  optional uint32 pv1_output_power = 6;
+  optional uint32 pv2_output_power = 7;
+  optional uint32 inv_to_other_power = 8;
+  optional uint32 space_demand_power = 9;
+  optional uint32 inv_demand_power = 10;
+}
+
+message inv_power_pack {
+  optional uint32 sys_seq = 1;
+  repeated .inv_power_item sys_power_stream = 2;
+}
+
+message inv_power_pack_ack {
+  optional uint32 sys_seq = 1;
+}
+
+message psdr_heartbeat_type2 {
+  optional uint32 pv1_app_mppt_sta = 1;
+  optional uint32 pv1_ctrl_mppt_off_flag = 2;
+  optional uint32 pv2_app_mppt_sta = 3;
+  optional uint32 pv2_ctrl_mppt_off_flag = 4;
+  optional uint32 bat_system = 5;
+  optional uint32 bat_off_flag = 6;
+  optional uint32 upper_limit = 7;
+  optional uint32 lower_limit = 8;
+  optional uint32 llc_off_flag = 9;
+  optional uint32 ac_off_flag = 10;
+  optional uint32 ac_is_ok = 11;
+  optional uint32 permanent_watts = 12;
+  optional uint32 dynamic_watts = 13;
+  optional uint32 freact_power = 14;
+  optional int32 re_pwr_filt = 15;
+  optional int32 curr_ref = 16;
+  optional uint32 bms_req_chg_vol = 17;
+  optional uint32 bms_req_chg_amp = 18;
+  optional uint32 bms_mos_state = 19;
+  optional uint32 bms_error_code = 20;
+  optional uint32 uwload_limit_flag = 21;
+  optional uint32 fload_limit_out = 22;
+  optional uint32 inv_load_limit_flag = 23;
+  optional uint32 inv_output_load_limit = 24;
+  optional uint32 bat_load_limit_flag = 25;
+  optional uint32 bat_output_load_limit = 26;
+  optional uint32 pv_power_limit_ac_power = 27;
+  optional uint32 bat_error_inv_load_limit = 28;
+  optional uint32 anti_back_flow_flag = 29;
+  optional uint32 uwsoc_flag = 30;
+  optional uint32 uwlow_light_flag = 31;
+  optional uint32 ac_set_watts = 32;
+  optional float fiso_rxyz = 33;
+  optional uint32 grid_ovp_cnt = 34;
+  optional uint32 bat_bms_chg_ctl_cmd = 35;
+  optional uint32 bat_bms_dsg_ctl_cmd = 36;
+  optional uint32 bat_chg_disable_cond = 37;
+  optional uint32 bat_dsg_disable_cond = 38;
+  optional uint32 bat_sys_state = 39;
+  optional uint32 bat_chg_dsg_state = 40;
+  optional uint32 bat_chg_mos_state = 41;
+  optional uint32 bat_dsg_mos_state = 42;
+  optional uint32 bat_product_type = 43;
+  optional uint32 bat_product_detail = 44;
+  repeated uint32 resv = 45;
+}
+
+message psdr_heartbeat_type3 {
+  optional uint32 num = 1;
+  optional uint32 type = 2;
+  optional uint32 cell_id = 3;
+  optional uint32 err_code = 4;
+  optional uint32 sys_ver = 5;
+  optional uint32 soc = 6;
+  optional uint32 vol = 7;
+  optional int32 amp = 8;
+  optional int32 temp = 9;
+  optional uint32 open_bms_state = 10;
+  optional uint32 design_cap = 11;
+  optional uint32 remain_cap = 12;
+  optional uint32 full_cap = 13;
+  optional uint32 cycles = 14;
+  optional uint32 soh = 15;
+  optional uint32 max_cell_vol = 16;
+  optional uint32 min_cell_vol = 17;
+  optional int32 max_cell_temp = 18;
+  optional int32 min_cell_temp = 19;
+  optional int32 max_mos_temp = 20;
+  optional int32 min_mos_temp = 21;
+  optional uint32 bms_fault = 22;
+  optional uint32 bq_sys_stat_reg = 23;
+  optional uint32 tag_chg_amp = 24;
+  optional float f32_show_soc = 25;
+  optional uint32 input_watts = 26;
+  optional uint32 output_watts = 27;
+  optional uint32 remain_time = 28;
+  optional uint32 chg_state = 29;
+  optional uint32 chg_cmd = 30;
+  optional uint32 dsg_cmd = 31;
+  optional uint32 chg_vol = 32;
+  optional uint32 chg_amp = 33;
+  optional uint32 fan_level = 34;
+  optional uint32 max_charge_soc = 35;
+  optional uint32 bms_model = 36;
+  optional uint32 lcd_show_soc = 37;
+  optional uint32 open_ups_flag = 38;
+  optional uint32 bms_warning_state = 39;
+  optional uint32 chg_remain_time = 40;
+  optional uint32 dsg_remain_time = 41;
+  optional uint32 ems_is_normal_flag = 42;
+  optional float f32_lcd_show_soc = 43;
+  repeated uint32 bms_is_connt = 44;
+  optional uint32 max_available_num = 45;
+  optional uint32 open_bms_idx = 46;
+  optional uint32 para_vol_min = 47;
+  optional uint32 para_vol_max = 48;
+  optional uint32 min_dsg_soc = 49;
+  optional uint32 min_open_oil_eb_soc = 50;
+  optional uint32 max_close_oil_eb_soc = 51;
+}
+
+message inv_heartbeat_type2 {
+  oneof _pv1_app_mppt_sta {
+    uint32 pv1_app_mppt_sta = 1;
+    uint32 resv = 64;
+  }
+  oneof _pv1_ctrl_mppt_off_flag {
+    uint32 pv1_ctrl_mppt_off_flag = 2;
+  }
+  oneof _pv2_app_mppt_sta {
+    uint32 pv2_app_mppt_sta = 3;
+  }
+  oneof _pv2_ctrl_mppt_off_flag {
+    uint32 pv2_ctrl_mppt_off_flag = 4;
+  }
+  oneof _bat_system {
+    uint32 bat_system = 5;
+  }
+  oneof _bat_off_flag {
+    uint32 bat_off_flag = 6;
+  }
+  oneof _upper_limit {
+    uint32 upper_limit = 7;
+  }
+  oneof _lower_limit {
+    uint32 lower_limit = 8;
+  }
+  oneof _llc_off_flag {
+    uint32 llc_off_flag = 9;
+  }
+  oneof _ac_off_flag {
+    uint32 ac_off_flag = 10;
+  }
+  oneof _ac_is_ok {
+    uint32 ac_is_ok = 11;
+  }
+  oneof _permanent_watts {
+    uint32 permanent_watts = 12;
+  }
+  oneof _dynamic_watts {
+    uint32 dynamic_watts = 13;
+  }
+  oneof _freact_power {
+    uint32 freact_power = 14;
+  }
+  oneof _re_pwr_filt {
+    int32 re_pwr_filt = 15;
+  }
+  oneof _curr_ref {
+    int32 curr_ref = 16;
+  }
+  oneof _bms_req_chg_vol {
+    uint32 bms_req_chg_vol = 17;
+  }
+  oneof _bms_req_chg_amp {
+    uint32 bms_req_chg_amp = 18;
+  }
+  oneof _bms_mos_state {
+    uint32 bms_mos_state = 19;
+  }
+  oneof _bms_error_code {
+    uint32 bms_error_code = 20;
+  }
+  oneof _uwload_limit_flag {
+    uint32 uwload_limit_flag = 21;
+  }
+  oneof _fload_limit_out {
+    uint32 fload_limit_out = 22;
+  }
+  oneof _inv_load_limit_flag {
+    uint32 inv_load_limit_flag = 23;
+  }
+  oneof _inv_output_load_limit {
+    uint32 inv_output_load_limit = 24;
+  }
+  oneof _bat_load_limit_flag {
+    uint32 bat_load_limit_flag = 25;
+  }
+  oneof _bat_output_load_limit {
+    uint32 bat_output_load_limit = 26;
+  }
+  oneof _pv_power_limit_ac_power {
+    uint32 pv_power_limit_ac_power = 27;
+  }
+  oneof _bat_error_inv_load_limit {
+    uint32 bat_error_inv_load_limit = 28;
+  }
+  oneof _reset_reason {
+    uint32 reset_reason = 29;
+  }
+  oneof _rtc_reset_reason {
+    uint32 rtc_reset_reason = 30;
+  }
+  oneof _reset_count {
+    uint32 reset_count = 31;
+  }
+  oneof _run_time {
+    uint32 run_time = 32;
+  }
+  oneof _lan_state {
+    uint32 lan_state = 33;
+  }
+  oneof _stack_free {
+    uint32 stack_free = 34;
+  }
+  oneof _stack_min_free {
+    uint32 stack_min_free = 35;
+  }
+  oneof _mesh_id {
+    uint32 mesh_id = 36;
+  }
+  oneof _mesh_layel {
+    uint32 mesh_layel = 37;
+  }
+  oneof _self_mac {
+    uint32 self_mac = 38;
+  }
+  oneof _parent_mac {
+    uint32 parent_mac = 39;
+  }
+  oneof _ota_dl_err {
+    int32 ota_dl_err = 40;
+  }
+  oneof _ota_dl_tls_err {
+    int32 ota_dl_tls_err = 41;
+  }
+  oneof _sta_ip_addr {
+    int32 sta_ip_addr = 42;
+  }
+  oneof _gene_num {
+    int32 gene_num = 43;
+  }
+  oneof _cons_num {
+    int32 cons_num = 44;
+  }
+  oneof _gene_watt {
+    int32 gene_watt = 45;
+  }
+  oneof _cons_watt {
+    int32 cons_watt = 46;
+  }
+  oneof _wifi_err {
+    int32 wifi_err = 47;
+  }
+  oneof _wifi_err_time {
+    int32 wifi_err_time = 48;
+  }
+  oneof _mqtt_err {
+    int32 mqtt_err = 49;
+  }
+  oneof _mqtt_err_time {
+    int32 mqtt_err_time = 50;
+  }
+  oneof _ate_load_limit {
+    int32 ate_load_limit = 51;
+  }
+  oneof _parent_wifi_rssi {
+    int32 parent_wifi_rssi = 52;
+  }
+  oneof _insights_switch {
+    uint32 insights_switch = 53;
+  }
+  oneof _bat_bms_chg_ctl_cmd {
+    uint32 bat_bms_chg_ctl_cmd = 54;
+  }
+  oneof _bat_bms_dsg_ctl_cmd {
+    uint32 bat_bms_dsg_ctl_cmd = 55;
+  }
+  oneof _bat_chg_disable_cond {
+    uint32 bat_chg_disable_cond = 56;
+  }
+  oneof _bat_dsg_disable_cond {
+    uint32 bat_dsg_disable_cond = 57;
+  }
+  oneof _bat_sys_state {
+    uint32 bat_sys_state = 58;
+  }
+  oneof _bat_chg_dsg_state {
+    uint32 bat_chg_dsg_state = 59;
+  }
+  oneof _bat_chg_mos_state {
+    uint32 bat_chg_mos_state = 60;
+  }
+  oneof _bat_dsg_mos_state {
+    uint32 bat_dsg_mos_state = 61;
+  }
+  oneof _bat_product_type {
+    uint32 bat_product_type = 62;
+  }
+  oneof _bat_product_detail {
+    uint32 bat_product_detail = 63;
+  }
+  oneof _new_psdr_heartbeat {
+    .psdr_heartbeat_type3 new_psdr_heartbeat = 65;
+  }
+}
+
+message node_massage {
+  oneof _mac {
+    string sn = 1;
+    bytes mac = 2;
+  }
+}
+
+message mesh_child_node_info {
+  oneof _mesh_protocol {
+    uint32 topology_type = 1;
+    uint32 mesh_protocol = 2;
+    .node_massage sub_device_list = 6;
+  }
+  oneof _max_sub_device_num {
+    uint32 max_sub_device_num = 3;
+  }
+  oneof _parent_mac_id {
+    bytes parent_mac_id = 4;
+  }
+  oneof _mesh_id {
+    bytes mesh_id = 5;
+  }
+}
+
+message brightness_pack {
+  optional int32 brightness = 1;
+}
+
+message AC_max_watts_pack {
+  optional uint32 AC_set_watts = 1;
+  optional uint32 AC_max_watts = 2;
+}
+

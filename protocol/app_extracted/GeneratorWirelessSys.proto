@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+message IotGetOilList {
+  optional int32 rssi = 1;
+  optional string sn = 2;
+  optional .IotOilBindState oil_bind_state = 3;
+}
+
+message IotGetOilListAck {
+  repeated .IotGetOilList dev = 1;
+}
+
+message IotSetConnectOil {
+  optional int32 connect = 1;
+  optional string sn = 2;
+}
+
+message IotConnectOilAck {
+  optional int32 result = 1;
+}
+
+message IotMixConnStatus {
+  oneof _ble_lr_conn_status {
+    .IotBleLrConnState ble_lr_conn_status = 1;
+  }
+  oneof _ble_lr_auth_status {
+    .IotBleLrAuthState ble_lr_auth_status = 2;
+  }
+  oneof _ac_conn_status {
+    .IotAcConnState ac_conn_status = 3;
+  }
+}
+
+message IotGetOilInfo {
+  optional int32 is_connect = 1;
+  optional int32 rssi = 2;
+  optional string sn = 3;
+  optional .IotOilBindState oil_bind_state = 4;
+}
+
+message IotSetBindOil {
+  optional bool is_bind_oil = 1;
+}
+
+enum IotOilBindState {
+  OIL_NOT_BINDED = 0;
+  OIL_BINDED = 1;
+}
+
+enum IotBleLrConnState {
+  BLE_CONNECED = 0;
+  BLE_CONNECTING = 1;
+  BLE_CONNECT_FAILED = 2;
+}
+
+enum IotBleLrAuthState {
+  APP_AUTH_SUCCESS = 0;
+  DEFAULT_ERRO = 1;
+  OTA_UPGRADE_ERROR = 2;
+  APP_SECRET_KEY_LEN_ERROR = 3;
+  IOT_STATUS_ERROR = 4;
+  LOCAL_APP_KEY_READ_ERROR = 5;
+  APP_KEY_NOT_MATCHING = 6;
+  MAX_ERROR = 7;
+}
+
+enum IotAcConnState {
+  AC_CONNECTED = 0;
+  AC_DISCONECT = 1;
+}
+

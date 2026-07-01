@@ -1,0 +1,1954 @@
+syntax = "proto3";
+
+option java_package = "com.ecoflow.pd303.pbdata";
+message DevieEdevInfo {
+  oneof _type {
+    uint32 type = 1;
+    uint32 ch_num = 10;
+  }
+  oneof _ver {
+    uint32 ver = 2;
+  }
+  oneof _sn {
+    string sn = 3;
+  }
+  oneof _dev_sta {
+    .EDEV_STA dev_sta = 4;
+  }
+  oneof _max_rate_pwr {
+    int32 max_rate_pwr = 5;
+  }
+  oneof _min_rate_pwr {
+    int32 min_rate_pwr = 6;
+  }
+  oneof _cur_pwr {
+    float cur_pwr = 7;
+  }
+  oneof _cur_vol {
+    float cur_vol = 8;
+  }
+  oneof _cur_amp {
+    float cur_amp = 9;
+  }
+  oneof _max_allow_cur {
+    float max_allow_cur = 11;
+  }
+  oneof _min_allow_cur {
+    float min_allow_cur = 12;
+  }
+  oneof _ev_time_task {
+    .TimeTaskItemV2 ev_time_task = 13;
+  }
+  oneof _ev_follow_time_task {
+    .TimeTaskItemV2 ev_follow_time_task = 14;
+  }
+  oneof _is_enable {
+    uint32 is_enable = 20;
+  }
+  oneof _is_connect {
+    uint32 is_connect = 21;
+  }
+  oneof _hw_connect {
+    uint32 hw_connect = 22;
+  }
+  oneof _work_sta {
+    uint32 work_sta = 23;
+  }
+  oneof _err_code {
+    uint32 err_code = 24;
+  }
+}
+
+message RtcHalData {
+  optional uint32 week = 1;
+  optional uint32 sec = 2;
+  optional uint32 min = 3;
+  optional uint32 hour = 4;
+  optional uint32 day = 5;
+  optional uint32 month = 6;
+  optional uint32 year = 7;
+}
+
+message ModelInfo {
+  optional string sn = 1;
+}
+
+message ErrCode {
+  repeated bytes err_code = 1;
+}
+
+message uploadMark {
+  optional uint32 time = 1;
+  optional uint32 index = 2;
+}
+
+message TimeTaskItemV2 {
+  optional uint32 task_index = 1;
+  optional bool is_cfg = 2;
+  optional bool is_enable = 3;
+  optional uint32 conflict_flag = 4;
+  optional .TIME_TASK_MODE time_mode = 5;
+  optional uint32 time_param = 6;
+  optional uint32 time_table = 7;
+  optional .TIME_TASK_TYPE task_type = 8;
+  optional uint32 task_param = 9;
+  repeated .TimeTaskParamDetail task_param_detail = 10;
+}
+
+message TimeTaskItemV2List {
+  repeated .TimeTaskItemV2 time_task = 1;
+}
+
+message TimeTaskParamDetail {
+  optional .TIME_TASK_DETAIL_TYPE type = 1;
+  optional float val = 2;
+}
+
+message BackupEnergyTimeInfo {
+  optional uint32 charge_time = 1;
+  optional uint32 discharge_time = 2;
+}
+
+message MasterTimeInfo {
+  optional float grid_watt = 1;
+  optional sint32 sys_timezone = 2;
+  optional uint32 time_type = 3;
+  optional string timezone_id = 4;
+}
+
+message LoadTimeInfo {
+  repeated float hall1_watt = 1;
+  repeated float hall1_curr = 2;
+}
+
+message BackupTimeInfo {
+  repeated float ch_watt = 1;
+  optional uint32 backup_discharge_time = 2;
+  optional uint32 backup_charge_time = 3;
+  optional .BackupEnergyTimeInfo energy_1 = 20;
+  optional .BackupEnergyTimeInfo energy_2 = 21;
+  optional .BackupEnergyTimeInfo energy_3 = 22;
+}
+
+message WattTimeInfo {
+  optional float grid_watt = 1;
+  repeated float ch_watt = 11;
+  repeated float bk_ch_pv_watt = 12;
+  optional float ch_pv_watt = 20;
+  optional float all_hall_watt = 21;
+  optional float ev_watt = 22;
+  repeated float grid_cur = 30;
+}
+
+message MasterVerTimeInfo {
+  optional uint32 app_main_ver = 1;
+  optional uint32 app_sub_ver = 2;
+  optional uint32 app_dbg_ver = 3;
+  optional uint32 app_test_ver = 4;
+}
+
+message MasterIncreInfo {
+  oneof _errcode {
+    .ErrCode errcode = 1;
+  }
+  oneof _grid_sta {
+    uint32 grid_sta = 2;
+  }
+  oneof _grid_vol {
+    uint32 grid_vol = 3;
+  }
+  oneof _master_rly1_cnt {
+    uint32 master_rly1_cnt = 4;
+  }
+  oneof _master_rly2_cnt {
+    uint32 master_rly2_cnt = 5;
+  }
+  oneof _master_rly3_cnt {
+    uint32 master_rly3_cnt = 6;
+  }
+  oneof _master_rly4_cnt {
+    uint32 master_rly4_cnt = 7;
+  }
+  oneof _master_rly_err_flg {
+    uint32 master_rly_err_flg = 16;
+  }
+  oneof _backup_vol_L1_safe_data {
+    float backup_vol_L1_safe_data = 30;
+  }
+  oneof _backup_vol_L2_safe_data {
+    float backup_vol_L2_safe_data = 31;
+  }
+  oneof _backup_phase_diff_safe_data {
+    uint32 backup_phase_diff_safe_data = 32;
+  }
+  oneof _load_vol_L1_safe_data {
+    float load_vol_L1_safe_data = 33;
+  }
+  oneof _load_vol_L2_safe_data {
+    float load_vol_L2_safe_data = 34;
+  }
+  oneof _load_phase_diff_safe_data {
+    uint32 load_phase_diff_safe_data = 35;
+  }
+  oneof _master_vol_L1_safe_data {
+    float master_vol_L1_safe_data = 36;
+  }
+  oneof _master_vol_L2_safe_data {
+    float master_vol_L2_safe_data = 37;
+  }
+  oneof _master_phase_diff_safe_data {
+    uint32 master_phase_diff_safe_data = 38;
+  }
+  oneof _sync_type {
+    uint32 sync_type = 50;
+  }
+  oneof _sync_sta {
+    uint32 sync_sta = 51;
+  }
+  oneof _sync_grid_phase_type {
+    uint32 sync_grid_phase_type = 52;
+  }
+  oneof _sync_back_phase_type {
+    uint32 sync_back_phase_type = 53;
+  }
+  oneof _sync_rate_l1 {
+    uint32 sync_rate_l1 = 54;
+  }
+  oneof _sync_rate_l2 {
+    uint32 sync_rate_l2 = 55;
+  }
+  oneof _tar_phase {
+    int32 tar_phase = 56;
+  }
+  oneof _tar_side {
+    uint32 tar_side = 57;
+  }
+  oneof _master_ver_info {
+    .MasterVerTimeInfo master_ver_info = 100;
+  }
+}
+
+message LoadSplitPhaseCfg {
+  oneof _link_mark {
+    bool link_mark = 1;
+  }
+  oneof _link_ch {
+    uint32 link_ch = 2;
+  }
+}
+
+message LoadChInfo {
+  oneof _set_amp {
+    .LoadSplitPhaseCfg splitphase = 1;
+    uint32 set_amp = 2;
+  }
+  oneof _icon_num {
+    uint32 icon_num = 3;
+  }
+  oneof _ch_name {
+    string ch_name = 4;
+  }
+  oneof _load_rly_cnt {
+    uint32 load_rly_cnt = 5;
+  }
+  oneof _history_ch_watt_max {
+    float history_ch_watt_max = 6;
+  }
+  oneof _load_sta {
+    .LOAD_CH_STA load_sta = 7;
+  }
+  oneof _ctrl_mode {
+    .CTRL_MODE ctrl_mode = 8;
+  }
+}
+
+message LoadChSta {
+  oneof _load_sta {
+    .LOAD_CH_STA load_sta = 1;
+  }
+  oneof _ctrl_mode {
+    .CTRL_MODE ctrl_mode = 2;
+  }
+  oneof _notice_set_time {
+    uint32 notice_set_time = 3;
+  }
+  oneof _notice_enble {
+    bool notice_enble = 4;
+  }
+  oneof _notice_action {
+    uint32 notice_action = 5;
+  }
+  oneof _load_rly_cnt {
+    uint32 load_rly_cnt = 6;
+  }
+  oneof _history_ch_watt_max {
+    float history_ch_watt_max = 7;
+  }
+  oneof _load_ch_switch_cause {
+    uint32 load_ch_switch_cause = 8;
+  }
+}
+
+message HallIncreInfo {
+  oneof _errcode {
+    .ErrCode errcode = 1;
+    .LoadChInfo ch1_info = 30;
+    .LoadChInfo ch2_info = 31;
+    .LoadChInfo ch3_info = 32;
+    .LoadChInfo ch4_info = 33;
+    .LoadChInfo ch5_info = 34;
+    .LoadChInfo ch6_info = 35;
+    .LoadChInfo ch7_info = 36;
+    .LoadChInfo ch8_info = 37;
+    .LoadChInfo ch9_info = 38;
+    .LoadChInfo ch10_info = 39;
+    .LoadChInfo ch11_info = 40;
+    .LoadChInfo ch12_info = 41;
+    .LoadChSta ch1_sta = 90;
+    .LoadChSta ch2_sta = 91;
+    .LoadChSta ch3_sta = 92;
+    .LoadChSta ch4_sta = 93;
+    .LoadChSta ch5_sta = 94;
+    .LoadChSta ch6_sta = 95;
+    .LoadChSta ch7_sta = 96;
+    .LoadChSta ch8_sta = 97;
+    .LoadChSta ch9_sta = 98;
+    .LoadChSta ch10_sta = 99;
+    .LoadChSta ch11_sta = 100;
+    .LoadChSta ch12_sta = 101;
+  }
+  oneof _model_info {
+    .ModelInfo model_info = 2;
+  }
+  oneof _mid_prority_discharge_time {
+    uint32 mid_prority_discharge_time = 3;
+  }
+  oneof _high_prority_discharge_time {
+    uint32 high_prority_discharge_time = 4;
+  }
+}
+
+message LoadIncreInfo {
+  optional .HallIncreInfo hall1_incre_info = 1;
+}
+
+message BackupEnergyIncreDevInfo {
+  optional .ModelInfo model_info = 1;
+  optional uint32 type = 2;
+  optional uint32 full_cap = 3;
+  optional float rate_power = 4;
+}
+
+message DprsOverloadCfg {
+  optional float overload = 1;
+  optional float overload_time = 2;
+}
+
+message DprsOverLoadTable {
+  optional float acp_hw_limit_max_amp = 1;
+  optional float max_hw_limit_amp = 2;
+  optional float max_hw_limit_w = 3;
+  optional uint32 level_num = 4;
+  repeated .DprsOverloadCfg level_pro = 5;
+  repeated uint32 rsv = 6;
+}
+
+message BackupEnergyIncreInfo {
+  oneof _dev_info {
+    .BackupEnergyIncreDevInfo dev_info = 1;
+  }
+  oneof _is_enable {
+    uint32 is_enable = 2;
+  }
+  oneof _is_connect {
+    uint32 is_connect = 3;
+  }
+  oneof _is_ac_open {
+    uint32 is_ac_open = 4;
+  }
+  oneof _is_power_output {
+    uint32 is_power_output = 5;
+  }
+  oneof _is_grid_charge {
+    uint32 is_grid_charge = 6;
+  }
+  oneof _is_mppt_charge {
+    uint32 is_mppt_charge = 7;
+  }
+  oneof _battery_percentage {
+    uint32 battery_percentage = 8;
+  }
+  oneof _output_power {
+    float output_power = 9;
+  }
+  oneof _oil_pack_num {
+    uint32 oil_pack_num = 10;
+  }
+  oneof _mult_pack_num {
+    uint32 mult_pack_num = 11;
+  }
+  oneof _ems_chg_flag {
+    uint32 ems_chg_flag = 12;
+  }
+  oneof _hw_connect {
+    uint32 hw_connect = 13;
+  }
+  oneof _ems_bat_temp {
+    uint32 ems_bat_temp = 14;
+  }
+  oneof _lcd_input_watts {
+    uint32 lcd_input_watts = 15;
+  }
+  oneof _pv_charge_watts {
+    uint32 pv_charge_watts = 16;
+  }
+  oneof _pv_low_charge_watts {
+    uint32 pv_low_charge_watts = 17;
+  }
+  oneof _pv_height_charge_watts {
+    uint32 pv_height_charge_watts = 18;
+  }
+  oneof _error_code_num {
+    uint32 error_code_num = 19;
+  }
+  oneof _charge_limit {
+    uint32 charge_limit = 20;
+  }
+  oneof _supported_phases {
+    uint32 supported_phases = 21;
+  }
+  oneof _pwr_l1 {
+    uint32 pwr_l1 = 22;
+  }
+  oneof _pwr_l2 {
+    uint32 pwr_l2 = 23;
+  }
+  oneof _cur_l1 {
+    uint32 cur_l1 = 24;
+  }
+  oneof _cur_l2 {
+    uint32 cur_l2 = 25;
+  }
+  oneof _chg_dsg_disable_flag {
+    uint32 chg_dsg_disable_flag = 26;
+  }
+  oneof _dprs_overload_table {
+    .DprsOverLoadTable dprs_overload_table = 27;
+  }
+  oneof _dpu_upgrade_flag {
+    .DPU_UPGRADE_STA dpu_upgrade_flag = 28;
+  }
+  oneof _pf_l1 {
+    float pf_l1 = 29;
+  }
+  oneof _pf_l2 {
+    float pf_l2 = 30;
+  }
+}
+
+message BackupChannelInfo {
+  oneof _backup_is_ready {
+    bool backup_is_ready = 1;
+  }
+  oneof _ctrl_sta {
+    .BACKUP_CH_STA ctrl_sta = 2;
+  }
+  oneof _force_charge_sta {
+    .FORCE_CHARGE_STA force_charge_sta = 3;
+  }
+  oneof _backup_rly1_cnt {
+    uint32 backup_rly1_cnt = 4;
+  }
+  oneof _backup_rly2_cnt {
+    uint32 backup_rly2_cnt = 5;
+  }
+  oneof _wake_up_charge_sta {
+    uint32 wake_up_charge_sta = 6;
+  }
+  oneof _energy_5p8_type {
+    uint32 energy_5p8_type = 7;
+  }
+}
+
+message ProBackupEnergyIncreInfo {
+  oneof _model_info {
+    .ModelInfo model_info = 1;
+  }
+  oneof _is_connect {
+    uint32 is_connect = 2;
+  }
+  oneof _battery_soc {
+    uint32 battery_soc = 3;
+  }
+  oneof _full_cap {
+    uint32 full_cap = 4;
+  }
+  oneof _rate_power {
+    float rate_power = 5;
+  }
+  oneof _is_ac_open {
+    uint32 is_ac_open = 6;
+  }
+  oneof _output_power {
+    float output_power = 7;
+  }
+  oneof _ems_bat_temp {
+    uint32 ems_bat_temp = 8;
+  }
+  oneof _lcd_input_watts {
+    uint32 lcd_input_watts = 9;
+  }
+  oneof _pv_insert_state {
+    uint32 pv_insert_state = 10;
+  }
+  oneof _pv_low_charge_watts {
+    uint32 pv_low_charge_watts = 11;
+  }
+  oneof _charge_time {
+    uint32 charge_time = 12;
+  }
+  oneof _discharge_time {
+    uint32 discharge_time = 13;
+  }
+  oneof _error_code_num {
+    uint32 error_code_num = 14;
+  }
+  oneof _chg_dsg_disable_flag {
+    uint32 chg_dsg_disable_flag = 15;
+  }
+}
+
+message BackupIncreInfo {
+  oneof _errcode {
+    .ErrCode errcode = 1;
+    .BackupChannelInfo ch1_info = 60;
+    .BackupChannelInfo ch2_info = 61;
+    .BackupChannelInfo ch3_info = 62;
+    .BackupEnergyIncreInfo Energy1_info = 80;
+    .BackupEnergyIncreInfo Energy2_info = 81;
+    .BackupEnergyIncreInfo Energy3_info = 82;
+    .ProBackupEnergyIncreInfo Delta_pro1_info = 90;
+    .ProBackupEnergyIncreInfo Delta_pro2_info = 91;
+    .DevieEdevInfo edev1_info = 100;
+    .DevieEdevInfo edev2_info = 101;
+    .DevieEdevInfo edev3_info = 102;
+  }
+  oneof _backup_full_cap {
+    uint32 backup_full_cap = 2;
+  }
+  oneof _backup_bat_per {
+    uint32 backup_bat_per = 3;
+  }
+  oneof _backup_discharge_rmain_bat_cap {
+    float backup_discharge_rmain_bat_cap = 4;
+  }
+  oneof _cur_discharge_soc {
+    float cur_discharge_soc = 5;
+  }
+  oneof _backup_box_type {
+    uint32 backup_box_type = 6;
+  }
+}
+
+message StrategyChInfo {
+  optional bool load_is_enable = 1;
+  optional uint32 load_priority = 2;
+  optional uint32 load_priority_type = 3;
+}
+
+message EmergencyStrategy {
+  optional uint32 is_cfg = 1;
+  optional uint32 backup_mode = 2;
+  optional uint32 overload_mode = 3;
+  optional uint32 mid_priority_ch_discharge_low = 4;
+  repeated .StrategyChInfo hall1_ch_info = 5;
+  optional bool is_enable = 7;
+}
+
+message TimeRangeStrategy {
+  optional bool is_cfg = 1;
+  optional bool is_enable = 2;
+  optional .STRATEGY_TIME_MODE time_mode = 3;
+  optional uint32 time_data = 4;
+  optional .RtcHalData start_time = 5;
+  optional .RtcHalData stop_time = 6;
+}
+
+message TimeScaleSta {
+  repeated bytes sta = 1;
+}
+
+message TimeTaskComCfg {
+  optional bool is_cfg = 1;
+  optional bool is_enable = 2;
+  optional .TIME_TASK_TYPE_LIST type = 3;
+  optional .RtcHalData set_time = 4;
+  optional .TimeRangeStrategy time_range = 5;
+  optional .TimeScaleSta time_scale = 6;
+}
+
+message BackupChargeCfg {
+  optional bool is_allow = 1;
+  optional uint32 charge_watt = 2;
+  optional uint32 low_soc = 3;
+  optional uint32 hight_soc = 4;
+  optional uint32 backup_reserve_enable = 5;
+  optional uint32 backup_reserve_soc = 6;
+}
+
+message BackupEvCtrlInfo {
+  oneof _ch_ctrl {
+    .EV_CHG_CTRL ch_ctrl = 1;
+  }
+  oneof _cfg_cur {
+    uint32 cfg_cur = 2;
+  }
+  oneof _cfg_ev_mode {
+    .EDEV_MODE cfg_ev_mode = 3;
+  }
+  oneof _ev_force_chg_is_allow {
+    .EV_CHG_CTRL ev_force_chg_is_allow = 4;
+  }
+  oneof _charge_suspend_reason {
+    uint32 charge_suspend_reason = 5;
+  }
+}
+
+message BackupDischargeCfg {
+  optional bool is_allow = 1;
+  optional uint32 discharge_watt = 2;
+  optional uint32 low_soc = 3;
+  optional uint32 backup_soc = 4;
+}
+
+message ChargeTimeCfg {
+  optional uint32 ch_charge_watt = 1;
+  optional uint32 low_battery = 2;
+  optional uint32 hight_battery = 3;
+  repeated .StrategyChInfo backup_ch_info = 4;
+}
+
+message DischargeTimeCfg {
+  optional uint32 mid_priority_ch_discharge_low = 1;
+  repeated .StrategyChInfo hall1_ch_info = 2;
+}
+
+message TimeTaskCfg {
+  oneof type {
+    .TimeTaskComCfg com_cfg = 1;
+    .ChargeTimeCfg charge_cfg = 2;
+    .DischargeTimeCfg discharge_cfg = 3;
+  }
+}
+
+message ProtoTime {
+  oneof _master_info {
+    .MasterTimeInfo master_info = 1;
+  }
+  oneof _load_info {
+    .LoadTimeInfo load_info = 2;
+  }
+  oneof _backup_info {
+    .BackupTimeInfo backup_info = 3;
+  }
+  oneof _watt_info {
+    .WattTimeInfo watt_info = 4;
+  }
+  oneof _master_ver_info {
+    .MasterVerTimeInfo master_ver_info = 5;
+  }
+  oneof _upload_mark {
+    .uploadMark upload_mark = 200;
+  }
+}
+
+message SysEventRecordItem {
+  oneof _sys_ms {
+    uint32 sys_ms = 1;
+  }
+  oneof _timestamp {
+    uint32 timestamp = 2;
+  }
+  oneof _event_no {
+    uint32 event_no = 3;
+  }
+  oneof _dur_time {
+    uint32 dur_time = 4;
+  }
+}
+
+message SysEventRecordReport {
+  oneof _event_seq {
+    uint32 event_seq = 1;
+    .SysEventRecordItem event_report = 2;
+  }
+}
+
+message SysEventInfoReportAck {
+  oneof _event_seq {
+    uint32 event_seq = 1;
+  }
+  oneof _event_item_num {
+    uint32 event_item_num = 2;
+  }
+}
+
+message TouData {
+  repeated bytes tou_char_dischar_data = 1;
+}
+
+message ProtoPushAndSet {
+  oneof _grid_vol {
+    uint32 grid_vol = 1;
+    .BackupIncreInfo backup_incre_info = 80;
+    .LoadIncreInfo load_incre_info = 81;
+    .MasterIncreInfo master_incre_info = 82;
+  }
+  oneof _grid_freq {
+    uint32 grid_freq = 2;
+  }
+  oneof _product_tpye {
+    .PRODUCT_TYPE product_tpye = 3;
+  }
+  oneof _eps_mode_info {
+    bool eps_mode_info = 5;
+  }
+  oneof _foce_charge_hight {
+    uint32 foce_charge_hight = 6;
+  }
+  oneof _charge_watt_power {
+    uint32 charge_watt_power = 7;
+  }
+  oneof _disc_lower {
+    uint32 disc_lower = 8;
+  }
+  oneof _power_sta {
+    .POWER_STA power_sta = 9;
+  }
+  oneof _master_cur {
+    uint32 master_cur = 10;
+  }
+  oneof _is_set_oil_engine {
+    bool is_set_oil_engine = 11;
+  }
+  oneof _oil_engine_watt {
+    uint32 oil_engine_watt = 12;
+  }
+  oneof _is_get_cfg_flag {
+    bool is_get_cfg_flag = 14;
+  }
+  oneof _has_config_done {
+    bool has_config_done = 15;
+  }
+  oneof _is_area_err {
+    bool is_area_err = 16;
+  }
+  oneof _area {
+    string area = 17;
+  }
+  oneof _ch1_force_charge {
+    .FORCE_CHARGE_STA ch1_force_charge = 18;
+  }
+  oneof _ch2_force_charge {
+    .FORCE_CHARGE_STA ch2_force_charge = 19;
+  }
+  oneof _ch3_force_charge {
+    .FORCE_CHARGE_STA ch3_force_charge = 20;
+  }
+  oneof _storm_is_enable {
+    bool storm_is_enable = 21;
+  }
+  oneof _storm_end_timestamp {
+    uint32 storm_end_timestamp = 22;
+  }
+  oneof _in_storm_mode {
+    bool in_storm_mode = 23;
+  }
+  oneof _ch1_enable_set {
+    uint32 ch1_enable_set = 24;
+  }
+  oneof _ch2_enable_set {
+    uint32 ch2_enable_set = 25;
+  }
+  oneof _ch3_enable_set {
+    uint32 ch3_enable_set = 26;
+  }
+  oneof _oil_engine_to_back_charge_persent {
+    uint32 oil_engine_to_back_charge_persent = 27;
+  }
+  oneof _clear_ntc_over_temp_err {
+    uint32 clear_ntc_over_temp_err = 28;
+  }
+  oneof _LoadStrategyCfg {
+    .EmergencyStrategy LoadStrategyCfg = 30;
+  }
+  oneof _TimeTaskCfg_1 {
+    .TimeTaskCfg TimeTaskCfg_1 = 31;
+  }
+  oneof _TimeTaskCfg_2 {
+    .TimeTaskCfg TimeTaskCfg_2 = 32;
+  }
+  oneof _TimeTaskCfg_3 {
+    .TimeTaskCfg TimeTaskCfg_3 = 33;
+  }
+  oneof _TimeTaskCfg_4 {
+    .TimeTaskCfg TimeTaskCfg_4 = 34;
+  }
+  oneof _TimeTaskCfg_5 {
+    .TimeTaskCfg TimeTaskCfg_5 = 35;
+  }
+  oneof _TimeTaskCfg_6 {
+    .TimeTaskCfg TimeTaskCfg_6 = 36;
+  }
+  oneof _TimeTaskCfg_7 {
+    .TimeTaskCfg TimeTaskCfg_7 = 37;
+  }
+  oneof _TimeTaskCfg_8 {
+    .TimeTaskCfg TimeTaskCfg_8 = 38;
+  }
+  oneof _TimeTaskCfg_9 {
+    .TimeTaskCfg TimeTaskCfg_9 = 39;
+  }
+  oneof _TimeTaskCfg_10 {
+    .TimeTaskCfg TimeTaskCfg_10 = 40;
+  }
+  oneof _ntc_over_temp_err {
+    uint32 ntc_over_temp_err = 41;
+  }
+  oneof _time_task_cnt {
+    uint32 time_task_cnt = 42;
+  }
+  oneof _smart_backup_mode {
+    uint32 smart_backup_mode = 61;
+  }
+  oneof _backup_reserve_enable {
+    uint32 backup_reserve_enable = 62;
+  }
+  oneof _backup_reserve_soc {
+    uint32 backup_reserve_soc = 63;
+  }
+  oneof _localTime {
+    uint32 localTime = 64;
+  }
+  oneof _toudata {
+    .TouData toudata = 65;
+  }
+  oneof _time_zone {
+    float time_zone = 66;
+  }
+  oneof _solar_backup_reserve_soc {
+    uint32 solar_backup_reserve_soc = 67;
+  }
+  oneof _oil_type {
+    uint32 oil_type = 70;
+  }
+  oneof _oil_max_output_watt {
+    uint32 oil_max_output_watt = 71;
+  }
+  oneof _storm_request_flag {
+    uint32 storm_request_flag = 90;
+  }
+  oneof _storm_cur_time_stop_flag {
+    uint32 storm_cur_time_stop_flag = 91;
+  }
+  oneof _sys_cur_running_state {
+    uint32 sys_cur_running_state = 92;
+  }
+  oneof _rly1_real_sta {
+    uint32 rly1_real_sta = 93;
+  }
+  oneof _rly2_real_sta {
+    uint32 rly2_real_sta = 94;
+  }
+  oneof _rly3_real_sta {
+    uint32 rly3_real_sta = 95;
+  }
+  oneof _rly4_real_sta {
+    uint32 rly4_real_sta = 96;
+  }
+  oneof _cur_running_strategy {
+    uint32 cur_running_strategy = 97;
+  }
+  oneof _reason_of_stop_dischar {
+    uint32 reason_of_stop_dischar = 98;
+  }
+  oneof _reason_os_stop_charge {
+    uint32 reason_os_stop_charge = 99;
+  }
+  oneof _inlet_box_current {
+    uint32 inlet_box_current = 100;
+  }
+  oneof _reason_of_stop_dischar_ack {
+    uint32 reason_of_stop_dischar_ack = 101;
+  }
+  oneof _reason_os_stop_charge_ack {
+    uint32 reason_os_stop_charge_ack = 102;
+  }
+  oneof _reconfig_flag {
+    uint32 reconfig_flag = 103;
+  }
+  oneof _phase_sub_value {
+    uint32 phase_sub_value = 104;
+  }
+  oneof _req_clear_data {
+    uint32 req_clear_data = 110;
+  }
+  oneof _ack_clear_data {
+    uint32 ack_clear_data = 111;
+  }
+  oneof _clear_data_fail_sta {
+    uint32 clear_data_fail_sta = 112;
+  }
+  oneof _upload_mark {
+    .uploadMark upload_mark = 200;
+  }
+}
+
+message BackupProtoTime {
+  oneof _backup_info {
+    .BackupTimeInfo backup_info = 1;
+  }
+}
+
+message LoadSafeDataTime {
+  optional float load_vol_L1_time = 1;
+  optional float load_vol_L2_time = 2;
+  optional uint32 load_phase_diff_time = 3;
+}
+
+message LoadProtoTime {
+  oneof _load_info {
+    .LoadTimeInfo load_info = 1;
+  }
+  oneof _load_safe_time {
+    .LoadSafeDataTime load_safe_time = 2;
+  }
+}
+
+message ConfigWrite {
+  oneof _cfg_ev_chg_amp_max {
+    uint32 cfg_ev_chg_amp_max = 35;
+  }
+  oneof _cfg_ev_chg_mode {
+    .EV_CHG_MODE cfg_ev_chg_mode = 36;
+  }
+  oneof _cfg_ev_chg_soc_min {
+    uint32 cfg_ev_chg_soc_min = 37;
+  }
+  oneof _cfg_ev_chg_manual_ctrl {
+    uint32 cfg_ev_chg_manual_ctrl = 38;
+  }
+  oneof _cfg_ev_eco_mode {
+    .ECO_MODE cfg_ev_eco_mode = 39;
+  }
+  oneof _cfg_display_property_full_upload_period {
+    int32 cfg_display_property_full_upload_period = 67;
+  }
+  oneof _cfg_display_property_incremental_upload_period {
+    int32 cfg_display_property_incremental_upload_period = 68;
+  }
+  oneof _cfg_runtime_property_full_upload_period {
+    int32 cfg_runtime_property_full_upload_period = 69;
+  }
+  oneof _cfg_runtime_property_incremental_upload_period {
+    int32 cfg_runtime_property_incremental_upload_period = 70;
+  }
+  oneof _active_display_property_full_upload {
+    bool active_display_property_full_upload = 71;
+  }
+  oneof _active_runtime_property_full_upload {
+    bool active_runtime_property_full_upload = 72;
+  }
+  oneof _cfg_time_task_v2_item {
+    .TimeTaskItemV2 cfg_time_task_v2_item = 127;
+  }
+  oneof _active_selected_time_task_v2 {
+    uint32 active_selected_time_task_v2 = 128;
+  }
+}
+
+message ConfigWriteAck {
+  oneof _cfg_display_property_full_upload_period {
+    uint32 action_id = 1;
+    bool config_ok = 2;
+    int32 cfg_display_property_full_upload_period = 67;
+  }
+  oneof _cfg_display_property_incremental_upload_period {
+    int32 cfg_display_property_incremental_upload_period = 68;
+  }
+  oneof _cfg_runtime_property_full_upload_period {
+    int32 cfg_runtime_property_full_upload_period = 69;
+  }
+  oneof _cfg_runtime_property_incremental_upload_period {
+    int32 cfg_runtime_property_incremental_upload_period = 70;
+  }
+  oneof _active_display_property_full_upload {
+    bool active_display_property_full_upload = 71;
+  }
+  oneof _active_runtime_property_full_upload {
+    bool active_runtime_property_full_upload = 72;
+  }
+  oneof _cfg_time_task_v2_item {
+    .TimeTaskItemV2 cfg_time_task_v2_item = 127;
+  }
+  oneof _active_selected_time_task_v2 {
+    uint32 active_selected_time_task_v2 = 128;
+  }
+}
+
+message LoadHeartBeatTime {
+  oneof _time_stamp {
+    uint32 time_stamp = 1;
+  }
+}
+
+message BackHeartTime {
+  oneof _time_stamp {
+    uint32 time_stamp = 1;
+  }
+}
+
+message MasterToBackHeartBeatTime {
+  oneof _time_stamp {
+    uint32 time_stamp = 1;
+  }
+  oneof _grid_status {
+    .GRID_STATUS grid_status = 2;
+  }
+  oneof _error_state {
+    uint32 error_state = 3;
+  }
+  oneof _phase_sub_value {
+    uint32 phase_sub_value = 4;
+  }
+}
+
+message MasterToLoadHeartTime {
+  oneof _time_stamp {
+    uint32 time_stamp = 1;
+  }
+}
+
+message MasterToBackProtoPushAndSet {
+  oneof _grid_vol {
+    uint32 grid_vol = 1;
+    .BackupEvCtrlInfo ch1_ev_ctrl = 17;
+    .BackupEvCtrlInfo ch2_ev_ctrl = 18;
+    .BackupEvCtrlInfo ch3_ev_ctrl = 19;
+  }
+  oneof _grid_freq {
+    uint32 grid_freq = 2;
+  }
+  oneof _stop_key_status {
+    bool stop_key_status = 3;
+  }
+  oneof _grid_status {
+    .GRID_STATUS grid_status = 4;
+  }
+  oneof _is_area_err {
+    bool is_area_err = 5;
+  }
+  oneof _master_to_back_time_stamp {
+    uint32 master_to_back_time_stamp = 6;
+  }
+  oneof _is_get_backup_info {
+    bool is_get_backup_info = 7;
+  }
+  oneof _open_door_flag {
+    uint32 open_door_flag = 8;
+  }
+  oneof _overall_err_sta {
+    uint32 overall_err_sta = 9;
+  }
+  oneof _ch1_charge_cfg {
+    .BackupChargeCfg ch1_charge_cfg = 10;
+  }
+  oneof _ch2_charge_cfg {
+    .BackupChargeCfg ch2_charge_cfg = 11;
+  }
+  oneof _ch3_charge_cfg {
+    .BackupChargeCfg ch3_charge_cfg = 12;
+  }
+  oneof _ch1_enable_set {
+    uint32 ch1_enable_set = 13;
+  }
+  oneof _ch2_enable_set {
+    uint32 ch2_enable_set = 14;
+  }
+  oneof _ch3_enable_set {
+    uint32 ch3_enable_set = 15;
+  }
+  oneof _mc_running_mode {
+    uint32 mc_running_mode = 16;
+  }
+  oneof _ch1_discharge_cfg {
+    .BackupDischargeCfg ch1_discharge_cfg = 30;
+  }
+  oneof _ch2_discharge_cfg {
+    .BackupDischargeCfg ch2_discharge_cfg = 31;
+  }
+  oneof _ch3_discharge_cfg {
+    .BackupDischargeCfg ch3_discharge_cfg = 32;
+  }
+  oneof _overall_load_pwr {
+    float overall_load_pwr = 33;
+  }
+  oneof _overall_load_pwr_L2 {
+    float overall_load_pwr_L2 = 34;
+  }
+  oneof _backup_discharge_ctrl {
+    .DISCHARGE_CTRL_MODE backup_discharge_ctrl = 35;
+  }
+  oneof _ch1_force_charge {
+    .FORCE_CHARGE_STA ch1_force_charge = 50;
+  }
+  oneof _ch2_force_charge {
+    .FORCE_CHARGE_STA ch2_force_charge = 51;
+  }
+  oneof _ch3_force_charge {
+    .FORCE_CHARGE_STA ch3_force_charge = 52;
+  }
+  oneof _mc_model_info {
+    .ModelInfo mc_model_info = 70;
+  }
+  oneof _request_backup_full_info {
+    bool request_backup_full_info = 71;
+  }
+  oneof _mc_is_upgrading {
+    .UPGRADING_STATUS mc_is_upgrading = 72;
+  }
+}
+
+message BackToMasterProtoPush {
+  oneof _max_power {
+    uint32 max_power = 1;
+    .BackupIncreInfo backup_incre_info = 3;
+  }
+  oneof _output_power {
+    uint32 output_power = 2;
+  }
+  oneof _backup_sys_sta {
+    .BACKUP_CH_STA backup_sys_sta = 4;
+  }
+  oneof _back_to_master_time_stamp {
+    uint32 back_to_master_time_stamp = 5;
+  }
+  oneof _get_master_init_sta {
+    bool get_master_init_sta = 6;
+  }
+  oneof _backup_vol_L1 {
+    float backup_vol_L1 = 7;
+  }
+  oneof _backup_vol_L2 {
+    float backup_vol_L2 = 8;
+  }
+  oneof _backup_watt_L1 {
+    float backup_watt_L1 = 9;
+  }
+  oneof _backup_watt_L2 {
+    float backup_watt_L2 = 10;
+  }
+  oneof _backup_phase_diff {
+    uint32 backup_phase_diff = 11;
+  }
+  oneof _ch1_vol_L1 {
+    float ch1_vol_L1 = 12;
+  }
+  oneof _ch1_vol_L2 {
+    float ch1_vol_L2 = 13;
+  }
+  oneof _ch2_vol_L1 {
+    float ch2_vol_L1 = 14;
+  }
+  oneof _ch2_vol_L2 {
+    float ch2_vol_L2 = 15;
+  }
+  oneof _ch3_vol_L1 {
+    float ch3_vol_L1 = 16;
+  }
+  oneof _ch3_vol_L2 {
+    float ch3_vol_L2 = 17;
+  }
+  oneof _discharge_AC_out_sta {
+    uint32 discharge_AC_out_sta = 20;
+  }
+  oneof _rly_s3_sta {
+    uint32 rly_s3_sta = 21;
+  }
+  oneof _dev_charge_err_sta {
+    uint32 dev_charge_err_sta = 22;
+  }
+}
+
+message MasterToLoadInfo {
+  oneof _ch1_stra_info {
+    .LoadChInfo ch1_info = 30;
+    .LoadChInfo ch2_info = 31;
+    .LoadChInfo ch3_info = 32;
+    .LoadChInfo ch4_info = 33;
+    .LoadChInfo ch5_info = 34;
+    .LoadChInfo ch6_info = 35;
+    .LoadChInfo ch7_info = 36;
+    .LoadChInfo ch8_info = 37;
+    .LoadChInfo ch9_info = 38;
+    .LoadChInfo ch10_info = 39;
+    .LoadChInfo ch11_info = 40;
+    .LoadChInfo ch12_info = 41;
+    .LoadChSta ch1_sta = 90;
+    .LoadChSta ch2_sta = 91;
+    .LoadChSta ch3_sta = 92;
+    .LoadChSta ch4_sta = 93;
+    .LoadChSta ch5_sta = 94;
+    .LoadChSta ch6_sta = 95;
+    .LoadChSta ch7_sta = 96;
+    .LoadChSta ch8_sta = 97;
+    .LoadChSta ch9_sta = 98;
+    .LoadChSta ch10_sta = 99;
+    .LoadChSta ch11_sta = 100;
+    .LoadChSta ch12_sta = 101;
+    .StrategyChInfo ch1_stra_info = 160;
+  }
+  oneof _ch2_stra_info {
+    .StrategyChInfo ch2_stra_info = 161;
+  }
+  oneof _ch3_stra_info {
+    .StrategyChInfo ch3_stra_info = 162;
+  }
+  oneof _ch4_stra_info {
+    .StrategyChInfo ch4_stra_info = 163;
+  }
+  oneof _ch5_stra_info {
+    .StrategyChInfo ch5_stra_info = 164;
+  }
+  oneof _ch6_stra_info {
+    .StrategyChInfo ch6_stra_info = 165;
+  }
+  oneof _ch7_stra_info {
+    .StrategyChInfo ch7_stra_info = 166;
+  }
+  oneof _ch8_stra_info {
+    .StrategyChInfo ch8_stra_info = 167;
+  }
+  oneof _ch9_stra_info {
+    .StrategyChInfo ch9_stra_info = 168;
+  }
+  oneof _ch10_stra_info {
+    .StrategyChInfo ch10_stra_info = 169;
+  }
+  oneof _ch11_stra_info {
+    .StrategyChInfo ch11_stra_info = 170;
+  }
+  oneof _ch12_stra_info {
+    .StrategyChInfo ch12_stra_info = 171;
+  }
+  oneof _ch1_oil_info {
+    .StrategyChInfo ch1_oil_info = 210;
+  }
+  oneof _ch2_oil_info {
+    .StrategyChInfo ch2_oil_info = 211;
+  }
+  oneof _ch3_oil_info {
+    .StrategyChInfo ch3_oil_info = 212;
+  }
+  oneof _ch4_oil_info {
+    .StrategyChInfo ch4_oil_info = 213;
+  }
+  oneof _ch5_oil_info {
+    .StrategyChInfo ch5_oil_info = 214;
+  }
+  oneof _ch6_oil_info {
+    .StrategyChInfo ch6_oil_info = 215;
+  }
+  oneof _ch7_oil_info {
+    .StrategyChInfo ch7_oil_info = 216;
+  }
+  oneof _ch8_oil_info {
+    .StrategyChInfo ch8_oil_info = 217;
+  }
+  oneof _ch9_oil_info {
+    .StrategyChInfo ch9_oil_info = 218;
+  }
+  oneof _ch10_oil_info {
+    .StrategyChInfo ch10_oil_info = 219;
+  }
+  oneof _ch11_oil_info {
+    .StrategyChInfo ch11_oil_info = 220;
+  }
+  oneof _ch12_oil_info {
+    .StrategyChInfo ch12_oil_info = 221;
+  }
+}
+
+message MasterToLoadProtoPushAndSet {
+  oneof _max_power {
+    uint32 max_power = 1;
+    .MasterToLoadInfo hall1_incre_info = 30;
+  }
+  oneof _output_power {
+    uint32 output_power = 2;
+  }
+  oneof _stop_key_statu {
+    bool stop_key_statu = 3;
+  }
+  oneof _power_sta {
+    .POWER_STA power_sta = 4;
+  }
+  oneof _master_to_load_time_stamp {
+    uint32 master_to_load_time_stamp = 5;
+  }
+  oneof _get_load_init_sta {
+    bool get_load_init_sta = 6;
+  }
+  oneof _grid_vol {
+    uint32 grid_vol = 7;
+  }
+  oneof _grid_freq {
+    uint32 grid_freq = 8;
+  }
+  oneof _backup_discharge_rmain_bat_cap {
+    float backup_discharge_rmain_bat_cap = 9;
+  }
+  oneof _mid_priority_ch_discharge_low {
+    uint32 mid_priority_ch_discharge_low = 10;
+  }
+  oneof _cur_discharge_soc {
+    float cur_discharge_soc = 11;
+  }
+  oneof _ntc_value_1 {
+    float ntc_value_1 = 12;
+  }
+  oneof _ntc_value_2 {
+    float ntc_value_2 = 13;
+  }
+  oneof _oil_output_max_power {
+    uint32 oil_output_max_power = 14;
+  }
+  oneof _oil_power_sta {
+    .OIL_POWER_STA oil_power_sta = 15;
+  }
+}
+
+message LoadtToMasterInfo {
+  oneof _errcode {
+    .ErrCode errcode = 1;
+    .LoadChSta load_ch1_sta = 20;
+    .LoadChSta load_ch2_sta = 21;
+    .LoadChSta load_ch3_sta = 22;
+    .LoadChSta load_ch4_sta = 23;
+    .LoadChSta load_ch5_sta = 24;
+    .LoadChSta load_ch6_sta = 25;
+    .LoadChSta load_ch7_sta = 26;
+    .LoadChSta load_ch8_sta = 27;
+    .LoadChSta load_ch9_sta = 28;
+    .LoadChSta load_ch10_sta = 29;
+    .LoadChSta load_ch11_sta = 30;
+    .LoadChSta load_ch12_sta = 31;
+  }
+  oneof _model_info {
+    .ModelInfo model_info = 2;
+  }
+  oneof _board_ntc_temp {
+    uint32 board_ntc_temp = 3;
+  }
+  oneof _load_to_master_time_stamp {
+    uint32 load_to_master_time_stamp = 4;
+  }
+  oneof _is_get_master_info {
+    bool is_get_master_info = 5;
+  }
+  oneof _mid_prority_discharge_time {
+    uint32 mid_prority_discharge_time = 6;
+  }
+  oneof _high_prority_discharge_time {
+    uint32 high_prority_discharge_time = 7;
+  }
+  oneof _all_load_ch_close_flag {
+    uint32 all_load_ch_close_flag = 8;
+  }
+}
+
+message LoadtToMasterProtoPushAndSet {
+  oneof _load_vol_L1 {
+    .LoadtToMasterInfo load_to_master_info1 = 30;
+    float load_vol_L1 = 33;
+  }
+  oneof _load_vol_L2 {
+    float load_vol_L2 = 34;
+  }
+  oneof _load_phase_diff {
+    uint32 load_phase_diff = 35;
+  }
+}
+
+message LoadtToBackupProtoPushAndSet {
+  oneof _L1_watt {
+    float L1_watt = 1;
+  }
+  oneof _L2_watt {
+    float L2_watt = 2;
+  }
+  oneof _L1_watt_home {
+    float L1_watt_home = 3;
+  }
+  oneof _L2_watt_home {
+    float L2_watt_home = 4;
+  }
+  oneof _L1_watt_s {
+    float L1_watt_s = 10;
+  }
+  oneof _L2_watt_s {
+    float L2_watt_s = 11;
+  }
+}
+
+message ChInfo {
+  optional uint32 ch_watt = 1;
+  optional uint32 load_priority = 2;
+}
+
+message BroadCastLoadInfo {
+  optional uint32 can_adrr = 1;
+  repeated .ChInfo ch_info = 2;
+}
+
+message sys_info_param_save {
+  oneof _grid_vol {
+    uint32 grid_vol = 1;
+    sint32 sys_timezone = 90;
+    uint32 time_type = 91;
+    string timezone_id = 92;
+    uint32 update_flag = 93;
+  }
+  oneof _grid_freq {
+    uint32 grid_freq = 2;
+  }
+  oneof _product_tpye {
+    .PRODUCT_TYPE product_tpye = 3;
+  }
+  oneof _eps_mode_info {
+    bool eps_mode_info = 4;
+  }
+  oneof _foce_charge_hight {
+    uint32 foce_charge_hight = 5;
+  }
+  oneof _charge_watt_power {
+    uint32 charge_watt_power = 6;
+  }
+  oneof _disc_lower {
+    uint32 disc_lower = 7;
+  }
+  oneof _is_set_oil_engine {
+    bool is_set_oil_engine = 8;
+  }
+  oneof _oil_engine_watt {
+    uint32 oil_engine_watt = 9;
+  }
+  oneof _master_cur {
+    uint32 master_cur = 10;
+  }
+  oneof _has_config_done {
+    bool has_config_done = 11;
+  }
+  oneof _area {
+    string area = 12;
+  }
+  oneof _storm_is_enable {
+    bool storm_is_enable = 21;
+  }
+  oneof _storm_end_timestamp {
+    uint32 storm_end_timestamp = 22;
+  }
+  oneof _in_storm_mode {
+    bool in_storm_mode = 23;
+  }
+  oneof _mid_priority_ch_discharge_low {
+    uint32 mid_priority_ch_discharge_low = 24;
+  }
+  oneof _oil_engine_to_back_charge_persent {
+    uint32 oil_engine_to_back_charge_persent = 28;
+  }
+  oneof _ntc_over_temp_err {
+    uint32 ntc_over_temp_err = 29;
+  }
+  oneof _master_rly1_cnt {
+    uint32 master_rly1_cnt = 13;
+  }
+  oneof _master_rly2_cnt {
+    uint32 master_rly2_cnt = 14;
+  }
+  oneof _master_rly3_cnt {
+    uint32 master_rly3_cnt = 15;
+  }
+  oneof _master_rly4_cnt {
+    uint32 master_rly4_cnt = 16;
+  }
+  oneof _g_i_coeff {
+    float g_i_coeff = 30;
+  }
+  oneof _g_i_offset {
+    float g_i_offset = 31;
+  }
+  oneof _g_p_coeff {
+    float g_p_coeff = 32;
+  }
+  oneof _g_p_offset {
+    float g_p_offset = 33;
+  }
+  oneof _g_p_coeff_1 {
+    float g_p_coeff_1 = 34;
+  }
+  oneof _g_p_offset_1 {
+    float g_p_offset_1 = 35;
+  }
+  oneof _g_p_coeff_2 {
+    float g_p_coeff_2 = 36;
+  }
+  oneof _g_p_offset_2 {
+    float g_p_offset_2 = 37;
+  }
+  oneof _g_p_coeff_1_2 {
+    float g_p_coeff_1_2 = 38;
+  }
+  oneof _g_p_offset_1_2 {
+    float g_p_offset_1_2 = 39;
+  }
+  oneof _smart_backup_mode {
+    uint32 smart_backup_mode = 61;
+  }
+  oneof _backup_reserve_enable {
+    uint32 backup_reserve_enable = 62;
+  }
+  oneof _backup_reserve_soc {
+    uint32 backup_reserve_soc = 63;
+  }
+  oneof _solar_backup_reserve_soc {
+    uint32 solar_backup_reserve_soc = 64;
+  }
+  oneof _oil_type {
+    uint32 oil_type = 70;
+  }
+  oneof _oil_max_output_watt {
+    uint32 oil_max_output_watt = 71;
+  }
+  oneof _storm_cur_time_stop_flag {
+    uint32 storm_cur_time_stop_flag = 80;
+  }
+  oneof _inlet_box_current {
+    uint32 inlet_box_current = 94;
+  }
+  oneof _phase_sub_value {
+    uint32 phase_sub_value = 95;
+  }
+  oneof _ack_clear_data {
+    uint32 ack_clear_data = 96;
+  }
+  oneof _ev_chg_amp_max {
+    uint32 ev_chg_amp_max = 97;
+  }
+  oneof _ev_chg_mode {
+    .EV_CHG_MODE ev_chg_mode = 98;
+  }
+  oneof _ev_chg_soc_min {
+    uint32 ev_chg_soc_min = 100;
+  }
+  oneof _ev_chg_manual_ctrl {
+    uint32 ev_chg_manual_ctrl = 101;
+  }
+  oneof _ev_eco_mode {
+    .ECO_MODE ev_eco_mode = 102;
+  }
+}
+
+message strategy_param_save {
+  oneof _LoadStrategyCfg {
+    .EmergencyStrategy LoadStrategyCfg = 30;
+  }
+  oneof _TimeTaskCfg_1 {
+    .TimeTaskCfg TimeTaskCfg_1 = 31;
+  }
+  oneof _TimeTaskCfg_2 {
+    .TimeTaskCfg TimeTaskCfg_2 = 32;
+  }
+  oneof _TimeTaskCfg_3 {
+    .TimeTaskCfg TimeTaskCfg_3 = 33;
+  }
+  oneof _TimeTaskCfg_4 {
+    .TimeTaskCfg TimeTaskCfg_4 = 34;
+  }
+  oneof _TimeTaskCfg_5 {
+    .TimeTaskCfg TimeTaskCfg_5 = 35;
+  }
+  oneof _TimeTaskCfg_6 {
+    .TimeTaskCfg TimeTaskCfg_6 = 36;
+  }
+  oneof _TimeTaskCfg_7 {
+    .TimeTaskCfg TimeTaskCfg_7 = 37;
+  }
+  oneof _TimeTaskCfg_8 {
+    .TimeTaskCfg TimeTaskCfg_8 = 38;
+  }
+  oneof _TimeTaskCfg_9 {
+    .TimeTaskCfg TimeTaskCfg_9 = 39;
+  }
+  oneof _TimeTaskCfg_10 {
+    .TimeTaskCfg TimeTaskCfg_10 = 40;
+  }
+  oneof _BranchTimeTask {
+    .TimeTaskItemV2List BranchTimeTask = 41;
+  }
+  oneof _EvTimeTask {
+    .TimeTaskItemV2 EvTimeTask = 42;
+  }
+}
+
+message hall_param {
+  optional .LoadChInfo ch1_info = 30;
+  optional .LoadChInfo ch2_info = 31;
+  optional .LoadChInfo ch3_info = 32;
+  optional .LoadChInfo ch4_info = 33;
+  optional .LoadChInfo ch5_info = 34;
+  optional .LoadChInfo ch6_info = 35;
+  optional .LoadChInfo ch7_info = 36;
+  optional .LoadChInfo ch8_info = 37;
+  optional .LoadChInfo ch9_info = 38;
+  optional .LoadChInfo ch10_info = 39;
+  optional .LoadChInfo ch11_info = 40;
+  optional .LoadChInfo ch12_info = 41;
+}
+
+message load_ch_watt_rec {
+  oneof _ch_watt_wek_day_idx {
+    uint32 ch_watt_wek_day_idx = 1;
+  }
+  oneof _ch_watt_day_1 {
+    float ch_watt_day_1 = 2;
+  }
+  oneof _ch_watt_day_2 {
+    float ch_watt_day_2 = 3;
+  }
+  oneof _ch_watt_day_3 {
+    float ch_watt_day_3 = 4;
+  }
+  oneof _ch_watt_day_4 {
+    float ch_watt_day_4 = 5;
+  }
+  oneof _ch_watt_day_5 {
+    float ch_watt_day_5 = 6;
+  }
+  oneof _ch_watt_day_6 {
+    float ch_watt_day_6 = 7;
+  }
+  oneof _ch_watt_day_7 {
+    float ch_watt_day_7 = 8;
+  }
+}
+
+message load_hall_watt_rec {
+  optional .load_ch_watt_rec ch1_watt_info = 30;
+  optional .load_ch_watt_rec ch2_watt_info = 31;
+  optional .load_ch_watt_rec ch3_watt_info = 32;
+  optional .load_ch_watt_rec ch4_watt_info = 33;
+  optional .load_ch_watt_rec ch5_watt_info = 34;
+  optional .load_ch_watt_rec ch6_watt_info = 35;
+  optional .load_ch_watt_rec ch7_watt_info = 36;
+  optional .load_ch_watt_rec ch8_watt_info = 37;
+  optional .load_ch_watt_rec ch9_watt_info = 38;
+  optional .load_ch_watt_rec ch10_watt_info = 39;
+  optional .load_ch_watt_rec ch11_watt_info = 40;
+  optional .load_ch_watt_rec ch12_watt_info = 41;
+}
+
+message load_param_save {
+  oneof _grid_freq {
+    .hall_param hall1_param = 1;
+    uint32 grid_freq = 2;
+    .load_hall_watt_rec hall1_watt_rec = 10;
+  }
+}
+
+message backup_chanel_info {
+  oneof _backup_rly1_cnt {
+    uint32 backup_rly1_cnt = 1;
+  }
+  oneof _backup_rly2_cnt {
+    uint32 backup_rly2_cnt = 2;
+  }
+  oneof _backup_ch_hand_enable_sta {
+    uint32 backup_ch_hand_enable_sta = 3;
+  }
+  oneof _backup_ch_dev_type {
+    uint32 backup_ch_dev_type = 4;
+  }
+}
+
+message backup_param_save {
+  oneof _grid_vol {
+    uint32 grid_vol = 1;
+    .backup_chanel_info backup_chanel1_info = 3;
+    .backup_chanel_info backup_chanel2_info = 4;
+    .backup_chanel_info backup_chanel3_info = 5;
+  }
+  oneof _grid_freq {
+    uint32 grid_freq = 2;
+  }
+  oneof _phase_diff {
+    uint32 phase_diff = 6;
+  }
+  oneof _backup_discharge_ctrl {
+    .DISCHARGE_CTRL_MODE backup_discharge_ctrl = 7;
+  }
+  oneof _ch1_discharge_cfg {
+    .BackupDischargeCfg ch1_discharge_cfg = 30;
+  }
+  oneof _ch2_discharge_cfg {
+    .BackupDischargeCfg ch2_discharge_cfg = 31;
+  }
+  oneof _ch3_discharge_cfg {
+    .BackupDischargeCfg ch3_discharge_cfg = 32;
+  }
+}
+
+message StatisticsItem {
+  optional uint32 timestamp = 1;
+  optional uint32 time_type = 2;
+  optional uint32 data_type = 3;
+  repeated sint32 data = 4;
+}
+
+message StatisticsTotalReport {
+  optional uint32 item_seq = 1;
+  repeated .StatisticsItem item_data = 2;
+}
+
+message StatisticsTotalReportAck {
+  optional uint32 result = 1;
+  optional uint32 item_seq = 2;
+  optional uint32 time_type = 3;
+  optional uint32 data_type = 4;
+}
+
+message StatisticsRptCtrlSet {
+  optional uint32 time_type = 1;
+  optional uint32 data_type = 2;
+  optional uint32 sys_rate_ctrl_time = 3;
+}
+
+message StatisticsRptCtrlSetAck {
+  optional uint32 result = 1;
+  optional uint32 time_type = 2;
+  optional uint32 data_type = 3;
+}
+
+message ConfigRead {
+  repeated uint32 action_id = 1;
+}
+
+message ConfigReadAck {
+  oneof _read_time_task_v2_list {
+    .TimeTaskItemV2List read_time_task_v2_list = 129;
+  }
+}
+
+message DisplayPropertyUpload {
+  oneof _ev_chg_amp_max {
+    uint32 ev_chg_amp_max = 538;
+  }
+  oneof _ev_chg_mode {
+    .EV_CHG_MODE ev_chg_mode = 539;
+  }
+  oneof _ev_chg_soc_min {
+    uint32 ev_chg_soc_min = 540;
+  }
+  oneof _ev_chg_manual_ctrl {
+    uint32 ev_chg_manual_ctrl = 541;
+  }
+  oneof _ev_eco_mode {
+    .ECO_MODE ev_eco_mode = 542;
+  }
+}
+
+enum POWER_STA {
+  LOAD_CH_EG_POWER = 0;
+  LOAD_CH_ES_POWER = 1;
+  LOAD_CH_OIL_POWER = 2;
+  LOAD_CH_STOP_EM = 3;
+  LOAD_CH_OFF_POWER = 4;
+}
+
+enum LOAD_CH_STA {
+  LOAD_CH_POWER_OFF = 0;
+  LOAD_CH_POWER_ON = 1;
+  LOAD_CH_EM_STOP = 2;
+  LOAD_CH_UNKNOWN_STA = 4;
+}
+
+enum BACKUP_CH_STA {
+  BACKUP_CH_OFF = 0;
+  BACKUP_CH_DISCHARGE = 1;
+  BACKUP_CH_CHARGE = 2;
+  BACKUP_CH_EM_STOP = 3;
+  BACKUP_CH_STANDBY = 4;
+}
+
+enum CTRL_MODE {
+  RLY_AUTO_CTRL_MODE = 0;
+  RLY_HAND_CTRL_MODE = 1;
+  RLY_FAILURE_CTRL_MODE = 2;
+}
+
+enum FORCE_CHARGE_STA {
+  FORCE_CHARGE_OFF = 0;
+  FORCE_CHARGE_ON = 1;
+}
+
+enum FORCE_CHARGE_ALLOW_STA {
+  FORCE_CHARGE_FORBID = 0;
+  FORCE_CHARGE_ALLOW = 1;
+}
+
+enum PRODUCT_TYPE {
+  GRID_OFF_LOAD12 = 0;
+  GRID_CONNECTED_LOAD12 = 1;
+  GRID_OFF_LOAD36 = 2;
+  GRID_CONNECTED_LOAD36 = 3;
+}
+
+enum PRODUCT_MODE {
+  GRID_OFF_MODE = 0;
+  GRID_CONNECTED_MODE = 1;
+}
+
+enum GRID_STATUS {
+  GRID_ON_STA = 0;
+  GRID_OFF_STA = 1;
+  GRID_PHASE_ERR_STA = 2;
+  GRID_VOLT_ERR_STA = 3;
+  GRID_FREQ_ERR_STA = 4;
+  NONE_STA = 5;
+}
+
+enum UPGRADING_STATUS {
+  UPGRADING_UNKNOWN_STA = 0;
+  UPGRADING_ONGOING = 1;
+  UPGRADING_OUT = 2;
+}
+
+enum DISCHARGE_CTRL_MODE {
+  DISCHARGE_NONE_MODE = 0;
+  DISCHARGE_AUTO_MODE = 1;
+  DISCHARGE_MASTER_MODE = 2;
+}
+
+enum OIL_POWER_STA {
+  LOAD_CH_NOT_OIL_POWER = 0;
+  LOAD_CH_SP_OIL_POWER = 1;
+  LOAD_CH_OP_OIL_L1_POWER = 2;
+  LOAD_CH_P_OIL_L2_POWER = 3;
+}
+
+enum EV_CHG_MODE {
+  EV_CHG_MODE_NULL = 0;
+  EV_CHG_MODE_REDUNDANCY_PV = 1;
+  EV_CHG_MODE_ENERGY_SAVE = 2;
+  EV_CHG_MODE_PLUG_PLAY = 3;
+  EV_CHG_MODE_FOLLOW_SYS = 4;
+}
+
+enum ECO_MODE {
+  ECO_NONE = 0;
+  ECO_FOLLOW = 1;
+  ECO_TIME = 2;
+}
+
+enum EV_CHG_CTRL {
+  EV_CHG_CTRL_OFF = 0;
+  EV_CHG_CTRL_ON = 1;
+  EV_CHG_CTRL_MAX = 2;
+}
+
+enum DPU_UPGRADE_STA {
+  DPU_UPGRADE_NONE = 0;
+  DPU_UPGRADING = 1;
+}
+
+enum EDEV_STA {
+  EDEV_EV_PRE = 0;
+  EDEV_EV_RUN = 1;
+  EDEV_EV_STOP = 2;
+  EDEV_EV_ERR = 3;
+  EDEV_NO_PLUG = 4;
+  pd303_EDEV_STA_EDEV_EV_PAUSE = 5;
+  pd303_EDEV_STA_EDEV_EV_UNAVAILABLE = 6;
+}
+
+enum EDEV_MODE {
+  MODE_EV_NULL = 0;
+  MODE_REDUNDANCY_PV = 1;
+  MODE_ENERGY_SAVE = 2;
+  MODE_PLUG_PLAY = 3;
+}
+
+enum STRATEGY_TIME_MODE {
+  STARTEGY_EVERY_DAY = 0;
+  STARTEGY_EVERY_WEEK = 1;
+  STARTEGY_EVERY_MONTH = 2;
+  STARTEGY_SPECIFY_DATE = 3;
+}
+
+enum TIME_TASK_TYPE_LIST {
+  NONE_TIME_TASK = 0;
+  CHARGE_TIME_TASK = 1;
+  DISCHARGE_TIME_TASK = 2;
+}
+
+enum TIME_TASK_MODE {
+  TIME_TASK_MODE_RESV = 0;
+  TIME_TASK_MODE_PER_WEEK = 1;
+  TIME_TASK_MODE_ONCE = 2;
+}
+
+enum TIME_TASK_TYPE {
+  TIME_TASK_TYPE_AC_CHG = 0;
+  TIME_TASK_TYPE_AC_DSG = 1;
+  TIME_TASK_TYPE_AC2_DSG = 2;
+  TIME_TASK_TYPE_DC_CHG = 3;
+  TIME_TASK_TYPE_DC2_CHG = 4;
+  TIME_TASK_TYPE_DC_DSG = 5;
+  TIME_TASK_TYPE_OIL_ON = 6;
+  TIME_TASK_TYPE_OIL_OFF = 7;
+  TIME_TASK_TYPE_USB_CHG = 8;
+  TIME_TASK_TYPE_USB_DSG = 9;
+  TIME_TASK_TYPE_AC_BYPASS = 10;
+  TIME_TASK_TYPE_AC_DSG_ONLY = 11;
+  TIME_TASK_TYPE_SHARING_SOC = 12;
+  TIME_TASK_TYPE_POWER_ON = 13;
+  TIME_TASK_TYPE_POWER_OFF = 14;
+  TIME_TASK_TYPE_THERMOSTATIC = 15;
+  TIME_TASK_TYPE_COOLING = 16;
+  TIME_TASK_TYPE_HEATING = 17;
+  TIME_TASK_TYPE_VENTING = 18;
+  TIME_TASK_TYPE_DEHUMIDIFYING = 19;
+  TIME_TASK_TYPE_LOAD_CTRL_OFF = 20;
+  TIME_TASK_TYPE_LOAD_CTRL_ON = 21;
+  TIME_TASK_TYPE_LOAD_CTRL_GRID = 22;
+  TIME_TASK_TYPE_LOAD_CTRL_BACKUP = 23;
+  TIME_TASK_TYPE_AC_DSG_SELF = 24;
+  TIME_TASK_TYPE_EV_CHG = 25;
+}
+
+enum TIME_TASK_DETAIL_TYPE {
+  TIME_TASK_DETAIL_IDLE = 0;
+  TIME_TASK_DETAIL_POW = 1;
+  TIME_TASK_DETAIL_TEMP = 2;
+  TIME_TASK_DETAIL_LEVEL = 3;
+  TIME_TASK_DETAIL_SOC = 4;
+  TIME_TASK_DETAIL_HUMI = 5;
+  TIME_TASK_DETAIL_MODE = 6;
+  TIME_TASK_DETAIL_FAN = 7;
+  TIME_TASK_DETAIL_SUBMODE = 8;
+  TIME_TASK_DETAIL_UPPER_TEMP = 9;
+  TIME_TASK_DETAIL_LOWER_TEMP = 10;
+  TIME_TASK_DETAIL_ALLOW_FEED_GRID = 11;
+  TIME_TASK_DETAIL_SWITCH_IDX = 12;
+}
+

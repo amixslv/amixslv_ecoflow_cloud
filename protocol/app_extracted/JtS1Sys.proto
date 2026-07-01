@@ -1,0 +1,3905 @@
+syntax = "proto3";
+
+message SgReadyStatParam {
+  oneof _ems_sg_stat {
+    bool ems_sg_stat_en = 1;
+    uint32 ems_sg_stat = 2;
+  }
+  oneof _ems_sg_pwr {
+    uint32 ems_sg_pwr = 3;
+  }
+  oneof _ems_sg_soc {
+    uint32 ems_sg_soc = 4;
+  }
+}
+
+message SgReadyParam {
+  oneof _ems_sg_mode {
+    .SgReadyMode ems_sg_mode = 1;
+    .SgReadyStatParam ems_sg_param = 2;
+  }
+  oneof _ems_sg_rate_pwr {
+    uint32 ems_sg_rate_pwr = 3;
+  }
+  oneof _ems_sg_swit_time {
+    uint32 ems_sg_swit_time = 4;
+  }
+}
+
+message TimeInfo {
+  optional uint32 hour = 1;
+  optional uint32 min = 2;
+  optional uint32 sec = 3;
+}
+
+message SelfUsedParam {
+}
+
+message TouParam {
+  optional .TimeInfo start_time = 1;
+  optional .TimeInfo end_time = 2;
+  optional uint32 chg_dsg_mode = 3;
+}
+
+message BackupParam {
+  optional uint32 backup_soc = 1;
+}
+
+message PeakShavingDetail {
+  optional uint32 peak_shaving_start_time = 1;
+  optional uint32 peak_shaving_end_time = 2;
+  optional float control_energy_wh = 3;
+}
+
+message EmsPeakShavingDetailReport {
+  optional float peak_electricity = 1;
+  optional .PeakShavingDetail peak_shaving_details = 2;
+}
+
+message EnergyStreamItem {
+  oneof _peak_shaving_detail {
+    float load_pwr = 1;
+    float grid_pwr = 2;
+    float mppt_pwr = 3;
+    float bp_pwr = 4;
+    uint32 timestamp = 5;
+    sint32 timezone = 6;
+    uint32 bp_soc = 7;
+    float pv1_pwr = 8;
+    float pv2_pwr = 9;
+    float pv_inv_pwr = 10;
+    float pv3_pwr = 11;
+    float other_pv_pwr = 12;
+    .EmsPeakShavingDetailReport peak_shaving_detail = 13;
+  }
+}
+
+message EnergyStreamSwitch {
+  optional bool ems_open_energy_stream = 1;
+}
+
+message EnergyStreamReport {
+  optional float sys_load_pwr = 1;
+  optional float sys_grid_pwr = 2;
+  optional float mppt_pwr = 3;
+  optional float bp_pwr = 4;
+  optional uint32 bp_soc = 5;
+  optional float pv1_pwr = 6;
+  optional float pv2_pwr = 7;
+  optional float pv_inv_pwr = 8;
+  optional float pv3_pwr = 9;
+  optional float other_pv_pwr = 10;
+}
+
+message EnergyStreamDetail {
+  repeated .EnergyStreamItem sys_energy_stream = 1;
+  optional uint32 sys_seq = 2;
+}
+
+message EnergyStreamDetailAck {
+  oneof _sys_energy_num {
+    uint32 sys_seq = 1;
+    uint32 sys_energy_num = 2;
+  }
+}
+
+message SysWorkModeSet {
+  oneof _ems_selfused_param {
+    .WorkMode ems_word_mode = 1;
+    .SelfUsedParam ems_selfused_param = 2;
+    .TouParam ems_tou_param = 3;
+  }
+  oneof _ems_backup_param {
+    .BackupParam ems_backup_param = 4;
+  }
+}
+
+message SysWorkModeSetAck {
+  optional sint32 result = 1;
+}
+
+message SysBackupEventSet {
+  oneof _ems_backup_enable_disenabl {
+    uint32 ems_backup_event = 1;
+    bool ems_backup_enable_disenabl = 2;
+  }
+  oneof _ems_backup_start_time {
+    uint32 ems_backup_start_time = 3;
+  }
+  oneof _ems_backup_end_time {
+    uint32 ems_backup_end_time = 4;
+  }
+}
+
+message SysBackupEventSetAck {
+  optional sint32 result = 1;
+}
+
+message SysKeepSocSet {
+  optional uint32 ems_keep_soc = 1;
+}
+
+message SysKeepSocSetAck {
+  optional sint32 result = 1;
+}
+
+message SysFeedPowerSet {
+  oneof _ems_feed_mode {
+    float ems_max_feed_pwr = 1;
+    uint32 ems_feed_mode = 2;
+  }
+  oneof _ems_feed_ratio {
+    uint32 ems_feed_ratio = 3;
+  }
+  oneof _ems_feed_pwr {
+    uint32 ems_feed_pwr = 4;
+  }
+  oneof _breaker_capacity_max {
+    uint32 breaker_capacity_max = 5;
+  }
+  oneof _sys_switch_bit {
+    uint32 sys_switch_bit = 6;
+  }
+  oneof _sys_switch_bit_set {
+    uint32 sys_switch_bit_set = 7;
+  }
+  oneof _sys_switch_bit_clear {
+    uint32 sys_switch_bit_clear = 8;
+  }
+}
+
+message SysFeedPowerSetAck {
+  optional sint32 result = 1;
+}
+
+message SysMeterRecheck {
+  oneof _meter_recheck {
+    uint32 meter_recheck = 1;
+  }
+}
+
+message SysMeterRecheckAck {
+  optional sint32 result = 1;
+}
+
+message SysOffGridSet {
+  optional bool sys_grid_disconnect_mode = 1;
+}
+
+message SysOffGridSetAck {
+  optional sint32 result = 1;
+}
+
+message SysOnOffMachineSet {
+  optional bool sys_on_off_machine = 1;
+}
+
+message SysOnOffMachineSetAck {
+  optional sint32 result = 1;
+}
+
+message SysMeterCfgSet {
+  oneof _sys_meter_cfg {
+    bool sys_meter_cfg = 1;
+  }
+}
+
+message SysMeterCfgSetAck {
+  optional sint32 result = 1;
+}
+
+message SysTypeCfgSet {
+  oneof _sys_type_cfg {
+    uint32 sys_type_cfg = 1;
+  }
+}
+
+message SysTypeCfgSetAck {
+  optional sint32 result = 1;
+}
+
+message SysReportRateCtrlSet {
+  oneof _rate_ctrl_swtich {
+    bool rate_ctrl_swtich = 1;
+  }
+  oneof _sys_rate_ctrl_time {
+    uint32 sys_rate_ctrl_time = 2;
+  }
+  oneof _dura_time {
+    uint32 dura_time = 3;
+  }
+  oneof _ui_perio {
+    uint32 ui_perio = 4;
+  }
+  oneof _perio_aging {
+    uint32 perio_aging = 5;
+  }
+}
+
+message SysReportRateCtrlSetAck {
+  optional sint32 result = 1;
+}
+
+message SysBatChgDsgSet {
+  oneof _sys_bat_chg_up_limit {
+    uint32 sys_bat_chg_up_limit = 1;
+  }
+  oneof _sys_bat_dsg_down_limie {
+    uint32 sys_bat_dsg_down_limie = 2;
+  }
+  oneof _sys_bat_backup_ratio {
+    uint32 sys_bat_backup_ratio = 3;
+  }
+  oneof _dev_soc {
+    uint32 dev_soc = 4;
+  }
+}
+
+message SysBatChgDsgSetAck {
+  optional sint32 result = 1;
+}
+
+message SysParamGet {
+}
+
+message SysParamGetAck {
+  optional .WorkMode ems_work_mode = 1;
+  optional uint32 ems_backup_event = 2;
+  optional uint32 ems_keep_soc = 3;
+  optional float ems_max_feed_pwr = 4;
+  optional bool sys_grid_disconnect_mode = 5;
+}
+
+message SysRTCSync {
+}
+
+message SysRTCSyncAck {
+  oneof _sys_timezone {
+    uint32 sys_utc_time = 1;
+    sint32 sys_timezone = 2;
+  }
+}
+
+message SysRTCGet {
+}
+
+message MpptPVInfo {
+  optional float vol = 1;
+  optional float amp = 2;
+  optional float pwr = 3;
+  optional bool light_sta = 4;
+}
+
+message PhaseInfo {
+  optional float vol = 1;
+  optional float amp = 2;
+  optional float act_pwr = 3;
+  optional float react_pwr = 4;
+  optional float apparent_pwr = 5;
+}
+
+message DCBusInfo {
+  optional float vol = 1;
+  optional float amp = 2;
+}
+
+message LoadInfo {
+  optional float vol = 1;
+  optional float amp = 2;
+  optional float freq = 3;
+  optional float pwr = 4;
+}
+
+message ErrorCode {
+  oneof _module_sn {
+    bytes module_sn = 1;
+    uint32 err_code = 2;
+  }
+}
+
+message ErrorCodeMask {
+  repeated uint32 err_code = 1;
+}
+
+message MpptStaReport {
+  oneof _mppt_ins_resist {
+    .MpptPVInfo mppt_pv = 1;
+    float mppt_ins_resist = 2;
+    float mppt_temp_val = 3;
+  }
+}
+
+message MpptPVScanSet {
+  oneof _mppt_no {
+    uint32 mppt_no = 1;
+  }
+}
+
+message MpptPVCharacterPoint {
+  optional uint32 pv_point_mark = 1;
+  optional float pv_scan_vol = 2;
+  optional float pv_scan_amp = 3;
+  optional float pv_scan_pwr = 4;
+}
+
+message SysEventRecordItem {
+  oneof _sys_ms {
+    uint32 sys_ms = 1;
+    uint32 timestamp = 2;
+    uint32 event_no = 3;
+    uint32 dur_time = 4;
+  }
+}
+
+message SysEventRecordReport {
+  optional uint32 event_seq = 1;
+  repeated .SysEventRecordItem event_report = 2;
+}
+
+message SysEventInfoReportAck {
+  optional uint32 event_seq = 1;
+  optional uint32 event_item_num = 2;
+}
+
+message MeterStaReport {
+  oneof _meter_type {
+    uint32 meter_type = 1;
+    float meter_data = 3;
+  }
+  oneof _meter_addr {
+    uint32 meter_addr = 2;
+  }
+}
+
+message BpStaReport {
+  oneof _bp_pwr {
+    float bp_pwr = 1;
+    float bp_temp = 5;
+    float bp_cell_vol = 14;
+  }
+  oneof _bp_soc {
+    uint32 bp_soc = 2;
+  }
+  oneof _bp_soh {
+    uint32 bp_soh = 3;
+  }
+  oneof _bp_sop {
+    uint32 bp_sop = 4;
+  }
+  oneof _bp_cell_max_vol {
+    float bp_cell_max_vol = 6;
+  }
+  oneof _bp_cell_min_vol {
+    float bp_cell_min_vol = 7;
+  }
+  oneof _bp_run_sta {
+    .RunStaDef bp_run_sta = 8;
+  }
+  oneof _bp_vol {
+    float bp_vol = 9;
+  }
+  oneof _bp_amp {
+    float bp_amp = 10;
+  }
+  oneof _bp_bus_vol {
+    float bp_bus_vol = 11;
+  }
+  oneof _bp_bus_amp {
+    float bp_bus_amp = 12;
+  }
+  oneof _bp_err_code {
+    uint32 bp_err_code = 13;
+  }
+  oneof _bp_dsrc {
+    uint32 bp_dsrc = 15;
+  }
+  oneof _bp_sn {
+    bytes bp_sn = 16;
+  }
+  oneof _bp_cycles {
+    uint32 bp_cycles = 17;
+  }
+  oneof _bp_balance_state {
+    uint32 bp_balance_state = 18;
+  }
+  oneof _bp_hv_mos_temp {
+    float bp_hv_mos_temp = 19;
+  }
+  oneof _bp_lv_mos_temp {
+    float bp_lv_mos_temp = 20;
+  }
+  oneof _bp_ptc_temp {
+    float bp_ptc_temp = 21;
+  }
+  oneof _bp_hts_temp {
+    float bp_hts_temp = 22;
+  }
+  oneof _bp_bus_neg_temp {
+    float bp_bus_neg_temp = 23;
+  }
+  oneof _bp_bus_pos_temp {
+    float bp_bus_pos_temp = 24;
+  }
+  oneof _bp_env_temp {
+    float bp_env_temp = 25;
+  }
+  oneof _bp_accu_chg_cap {
+    uint32 bp_accu_chg_cap = 26;
+  }
+  oneof _bp_accu_dsg_cap {
+    uint32 bp_accu_dsg_cap = 27;
+  }
+  oneof _bp_design_cap {
+    uint32 bp_design_cap = 28;
+  }
+  oneof _bp_full_cap {
+    uint32 bp_full_cap = 29;
+  }
+  oneof _bp_max_cell_temp {
+    float bp_max_cell_temp = 30;
+  }
+  oneof _bp_min_cell_temp {
+    float bp_min_cell_temp = 31;
+  }
+  oneof _bp_max_mos_temp {
+    float bp_max_mos_temp = 32;
+  }
+  oneof _bp_min_mos_temp {
+    float bp_min_mos_temp = 33;
+  }
+  oneof _bp_bms_fault {
+    uint32 bp_bms_fault = 34;
+  }
+  oneof _bp_eclound_soc {
+    uint32 bp_eclound_soc = 35;
+  }
+  oneof _bp_heartbeat_ver {
+    uint32 bp_heartbeat_ver = 36;
+  }
+  oneof _bp_timestamp {
+    uint32 bp_timestamp = 37;
+  }
+  oneof _bp_real_soc {
+    float bp_real_soc = 38;
+  }
+  oneof _bp_real_soh {
+    float bp_real_soh = 39;
+  }
+  oneof _bp_global_protect {
+    uint32 bp_global_protect = 40;
+  }
+  oneof _bp_down_limit_soc {
+    uint32 bp_down_limit_soc = 41;
+  }
+  oneof _bp_up_limit_soc {
+    uint32 bp_up_limit_soc = 42;
+  }
+  oneof _bp_active_cal_req_stat {
+    uint32 bp_active_cal_req_stat = 43;
+  }
+  oneof _bp_active_cal_run_stat {
+    uint32 bp_active_cal_run_stat = 44;
+  }
+  oneof _module_product_info {
+    uint32 module_product_info = 45;
+  }
+  oneof _module_program_sta {
+    uint32 module_program_sta = 46;
+  }
+  oneof _module_apl_sw_ver {
+    uint32 module_apl_sw_ver = 47;
+  }
+  oneof _module_loader_sw_ver {
+    uint32 module_loader_sw_ver = 48;
+  }
+  oneof _bms_run_sta {
+    .bms_RunStaDef bms_run_sta = 49;
+  }
+  oneof _bms_chg_dsg_sta {
+    .bms_ChgDsgSta bms_chg_dsg_sta = 50;
+  }
+  oneof _dab_mod_sta {
+    .dab_ModelStaDef dab_mod_sta = 51;
+  }
+  oneof _bp_chg_sop {
+    uint32 bp_chg_sop = 52;
+  }
+  oneof _bp_dsg_sop {
+    uint32 bp_dsg_sop = 53;
+  }
+  oneof _bp_remain_watth {
+    float bp_remain_watth = 54;
+  }
+  oneof _bp_target_soc {
+    float bp_target_soc = 55;
+  }
+  oneof _bp_diff_soc {
+    float bp_diff_soc = 56;
+  }
+  oneof _bp_max_soc {
+    float bp_max_soc = 57;
+  }
+  oneof _bp_min_soc {
+    float bp_min_soc = 58;
+  }
+  oneof _bp_limit_soc {
+    float bp_limit_soc = 59;
+  }
+  oneof _bp_calendar_soh {
+    float bp_calendar_soh = 60;
+  }
+  oneof _bp_cycle_soh {
+    float bp_cycle_soh = 61;
+  }
+  oneof _bp_ac_recharge_flag {
+    bool bp_ac_recharge_flag = 62;
+  }
+  oneof _bp_ptc_heat_flag {
+    bool bp_ptc_heat_flag = 63;
+  }
+  oneof _bp_ptc_exit_event {
+    .bms_HeatingExitEvent bp_ptc_exit_event = 64;
+  }
+  oneof _bp_accu_chg_energy {
+    uint32 bp_accu_chg_energy = 65;
+  }
+  oneof _bp_accu_dsg_energy {
+    uint32 bp_accu_dsg_energy = 66;
+  }
+  oneof _bp_ptc_temp2 {
+    float bp_ptc_temp2 = 67;
+  }
+  oneof _bp_sys_state {
+    .bms_SysState bp_sys_state = 68;
+  }
+  oneof _bp_aux_cell_vol_01 {
+    float bp_aux_cell_vol_01 = 69;
+  }
+}
+
+message HeartbeatReport {
+  oneof _bp_remain_watth {
+    float bp_remain_watth = 1;
+    .LoadInfo pcs_load_info = 15;
+    .MeterStaReport meter_heart_beat = 30;
+    .MpptStaReport mppt_heart_beat = 31;
+  }
+  oneof _bp_dsg_time {
+    uint32 bp_dsg_time = 2;
+  }
+  oneof _rate_ctrl_swtich {
+    bool rate_ctrl_swtich = 3;
+  }
+  oneof _sys_rate_ctrl_time {
+    uint32 sys_rate_ctrl_time = 4;
+  }
+  oneof _dura_time {
+    uint32 dura_time = 5;
+  }
+  oneof _pcs_act_pwr {
+    float pcs_act_pwr = 10;
+  }
+  oneof _pcs_ac_freq {
+    float pcs_ac_freq = 11;
+  }
+  oneof _pcs_a_phase {
+    .PhaseInfo pcs_a_phase = 12;
+  }
+  oneof _pcs_b_phase {
+    .PhaseInfo pcs_b_phase = 13;
+  }
+  oneof _pcs_c_phase {
+    .PhaseInfo pcs_c_phase = 14;
+  }
+  oneof _pcs_bus_volt {
+    float pcs_bus_volt = 16;
+  }
+  oneof _pcs_leak_amp {
+    float pcs_leak_amp = 17;
+  }
+  oneof _pcs_dci {
+    float pcs_dci = 18;
+  }
+  oneof _pcs_dcv {
+    float pcs_dcv = 19;
+  }
+  oneof _pcs_dev_state {
+    uint32 pcs_dev_state = 20;
+  }
+  oneof _pcs_run_ctrl {
+    uint32 pcs_run_ctrl = 21;
+  }
+  oneof _pcs_offgrid_para_addr {
+    uint32 pcs_offgrid_para_addr = 22;
+  }
+  oneof _pcs_offgrid_para_type {
+    uint32 pcs_offgrid_para_type = 23;
+  }
+  oneof _pcs_vbus_ref {
+    float pcs_vbus_ref = 32;
+  }
+  oneof _pcs_active_power_ref {
+    float pcs_active_power_ref = 33;
+  }
+  oneof _pcs_active_power_limit_up {
+    float pcs_active_power_limit_up = 34;
+  }
+  oneof _pcs_active_power_limit_dn {
+    float pcs_active_power_limit_dn = 35;
+  }
+  oneof _pcs_bp_power {
+    float pcs_bp_power = 36;
+  }
+  oneof _pcs_bp_power_chg_limit {
+    float pcs_bp_power_chg_limit = 37;
+  }
+  oneof _pcs_relay_state_show {
+    uint32 pcs_relay_state_show = 38;
+  }
+  oneof _pcs_grid_safety_func_record {
+    uint32 pcs_grid_safety_func_record = 39;
+  }
+  oneof _pcs_grid_safety_state_record {
+    uint32 pcs_grid_safety_state_record = 40;
+  }
+  oneof _pcs_grid_inv_error_rms {
+    float pcs_grid_inv_error_rms = 41;
+  }
+  oneof _pcs_pfc_cur_real {
+    float pcs_pfc_cur_real = 42;
+  }
+  oneof _pcs_pfc_cur_ref {
+    float pcs_pfc_cur_ref = 43;
+  }
+  oneof _pcs_reactive_power_ref {
+    float pcs_reactive_power_ref = 44;
+  }
+  oneof _pcs_meter_power {
+    float pcs_meter_power = 45;
+  }
+  oneof _pcs_comm_interface_state {
+    uint32 pcs_comm_interface_state = 46;
+  }
+  oneof _pcs_average_voltage {
+    float pcs_average_voltage = 47;
+  }
+  oneof _pcs_vgrid_thd {
+    float pcs_vgrid_thd = 48;
+  }
+  oneof _pcs_interrupt_occupancy_rate {
+    float pcs_interrupt_occupancy_rate = 49;
+  }
+  oneof _ems_mppt_selfcheck_state {
+    uint32 ems_mppt_selfcheck_state = 50;
+  }
+  oneof _ems_mppt_startup_state {
+    uint32 ems_mppt_startup_state = 51;
+  }
+  oneof _ems_bp_selfcheck_state {
+    uint32 ems_bp_selfcheck_state = 52;
+  }
+  oneof _ems_bp_startup_state {
+    uint32 ems_bp_startup_state = 53;
+  }
+  oneof _ems_pcs_selfcheck_state {
+    uint32 ems_pcs_selfcheck_state = 54;
+  }
+  oneof _ems_pcs_startup_state {
+    uint32 ems_pcs_startup_state = 55;
+  }
+  oneof _ems_bus_volt {
+    float ems_bus_volt = 56;
+  }
+  oneof _ems_active_off_grid_cmd {
+    uint32 ems_active_off_grid_cmd = 57;
+  }
+  oneof _ems_bp_alive_num {
+    uint32 ems_bp_alive_num = 58;
+  }
+  oneof _ems_bp_power {
+    float ems_bp_power = 59;
+  }
+  oneof _ems_bp_chg {
+    float ems_bp_chg = 60;
+  }
+  oneof _ems_bp_dsg {
+    float ems_bp_dsg = 61;
+  }
+  oneof _ems_bp_chg_request {
+    uint32 ems_bp_chg_request = 62;
+  }
+  oneof _ems_self_used_cnt {
+    uint32 ems_self_used_cnt = 63;
+  }
+  oneof _ems_ac_makeup_triggle_soc {
+    uint32 ems_ac_makeup_triggle_soc = 64;
+  }
+  oneof _ems_ac_makeup_exit_soc {
+    uint32 ems_ac_makeup_exit_soc = 65;
+  }
+  oneof _ems_ac_makeup_min_soc {
+    uint32 ems_ac_makeup_min_soc = 66;
+  }
+  oneof _ems_ac_makeup_cnt {
+    uint32 ems_ac_makeup_cnt = 67;
+  }
+  oneof _ems_start_fsm_state {
+    uint32 ems_start_fsm_state = 68;
+  }
+  oneof _ems_mppt_run_state {
+    uint32 ems_mppt_run_state = 69;
+  }
+  oneof _ems_mppt_mod_stat {
+    uint32 ems_mppt_mod_stat = 70;
+  }
+  oneof _ems_stop_cmd {
+    uint32 ems_stop_cmd = 71;
+  }
+  oneof _ems_sys_cfg {
+    uint32 ems_sys_cfg = 72;
+  }
+  oneof _ems_lp_state {
+    uint32 ems_lp_state = 73;
+  }
+  oneof _ems_lp_type {
+    uint32 ems_lp_type = 74;
+  }
+  oneof _ems_lp_mppt_cnt {
+    uint32 ems_lp_mppt_cnt = 75;
+  }
+  oneof _ems_lp_bp_cnt {
+    uint32 ems_lp_bp_cnt = 76;
+  }
+  oneof _ems_lp_state_flag {
+    uint32 ems_lp_state_flag = 77;
+  }
+  oneof _ems_soc_calib_state {
+    uint32 ems_soc_calib_state = 78;
+  }
+  oneof _ems_soc_calib_request {
+    uint32 ems_soc_calib_request = 79;
+  }
+  oneof _ems_mppt_hb_state {
+    uint32 ems_mppt_hb_state = 80;
+  }
+  oneof _ems_ntc_temp_max {
+    float ems_ntc_temp_max = 81;
+  }
+  oneof _ems_bus_volt_err_slid_filter {
+    float ems_bus_volt_err_slid_filter = 82;
+  }
+  oneof _ems_bus_volt_ripple {
+    float ems_bus_volt_ripple = 83;
+  }
+  oneof _ems_pv_inv_pwr {
+    float ems_pv_inv_pwr = 84;
+  }
+  oneof _ems_14A_eebus_power {
+    uint32 ems_14A_eebus_power = 85;
+  }
+  oneof _mppt_bus_vol_ref {
+    float mppt_bus_vol_ref = 100;
+  }
+  oneof _dcdc_bus_vol_ref {
+    float dcdc_bus_vol_ref = 101;
+  }
+  oneof _dcdc_bp_vol {
+    float dcdc_bp_vol = 102;
+  }
+  oneof _dcdc_inductance_curr {
+    float dcdc_inductance_curr = 103;
+  }
+  oneof _inner_temperature {
+    float inner_temperature = 104;
+  }
+  oneof _power_limit_mode {
+    uint32 power_limit_mode = 105;
+  }
+  oneof _inv_rated_power {
+    uint32 inv_rated_power = 106;
+  }
+  oneof _dcdc_state_record {
+    uint32 dcdc_state_record = 107;
+  }
+  oneof _ems_work_mode {
+    uint32 ems_work_mode = 108;
+  }
+  oneof _pcs_backup_pwr {
+    float pcs_backup_pwr = 109;
+  }
+}
+
+message ai_schedule_data {
+  oneof _bp_chg_pwr_max {
+    float bp_chg_pwr_max = 1;
+  }
+  oneof _bp_dsg_pwr_max {
+    float bp_dsg_pwr_max = 2;
+  }
+  oneof _bp_chg_effic {
+    float bp_chg_effic = 3;
+  }
+  oneof _bp_dsg_effic {
+    float bp_dsg_effic = 4;
+  }
+  oneof _bp_full_cap {
+    float bp_full_cap = 5;
+  }
+  oneof _bp_crrent_soc {
+    float bp_crrent_soc = 6;
+  }
+  oneof _bp_chg_up_limit {
+    float bp_chg_up_limit = 7;
+  }
+  oneof _bp_chg_down_limit {
+    float bp_chg_down_limit = 8;
+  }
+  oneof _pcs_max_in_pwr {
+    float pcs_max_in_pwr = 9;
+  }
+  oneof _pcs_max_out_pwr {
+    float pcs_max_out_pwr = 10;
+  }
+  oneof _grid_get_max_pwr {
+    float grid_get_max_pwr = 11;
+  }
+  oneof _max_feed_pwr {
+    float max_feed_pwr = 12;
+  }
+}
+
+message BpHeartbeatReport {
+  repeated .BpStaReport bp_heart_beat = 1;
+}
+
+message EVChargingSnList {
+  repeated string ev_sn = 1;
+}
+
+message EmsChangeReport {
+  oneof _sys_work_sta {
+    uint32 sys_work_sta = 1;
+  }
+  oneof _sys_grid_sta {
+    uint32 sys_grid_sta = 2;
+  }
+  oneof _ems_word_mode {
+    .WorkMode ems_word_mode = 3;
+  }
+  oneof _ems_backup_event {
+    uint32 ems_backup_event = 4;
+  }
+  oneof _bp_chg_dsg_sta {
+    uint32 bp_chg_dsg_sta = 5;
+  }
+  oneof _ems_keep_soc {
+    uint32 ems_keep_soc = 6;
+  }
+  oneof _bp_soc {
+    uint32 bp_soc = 7;
+  }
+  oneof _ems_sys_self_check_stat {
+    uint32 ems_sys_self_check_stat = 8;
+  }
+  oneof _bp_online_sum {
+    uint32 bp_online_sum = 9;
+  }
+  oneof _sys_on_off_machine_stat {
+    uint32 sys_on_off_machine_stat = 10;
+  }
+  oneof _sys_bat_chg_up_limit {
+    uint32 sys_bat_chg_up_limit = 11;
+  }
+  oneof _sys_bat_dsg_down_limit {
+    uint32 sys_bat_dsg_down_limit = 12;
+  }
+  oneof _bp_total_chg_energy {
+    uint32 bp_total_chg_energy = 13;
+  }
+  oneof _bp_total_dsg_energy {
+    uint32 bp_total_dsg_energy = 14;
+  }
+  oneof _sys_bat_backup_ratio {
+    uint32 sys_bat_backup_ratio = 15;
+  }
+  oneof _ems_feed_mode {
+    uint32 ems_feed_mode = 16;
+  }
+  oneof _ems_feed_ratio {
+    uint32 ems_feed_ratio = 17;
+  }
+  oneof _ems_feed_pwr {
+    uint32 ems_feed_pwr = 18;
+  }
+  oneof _sys_meter_cfg {
+    uint32 sys_meter_cfg = 19;
+  }
+  oneof _sys_type_cfg {
+    uint32 sys_type_cfg = 20;
+  }
+  oneof _pcs_run_sta {
+    .RunStaDef pcs_run_sta = 21;
+  }
+  oneof _pcs_ac_err_code {
+    uint32 pcs_ac_err_code = 22;
+  }
+  oneof _pcs_dc_err_code {
+    uint32 pcs_dc_err_code = 23;
+  }
+  oneof _meter_connect_stat {
+    uint32 meter_connect_stat = 30;
+  }
+  oneof _pcs_over_vol1 {
+    float pcs_over_vol1 = 31;
+  }
+  oneof _pcs_over_vol2 {
+    float pcs_over_vol2 = 32;
+  }
+  oneof _pcs_over_vol3 {
+    float pcs_over_vol3 = 33;
+  }
+  oneof _pcs_over_vol_time1 {
+    uint32 pcs_over_vol_time1 = 34;
+  }
+  oneof _pcs_over_vol_time2 {
+    uint32 pcs_over_vol_time2 = 35;
+  }
+  oneof _pcs_over_vol_time3 {
+    uint32 pcs_over_vol_time3 = 36;
+  }
+  oneof _pcs_low_vol1 {
+    float pcs_low_vol1 = 37;
+  }
+  oneof _pcs_low_vol2 {
+    float pcs_low_vol2 = 38;
+  }
+  oneof _pcs_low_vol3 {
+    float pcs_low_vol3 = 39;
+  }
+  oneof _pcs_low_vol_time1 {
+    uint32 pcs_low_vol_time1 = 40;
+  }
+  oneof _pcs_low_vol_time2 {
+    uint32 pcs_low_vol_time2 = 41;
+  }
+  oneof _pcs_low_vol_time3 {
+    uint32 pcs_low_vol_time3 = 42;
+  }
+  oneof _pcs_over_vol_recover {
+    float pcs_over_vol_recover = 43;
+  }
+  oneof _pcs_low_vol_recover {
+    float pcs_low_vol_recover = 44;
+  }
+  oneof _pcs_vol_recover_time {
+    uint32 pcs_vol_recover_time = 45;
+  }
+  oneof _pcs_10min_over_vol {
+    float pcs_10min_over_vol = 46;
+  }
+  oneof _pcs_10min_over_vol_time {
+    uint32 pcs_10min_over_vol_time = 47;
+  }
+  oneof _pcs_over_freq1 {
+    float pcs_over_freq1 = 48;
+  }
+  oneof _pcs_over_freq2 {
+    float pcs_over_freq2 = 49;
+  }
+  oneof _pcs_over_freq_time1 {
+    uint32 pcs_over_freq_time1 = 50;
+  }
+  oneof _pcs_over_freq_time2 {
+    uint32 pcs_over_freq_time2 = 51;
+  }
+  oneof _pcs_low_freq1 {
+    float pcs_low_freq1 = 52;
+  }
+  oneof _pcs_low_freq2 {
+    float pcs_low_freq2 = 53;
+  }
+  oneof _pcs_low_freq_time1 {
+    uint32 pcs_low_freq_time1 = 54;
+  }
+  oneof _pcs_low_freq_time2 {
+    uint32 pcs_low_freq_time2 = 55;
+  }
+  oneof _pcs_over_freq_recover {
+    float pcs_over_freq_recover = 56;
+  }
+  oneof _pcs_low_freq_recover {
+    float pcs_low_freq_recover = 57;
+  }
+  oneof _pcs_freq_recover_time {
+    uint32 pcs_freq_recover_time = 58;
+  }
+  oneof _pcs_hvrt_lvrt_switch {
+    uint32 pcs_hvrt_lvrt_switch = 59;
+  }
+  oneof _pcs_over_vol_ride_through_start1 {
+    float pcs_over_vol_ride_through_start1 = 60;
+  }
+  oneof _pcs_over_vol_ride_through_start2 {
+    float pcs_over_vol_ride_through_start2 = 61;
+  }
+  oneof _pcs_over_vol_ride_through_protect_time1 {
+    uint32 pcs_over_vol_ride_through_protect_time1 = 62;
+  }
+  oneof _pcs_over_vol_ride_through_protect_time2 {
+    uint32 pcs_over_vol_ride_through_protect_time2 = 63;
+  }
+  oneof _pcs_low_vol_ride_through_start1 {
+    float pcs_low_vol_ride_through_start1 = 64;
+  }
+  oneof _pcs_low_vol_ride_through_start2 {
+    float pcs_low_vol_ride_through_start2 = 65;
+  }
+  oneof _pcs_low_vol_ride_through_start3 {
+    float pcs_low_vol_ride_through_start3 = 66;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time1 {
+    uint32 pcs_low_vol_ride_through_protect_time1 = 67;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time2 {
+    uint32 pcs_low_vol_ride_through_protect_time2 = 68;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time3 {
+    uint32 pcs_low_vol_ride_through_protect_time3 = 69;
+  }
+  oneof _pcs_high_vol_ride_through_recover {
+    float pcs_high_vol_ride_through_recover = 70;
+  }
+  oneof _pcs_low_vol_ride_through_recover {
+    float pcs_low_vol_ride_through_recover = 71;
+  }
+  oneof _pcs_island_detect_switch {
+    uint32 pcs_island_detect_switch = 72;
+  }
+  oneof _pcs_active_power_derating_switch {
+    uint32 pcs_active_power_derating_switch = 73;
+  }
+  oneof _pcs_active_power_derating_percent {
+    float pcs_active_power_derating_percent = 74;
+  }
+  oneof _pcs_active_power_gradient {
+    float pcs_active_power_gradient = 75;
+  }
+  oneof _pcs_active_power_softstart_switch {
+    uint32 pcs_active_power_softstart_switch = 76;
+  }
+  oneof _pcs_active_power_softstart_time {
+    uint32 pcs_active_power_softstart_time = 77;
+  }
+  oneof _pcs_over_freq_derating_switch {
+    uint32 pcs_over_freq_derating_switch = 78;
+  }
+  oneof _pcs_over_freq_derating_power_based {
+    float pcs_over_freq_derating_power_based = 79;
+  }
+  oneof _pcs_over_freq_derating_start {
+    float pcs_over_freq_derating_start = 80;
+  }
+  oneof _pcs_over_freq_derating_end {
+    float pcs_over_freq_derating_end = 81;
+  }
+  oneof _pcs_over_freq_derating_slope {
+    float pcs_over_freq_derating_slope = 82;
+  }
+  oneof _pcs_over_freq_derating_recover_slope {
+    float pcs_over_freq_derating_recover_slope = 83;
+  }
+  oneof _pcs_over_freq_derating_froze_switch {
+    uint32 pcs_over_freq_derating_froze_switch = 84;
+  }
+  oneof _pcs_over_freq_derating_cutoff_power {
+    float pcs_over_freq_derating_cutoff_power = 85;
+  }
+  oneof _pcs_under_freq_increment_switch {
+    uint32 pcs_under_freq_increment_switch = 86;
+  }
+  oneof _pcs_under_freq_increment_start {
+    float pcs_under_freq_increment_start = 87;
+  }
+  oneof _pcs_under_freq_increment_end {
+    float pcs_under_freq_increment_end = 88;
+  }
+  oneof _pcs_under_freq_increment_slope {
+    float pcs_under_freq_increment_slope = 89;
+  }
+  oneof _pcs_under_freq_increment_recover_slope {
+    float pcs_under_freq_increment_recover_slope = 90;
+  }
+  oneof _pcs_under_freq_increment_froze_switch {
+    uint32 pcs_under_freq_increment_froze_switch = 91;
+  }
+  oneof _pcs_anti_back_flow_switch {
+    uint32 pcs_anti_back_flow_switch = 92;
+  }
+  oneof _pcs_over_vol_derating_switch {
+    uint32 pcs_over_vol_derating_switch = 93;
+  }
+  oneof _pcs_over_vol_derating_start {
+    float pcs_over_vol_derating_start = 94;
+  }
+  oneof _pcs_over_vol_derating_end {
+    float pcs_over_vol_derating_end = 95;
+  }
+  oneof _pcs_over_vol_derating_starting_power {
+    float pcs_over_vol_derating_starting_power = 96;
+  }
+  oneof _pcs_over_vol_derating_end_power {
+    float pcs_over_vol_derating_end_power = 97;
+  }
+  oneof _pcs_over_vol_derating_time_const {
+    float pcs_over_vol_derating_time_const = 98;
+  }
+  oneof _pcs_react_pwr_mode_select {
+    uint32 pcs_react_pwr_mode_select = 99;
+  }
+  oneof _pcs_react_pwr_compensation {
+    float pcs_react_pwr_compensation = 100;
+  }
+  oneof _pcs_pf_value {
+    float pcs_pf_value = 101;
+  }
+  oneof _pcs_react_pwr_percent {
+    float pcs_react_pwr_percent = 102;
+  }
+  oneof _pcs_qu_v1 {
+    float pcs_qu_v1 = 103;
+  }
+  oneof _pcs_qu_v2 {
+    float pcs_qu_v2 = 104;
+  }
+  oneof _pcs_qu_v3 {
+    float pcs_qu_v3 = 105;
+  }
+  oneof _pcs_qu_v4 {
+    float pcs_qu_v4 = 106;
+  }
+  oneof _pcs_qu_q1 {
+    float pcs_qu_q1 = 107;
+  }
+  oneof _pcs_qu_q2 {
+    float pcs_qu_q2 = 108;
+  }
+  oneof _pcs_qu_q3 {
+    float pcs_qu_q3 = 109;
+  }
+  oneof _pcs_qu_q4 {
+    float pcs_qu_q4 = 110;
+  }
+  oneof _pcs_qu_time_const {
+    float pcs_qu_time_const = 111;
+  }
+  oneof _pcs_cosp_p1 {
+    float pcs_cosp_p1 = 112;
+  }
+  oneof _pcs_cosp_p2 {
+    float pcs_cosp_p2 = 113;
+  }
+  oneof _pcs_cosp_p3 {
+    float pcs_cosp_p3 = 114;
+  }
+  oneof _pcs_cosp_pf1 {
+    float pcs_cosp_pf1 = 115;
+  }
+  oneof _pcs_cosp_pf2 {
+    float pcs_cosp_pf2 = 116;
+  }
+  oneof _pcs_cosp_pf3 {
+    float pcs_cosp_pf3 = 117;
+  }
+  oneof _pcs_safety_country_code_selection {
+    uint32 pcs_safety_country_code_selection = 118;
+  }
+  oneof _pcs_reconnect_grid_detect_switch {
+    uint32 pcs_reconnect_grid_detect_switch = 119;
+  }
+  oneof _pcs_on_grid_wait_time {
+    uint32 pcs_on_grid_wait_time = 120;
+  }
+  oneof _pcs_high_vol_on_grid {
+    float pcs_high_vol_on_grid = 121;
+  }
+  oneof _pcs_low_vol_on_grid {
+    float pcs_low_vol_on_grid = 122;
+  }
+  oneof _pcs_high_freq_on_grid {
+    float pcs_high_freq_on_grid = 123;
+  }
+  oneof _pcs_low_freq_on_grid {
+    float pcs_low_freq_on_grid = 124;
+  }
+  oneof _pcs_fault_recover_on_grid_wait_time {
+    uint32 pcs_fault_recover_on_grid_wait_time = 125;
+  }
+  oneof _pcs_fault_recover_high_vol_on_grid {
+    float pcs_fault_recover_high_vol_on_grid = 126;
+  }
+  oneof _pcs_fault_recover_low_vol_on_grid {
+    float pcs_fault_recover_low_vol_on_grid = 127;
+  }
+  oneof _pcs_fault_recover_high_freq_on_grid {
+    float pcs_fault_recover_high_freq_on_grid = 128;
+  }
+  oneof _pcs_fault_recover_low_freq_on_grid {
+    float pcs_fault_recover_low_freq_on_grid = 129;
+  }
+  oneof _pcs_power_derating_flag {
+    uint32 pcs_power_derating_flag = 130;
+  }
+  oneof _pcs_power_derating_set {
+    uint32 pcs_power_derating_set = 131;
+  }
+  oneof _pcs_send_end {
+    uint32 pcs_send_end = 132;
+  }
+  oneof _rate_ctrl_swtich {
+    bool rate_ctrl_swtich = 133;
+  }
+  oneof _sys_rate_ctrl_time {
+    uint32 sys_rate_ctrl_time = 134;
+  }
+  oneof _dura_time {
+    uint32 dura_time = 135;
+  }
+  oneof _pcs_10min_over_vol_switch {
+    uint32 pcs_10min_over_vol_switch = 136;
+  }
+  oneof _pcs_active_power_soft_start_rate {
+    float pcs_active_power_soft_start_rate = 137;
+  }
+  oneof _pcs_active_power_normal_ramp_up_rate {
+    float pcs_active_power_normal_ramp_up_rate = 138;
+  }
+  oneof _pcs_over_freq_derating_start_delay {
+    float pcs_over_freq_derating_start_delay = 139;
+  }
+  oneof _pcs_over_freq_derating_end_delay {
+    float pcs_over_freq_derating_end_delay = 140;
+  }
+  oneof _pcs_over_freq_derating_recover_slope_switch {
+    uint32 pcs_over_freq_derating_recover_slope_switch = 141;
+  }
+  oneof _pcs_under_freq_increment_start_delay {
+    float pcs_under_freq_increment_start_delay = 142;
+  }
+  oneof _pcs_under_freq_increment_end_delay {
+    float pcs_under_freq_increment_end_delay = 143;
+  }
+  oneof _pcs_over_vol_derating_delay_time {
+    uint32 pcs_over_vol_derating_delay_time = 144;
+  }
+  oneof _pcs_ongrid_reconnect_flag {
+    uint32 pcs_ongrid_reconnect_flag = 145;
+  }
+  oneof _pcs_qu_lockin_power {
+    float pcs_qu_lockin_power = 146;
+  }
+  oneof _pcs_qu_lockout_power {
+    float pcs_qu_lockout_power = 147;
+  }
+  oneof _pcs_qu_minimum_cosphi {
+    float pcs_qu_minimum_cosphi = 148;
+  }
+  oneof _pcs_fast_check {
+    uint32 pcs_fast_check = 149;
+  }
+  oneof _pcs_function_enable {
+    uint32 pcs_function_enable = 150;
+  }
+  oneof _ems_ctrl_led_type {
+    uint32 ems_ctrl_led_type = 151;
+  }
+  oneof _ems_ctrl_led_bright {
+    uint32 ems_ctrl_led_bright = 152;
+  }
+  oneof _pcs_under_freq_increment_recover_slope_switch {
+    uint32 pcs_under_freq_increment_recover_slope_switch = 153;
+  }
+  oneof _pcs_over_vol_derating_daley_time {
+    float pcs_over_vol_derating_daley_time = 154;
+  }
+  oneof _pcs_cosp_p4 {
+    float pcs_cosp_p4 = 155;
+  }
+  oneof _pcs_cosp_pf4 {
+    float pcs_cosp_pf4 = 156;
+  }
+  oneof _pcs_reserved1 {
+    uint32 pcs_reserved1 = 157;
+  }
+  oneof _pcs_reserved2 {
+    uint32 pcs_reserved2 = 158;
+  }
+  oneof _pcs_reserved3 {
+    uint32 pcs_reserved3 = 159;
+  }
+  oneof _pcs_reserved4 {
+    uint32 pcs_reserved4 = 160;
+  }
+  oneof _pcs_reserved5 {
+    uint32 pcs_reserved5 = 161;
+  }
+  oneof _pcs_uwn_pe_relay_close_enable {
+    uint32 pcs_uwn_pe_relay_close_enable = 162;
+  }
+  oneof _pcs_fvolt_rated {
+    float pcs_fvolt_rated = 163;
+  }
+  oneof _pcs_fIrated {
+    float pcs_fIrated = 164;
+  }
+  oneof _pcs_ffreq_rate {
+    float pcs_ffreq_rate = 165;
+  }
+  oneof _pcs_ffreq_deta_limit {
+    float pcs_ffreq_deta_limit = 166;
+  }
+  oneof _pcs_fapparent_rate {
+    float pcs_fapparent_rate = 167;
+  }
+  oneof _pcs_fapparent_max {
+    float pcs_fapparent_max = 168;
+  }
+  oneof _pcs_fact_power_rate {
+    float pcs_fact_power_rate = 169;
+  }
+  oneof _pcs_fact_power_max {
+    float pcs_fact_power_max = 170;
+  }
+  oneof _pcs_freact_power_max {
+    float pcs_freact_power_max = 171;
+  }
+  oneof _pcs_fact_power_max_each {
+    float pcs_fact_power_max_each = 172;
+  }
+  oneof _pcs_freact_power_max_each {
+    float pcs_freact_power_max_each = 173;
+  }
+  oneof _pcs_fapparent_max_each {
+    float pcs_fapparent_max_each = 174;
+  }
+  oneof _pcs_fapparent_rate_each {
+    float pcs_fapparent_rate_each = 175;
+  }
+  oneof _sys_mul_peak_switch {
+    bool sys_mul_peak_switch = 180;
+  }
+  oneof _sys_mul_peak_time {
+    uint32 sys_mul_peak_time = 181;
+  }
+  oneof _ems_sg_ready {
+    .SgReadyParam ems_sg_ready = 182;
+  }
+  oneof _ems_sg_ready_en {
+    bool ems_sg_ready_en = 183;
+  }
+  oneof _ems_sg_run_stat {
+    uint32 ems_sg_run_stat = 184;
+  }
+  oneof _ems_stop_all {
+    uint32 ems_stop_all = 185;
+  }
+  oneof _iot_4g_on {
+    sint32 iot_4g_on = 186;
+  }
+  oneof _iot_4g_sta {
+    sint32 iot_4g_sta = 187;
+  }
+  oneof _iot_4g_pdp {
+    sint32 iot_4g_pdp = 188;
+  }
+  oneof _iot_4g_err {
+    sint32 iot_4g_err = 189;
+  }
+  oneof _sys_heat_stat {
+    uint32 sys_heat_stat = 190;
+  }
+  oneof _pcs_ac_warning_code {
+    uint32 pcs_ac_warning_code = 191;
+  }
+  oneof _pcs_relay_self_check_sta {
+    uint32 pcs_relay_self_check_sta = 192;
+  }
+  oneof _pcs_run_fsm_state {
+    uint32 pcs_run_fsm_state = 193;
+  }
+  oneof _mppt1_fault_code {
+    uint32 mppt1_fault_code = 194;
+  }
+  oneof _mppt2_fault_code {
+    uint32 mppt2_fault_code = 195;
+  }
+  oneof _mppt1_warning_code {
+    uint32 mppt1_warning_code = 196;
+  }
+  oneof _mppt2_warning_code {
+    uint32 mppt2_warning_code = 197;
+  }
+  oneof _bp_line_off_flag {
+    uint32 bp_line_off_flag = 198;
+  }
+  oneof _bp_restart_flag {
+    uint32 bp_restart_flag = 199;
+  }
+  oneof _bp_reverse_flag {
+    uint32 bp_reverse_flag = 200;
+  }
+  oneof _bat_relay_close_fail_flag {
+    uint32 bat_relay_close_fail_flag = 201;
+  }
+  oneof _bat_soft_relay_status {
+    uint32 bat_soft_relay_status = 202;
+  }
+  oneof _bat_realy_status {
+    uint32 bat_realy_status = 203;
+  }
+  oneof _pcs_relay_state_show {
+    uint32 pcs_relay_state_show = 204;
+  }
+  oneof _ems_work_state {
+    uint32 ems_work_state = 205;
+  }
+  oneof _ev_bind_list {
+    .EVChargingSnList ev_bind_list = 206;
+  }
+  oneof _afci_fault_cnt_ch1 {
+    uint32 afci_fault_cnt_ch1 = 207;
+  }
+  oneof _afci_fault_value_ch1 {
+    float afci_fault_value_ch1 = 208;
+  }
+  oneof _afci_fault_max_value_ch1 {
+    float afci_fault_max_value_ch1 = 209;
+  }
+  oneof _afci_protect_value_ch1 {
+    float afci_protect_value_ch1 = 210;
+  }
+  oneof _afci_fault_flag_ch1 {
+    uint32 afci_fault_flag_ch1 = 211;
+  }
+  oneof _afci_fault_cnt_ch2 {
+    uint32 afci_fault_cnt_ch2 = 212;
+  }
+  oneof _afci_fault_value_ch2 {
+    float afci_fault_value_ch2 = 213;
+  }
+  oneof _afci_fault_max_value_ch2 {
+    float afci_fault_max_value_ch2 = 214;
+  }
+  oneof _afci_protect_value_ch2 {
+    float afci_protect_value_ch2 = 215;
+  }
+  oneof _afci_fault_flag_ch2 {
+    uint32 afci_fault_flag_ch2 = 216;
+  }
+  oneof _afci_self_test_cmd_state {
+    uint32 afci_self_test_cmd_state = 217;
+  }
+  oneof _afci_enable_cmd_state {
+    uint32 afci_enable_cmd_state = 218;
+  }
+  oneof _afci_fault_clear_state {
+    uint32 afci_fault_clear_state = 219;
+  }
+  oneof _afci_sellf_test_result {
+    uint32 afci_sellf_test_result = 220;
+  }
+  oneof _afci_switch_freq_ch1 {
+    uint32 afci_switch_freq_ch1 = 221;
+  }
+  oneof _afci_switch_freq_ch2 {
+    uint32 afci_switch_freq_ch2 = 222;
+  }
+  oneof _sys_cal_stat {
+    uint32 sys_cal_stat = 223;
+  }
+  oneof _eth_wan_stat {
+    uint32 eth_wan_stat = 224;
+  }
+  oneof _wifi_sta_stat {
+    uint32 wifi_sta_stat = 225;
+  }
+  oneof _wireless_4g_iccid {
+    string wireless_4g_iccid = 226;
+  }
+  oneof _virtual_hard_edition {
+    uint32 virtual_hard_edition = 227;
+  }
+  oneof _user_role {
+    uint32 user_role = 228;
+  }
+  oneof _chg_dsg_mode {
+    uint32 chg_dsg_mode = 229;
+  }
+  oneof _chg_dsg_pwr {
+    float chg_dsg_pwr = 230;
+  }
+  oneof _parallel_allow_state {
+    bool parallel_allow_state = 231;
+  }
+  oneof _parallel_type_set {
+    uint32 parallel_type_set = 232;
+  }
+  oneof _parallel_type {
+    uint32 parallel_type = 233;
+  }
+  oneof _afci_is_exist {
+    uint32 afci_is_exist = 234;
+  }
+  oneof _afci_en {
+    uint32 afci_en = 235;
+  }
+  oneof _afci_en_set {
+    uint32 afci_en_set = 236;
+  }
+  oneof _parallel_type_cur {
+    uint32 parallel_type_cur = 237;
+  }
+  oneof _pcs_pcs_anti_back_flow_protect_switch {
+    uint32 pcs_pcs_anti_back_flow_protect_switch = 238;
+  }
+  oneof _pcs_anti_back_flow_export_current_limit {
+    float pcs_anti_back_flow_export_current_limit = 239;
+  }
+  oneof _pcs_anti_back_flow_import_current_limit {
+    float pcs_anti_back_flow_import_current_limit = 240;
+  }
+  oneof _pcs_freq_local_command {
+    uint32 pcs_freq_local_command = 241;
+  }
+  oneof _pcs_freq_external_signal {
+    uint32 pcs_freq_external_signal = 242;
+  }
+  oneof _pcs_auto_test_state {
+    uint32 pcs_auto_test_state = 243;
+  }
+  oneof _pcs_auto_test_flag {
+    uint32 pcs_auto_test_flag = 244;
+  }
+  oneof _pcs_avg_ovp_protect_cnt {
+    uint32 pcs_avg_ovp_protect_cnt = 245;
+  }
+  oneof _pcs_ovp_protect_cnt {
+    uint32 pcs_ovp_protect_cnt = 246;
+  }
+  oneof _pcs_uvp1_protect_cnt {
+    uint32 pcs_uvp1_protect_cnt = 247;
+  }
+  oneof _pcs_uvp2_protect_cnt {
+    uint32 pcs_uvp2_protect_cnt = 248;
+  }
+  oneof _pcs_ofp_protect_cnt {
+    uint32 pcs_ofp_protect_cnt = 249;
+  }
+  oneof _pcs_ufp_protect_cnt {
+    uint32 pcs_ufp_protect_cnt = 250;
+  }
+  oneof _pcs_avg_ovp_protect_value {
+    float pcs_avg_ovp_protect_value = 251;
+  }
+  oneof _pcs_ovp_protect_value {
+    float pcs_ovp_protect_value = 252;
+  }
+  oneof _pcs_uvp1_protect_value {
+    float pcs_uvp1_protect_value = 253;
+  }
+  oneof _pcs_uvp2_protect_value {
+    float pcs_uvp2_protect_value = 254;
+  }
+  oneof _pcs_ofp_protect_value {
+    float pcs_ofp_protect_value = 255;
+  }
+  oneof _pcs_ufp_protect_value {
+    float pcs_ufp_protect_value = 256;
+  }
+  oneof _pcs_auto_test_percent {
+    uint32 pcs_auto_test_percent = 257;
+  }
+  oneof _pcs_qu_k {
+    float pcs_qu_k = 258;
+  }
+  oneof _pcs_battery_storage_mode {
+    uint32 pcs_battery_storage_mode = 259;
+  }
+  oneof _pcs_dci_protect_switch {
+    uint32 pcs_dci_protect_switch = 260;
+  }
+  oneof _relay_14a {
+    uint32 relay_14a = 261;
+  }
+  oneof _sys_14a_type {
+    uint32 sys_14a_type = 262;
+  }
+  oneof _sys_14a_enable {
+    bool sys_14a_enable = 263;
+  }
+  oneof _offgrid_parallel_bit {
+    uint32 offgrid_parallel_bit = 264;
+  }
+  oneof _pcs_safety_set_related_flag {
+    uint32 pcs_safety_set_related_flag = 265;
+  }
+  oneof _sys_state_bit {
+    uint32 sys_state_bit = 266;
+  }
+  oneof _slave_modbus_addr {
+    uint32 slave_modbus_addr = 267;
+  }
+  oneof _end_timestamp {
+    uint32 end_timestamp = 268;
+  }
+  oneof _duration {
+    uint32 duration = 269;
+  }
+  oneof _dev_max_power {
+    uint32 dev_max_power = 270;
+  }
+  oneof _pcs_quick_selfcheck_en {
+    uint32 pcs_quick_selfcheck_en = 271;
+  }
+  oneof _pcs_qp_p1 {
+    float pcs_qp_p1 = 272;
+  }
+  oneof _pcs_qp_p2 {
+    float pcs_qp_p2 = 273;
+  }
+  oneof _pcs_qp_p3 {
+    float pcs_qp_p3 = 274;
+  }
+  oneof _pcs_qp_p4 {
+    float pcs_qp_p4 = 275;
+  }
+  oneof _pcs_qp_q1 {
+    float pcs_qp_q1 = 276;
+  }
+  oneof _pcs_qp_q2 {
+    float pcs_qp_q2 = 277;
+  }
+  oneof _pcs_qp_q3 {
+    float pcs_qp_q3 = 278;
+  }
+  oneof _pcs_qp_q4 {
+    float pcs_qp_q4 = 279;
+  }
+  oneof _rcr_report {
+    .SafetyFunRCRParamReport rcr_report = 280;
+  }
+  oneof _role_effect_state {
+    uint32 role_effect_state = 281;
+  }
+  oneof _safety_effect_state {
+    uint32 safety_effect_state = 282;
+  }
+  oneof _meter_check_state {
+    uint32 meter_check_state = 283;
+  }
+  oneof _pcs_under_freq_increment_transition_point {
+    float pcs_under_freq_increment_transition_point = 284;
+  }
+  oneof _pcs_over_freq_derating_transition_point {
+    float pcs_over_freq_derating_transition_point = 285;
+  }
+  oneof _pcs_charge_under_vol_derating_switch {
+    uint32 pcs_charge_under_vol_derating_switch = 286;
+  }
+  oneof _pcs_charge_under_vol_derating_start {
+    float pcs_charge_under_vol_derating_start = 287;
+  }
+  oneof _pcs_charge_under_vol_derating_end {
+    float pcs_charge_under_vol_derating_end = 288;
+  }
+  oneof _pcs_charge_under_vol_derating_starting_power {
+    float pcs_charge_under_vol_derating_starting_power = 289;
+  }
+  oneof _pcs_charge_under_vol_derating_end_power {
+    float pcs_charge_under_vol_derating_end_power = 290;
+  }
+  oneof _pcs_hard_export_limit {
+    float pcs_hard_export_limit = 291;
+  }
+  oneof _ems_acmake_stat {
+    bool ems_acmake_stat = 306;
+  }
+  oneof _po_ai_schedule {
+    .ai_schedule_data po_ai_schedule = 307;
+  }
+  oneof _battery_limit_reason {
+    uint32 battery_limit_reason = 600;
+  }
+  oneof _gateway_mode {
+    bool gateway_mode = 400;
+  }
+  oneof _gateway_online_sta {
+    bool gateway_online_sta = 402;
+  }
+  oneof _app_switch_bit_one {
+    uint32 app_switch_bit_one = 601;
+  }
+}
+
+message EmsPeakShavingReport {
+  oneof _peak_shaving_status {
+    .PeakShavingStatus peak_shaving_status = 1;
+  }
+  oneof _peak_shaving_max_power {
+    float peak_shaving_max_power = 2;
+  }
+  oneof _peak_shaving_energy {
+    float peak_shaving_energy = 3;
+  }
+  oneof _peak_shaving_soc {
+    float peak_shaving_soc = 4;
+  }
+  oneof _peak_shaving_times {
+    float peak_shaving_times = 5;
+  }
+  oneof _peak_shaving_control_energy {
+    float peak_shaving_control_energy = 6;
+  }
+}
+
+message EmsParamChangeReport {
+  oneof _smart_ctrl {
+    bool smart_ctrl = 1;
+  }
+  oneof _energy_efficient_enable {
+    bool energy_efficient_enable = 2;
+  }
+  oneof _sys_zone {
+    uint32 sys_zone = 3;
+  }
+  oneof _sys_time_tab {
+    uint32 sys_time_tab = 4;
+  }
+  oneof _bp_burst {
+    bool bp_burst = 5;
+  }
+  oneof _lower_power_stat {
+    bool lower_power_stat = 6;
+  }
+  oneof _breaker_capacity_max {
+    uint32 breaker_capacity_max = 7;
+  }
+  oneof _breaker_enable_state {
+    bool breaker_enable_state = 8;
+  }
+  oneof _timer_task {
+    .EmsAllTimerTaskReport timer_task = 9;
+  }
+  oneof _dev_soc {
+    uint32 dev_soc = 10;
+  }
+  oneof _sys_switch_bit {
+    uint32 sys_switch_bit = 11;
+  }
+  oneof _modbus_online_status {
+    uint32 modbus_online_status = 12;
+  }
+  oneof _tou_offset {
+    float tou_offset = 13;
+  }
+  oneof _ems_peak_shaving_report {
+    .EmsPeakShavingReport ems_peak_shaving_report = 14;
+  }
+  oneof _ems_all_peak_task_report {
+    .EmsAllPeakTaskReport ems_all_peak_task_report = 15;
+  }
+  oneof _alarm_reset_count {
+    uint32 alarm_reset_count = 16;
+  }
+  oneof _solar_Array {
+    .solarAttr solar_Array = 17;
+  }
+  oneof _kraken_register_status {
+    uint32 kraken_register_status = 18;
+  }
+  oneof _kraken_switch {
+    uint32 kraken_switch = 19;
+  }
+  oneof _timer_heating_task {
+    .EmsAllTimerTaskReport timer_heating_task = 22;
+  }
+}
+
+message solarAttr {
+  repeated float mppt_pwr_max = 1;
+}
+
+message BpFaultCode {
+  oneof _bp_err_code {
+    uint32 bp_err_code = 1;
+  }
+  oneof _bp_bms_fault {
+    uint32 bp_bms_fault = 2;
+  }
+  oneof _bp_global_protect {
+    uint32 bp_global_protect = 3;
+  }
+}
+
+message CtrlAssistData {
+  oneof _ac_wiring_type {
+    uint32 ac_wiring_type = 1;
+    .BpFaultCode bp_fault_code = 34;
+  }
+  oneof _ems_pcs_startup_state {
+    uint32 ems_pcs_startup_state = 2;
+  }
+  oneof _pcs_run_sta {
+    .RunStaDef pcs_run_sta = 3;
+  }
+  oneof _sys_grid_sta {
+    uint32 sys_grid_sta = 4;
+  }
+  oneof _pcs_ac_err_code {
+    uint32 pcs_ac_err_code = 5;
+  }
+  oneof _pcs_dc_err_code {
+    uint32 pcs_dc_err_code = 6;
+  }
+  oneof _pcs_act_pwr {
+    float pcs_act_pwr = 7;
+  }
+  oneof _pcs_apparent_power {
+    float pcs_apparent_power = 8;
+  }
+  oneof _pcs_reactive_power {
+    float pcs_reactive_power = 9;
+  }
+  oneof _pcs_power_factor {
+    float pcs_power_factor = 10;
+  }
+  oneof _pcs_voltage_ll {
+    float pcs_voltage_ll = 11;
+  }
+  oneof _pcs_voltage_ln {
+    float pcs_voltage_ln = 12;
+  }
+  oneof _pcs_ac_freq {
+    float pcs_ac_freq = 13;
+  }
+  oneof _pcs_fact_power_max {
+    float pcs_fact_power_max = 14;
+  }
+  oneof _fcr_ctrl_enable {
+    uint32 fcr_ctrl_enable = 15;
+  }
+  oneof _fcr_ctrl_mode {
+    .InverterCtrlMode fcr_ctrl_mode = 16;
+  }
+  oneof _fcr_ctrl_pwr {
+    int32 fcr_ctrl_pwr = 17;
+  }
+  oneof _ctrl_heatbeat {
+    uint32 ctrl_heatbeat = 18;
+  }
+  oneof _meter_act_pwr {
+    float meter_act_pwr = 19;
+  }
+  oneof _mppt_state {
+    .RunStaDef mppt_state = 20;
+  }
+  oneof _mppt1_fault_code {
+    uint32 mppt1_fault_code = 21;
+  }
+  oneof _mppt2_fault_code {
+    uint32 mppt2_fault_code = 22;
+  }
+  oneof _mppt_ctrl_mode {
+    uint32 mppt_ctrl_mode = 23;
+  }
+  oneof _mppt_pwr_limit {
+    int32 mppt_pwr_limit = 24;
+  }
+  oneof _mppt_pwr {
+    float mppt_pwr = 25;
+  }
+  oneof _bp_energy_cap {
+    float bp_energy_cap = 26;
+  }
+  oneof _ems_bp_chg {
+    float ems_bp_chg = 27;
+  }
+  oneof _ems_bp_dsg {
+    float ems_bp_dsg = 28;
+  }
+  oneof _fcr_bp_chg_limit {
+    uint32 fcr_bp_chg_limit = 29;
+  }
+  oneof _fcr_bp_dsg_limit {
+    uint32 fcr_bp_dsg_limit = 30;
+  }
+  oneof _soc_cur {
+    float soc_cur = 31;
+  }
+  oneof _bp_backup_ratio {
+    float bp_backup_ratio = 32;
+  }
+  oneof _bp_state {
+    .RunStaDef bp_state = 33;
+  }
+  oneof _pcs_dcv {
+    float pcs_dcv = 35;
+  }
+  oneof _pcs_dci {
+    float pcs_dci = 36;
+  }
+  oneof _ems_bp_power {
+    float ems_bp_power = 37;
+  }
+}
+
+message ThirdPvInfo {
+  optional float pv_vol = 1;
+  optional float pv_cur = 2;
+}
+
+message ThirdPvData {
+  repeated .ThirdPvInfo pv_info = 1;
+}
+
+message ThirdErrorCode {
+  repeated uint32 error_code = 1;
+}
+
+message ThirdBpSoc {
+  repeated uint32 bp_soc = 1;
+}
+
+message ThirdGridTotalEnergy {
+  repeated float grid_total_energy = 1;
+}
+
+message ThirdInvTotalEnergy {
+  repeated float inv_total_energy = 1;
+}
+
+message ThirdBpTotalEnergy {
+  repeated float bp_total_energy = 1;
+}
+
+message ThirdGridInEnergy {
+  optional float grid_in_energy_total = 1;
+  repeated float grid_in_energy = 2;
+}
+
+message ThirdGridOutEnergy {
+  optional float grid_out_energy_total = 1;
+  repeated float grid_out_energy = 2;
+}
+
+message ThirdInvInEnergy {
+  optional float inv_in_energy_total = 1;
+  repeated float inv_in_energy = 2;
+}
+
+message ThirdInvOutEnergy {
+  optional float inv_out_energy_total = 1;
+  repeated float inv_out_energy = 2;
+}
+
+message ThirdBpInEnergy {
+  optional float bp_in_energy_total = 1;
+  repeated float bp_in_energy = 2;
+}
+
+message ThirdBpOutEnergy {
+  optional float bp_out_energy_total = 1;
+  repeated float bp_out_energy = 2;
+}
+
+message ThirdPvEnergy {
+  optional float pv_energy_total = 1;
+  repeated float pv_energy = 2;
+}
+
+message ThirdPartyData {
+  oneof _grid_code {
+    uint32 grid_code = 1;
+  }
+  oneof _utc_time {
+    uint32 utc_time = 2;
+  }
+  oneof _time_zone {
+    int32 time_zone = 3;
+  }
+  oneof _load_pwr {
+    float load_pwr = 4;
+  }
+  oneof _grid_pwr {
+    float grid_pwr = 5;
+  }
+  oneof _pv_pwr {
+    float pv_pwr = 6;
+  }
+  oneof _bp_pwr {
+    float bp_pwr = 7;
+  }
+  oneof _sys_soc {
+    uint32 sys_soc = 8;
+  }
+  oneof _sys_rated_pwr {
+    uint32 sys_rated_pwr = 9;
+  }
+  oneof _sys_state_1 {
+    uint32 sys_state_1 = 10;
+  }
+  oneof _sys_state_2 {
+    uint32 sys_state_2 = 11;
+  }
+  oneof _backup_radio {
+    uint32 backup_radio = 12;
+  }
+  oneof _feed_mode_set {
+    uint32 feed_mode_set = 13;
+  }
+  oneof _max_feed_pwr {
+    uint32 max_feed_pwr = 14;
+  }
+  oneof _breaker_cap {
+    uint32 breaker_cap = 15;
+  }
+  oneof _led_bright {
+    uint32 led_bright = 16;
+  }
+  oneof _sys_pwr_set {
+    int32 sys_pwr_set = 17;
+  }
+  oneof _inv_pwr_set {
+    int32 inv_pwr_set = 18;
+  }
+  oneof _max_inv_cap {
+    uint32 max_inv_cap = 19;
+  }
+  oneof _max_rec_cap {
+    uint32 max_rec_cap = 20;
+  }
+  oneof _inv_pwr {
+    int32 inv_pwr = 21;
+  }
+  oneof _bp_cap {
+    uint32 bp_cap = 22;
+  }
+  oneof _bp_dsg_cap {
+    uint32 bp_dsg_cap = 23;
+  }
+  oneof _bp_chg_cap {
+    uint32 bp_chg_cap = 24;
+  }
+  oneof _grid_cur_a {
+    float grid_cur_a = 25;
+  }
+  oneof _grid_cur_b {
+    float grid_cur_b = 26;
+  }
+  oneof _grid_cur_c {
+    float grid_cur_c = 27;
+  }
+  oneof _grid_vol_a {
+    float grid_vol_a = 28;
+  }
+  oneof _grid_vol_b {
+    float grid_vol_b = 29;
+  }
+  oneof _grid_vol_c {
+    float grid_vol_c = 30;
+  }
+  oneof _bp_pwr_set {
+    int32 bp_pwr_set = 31;
+  }
+  oneof _feed_limit_percent {
+    uint32 feed_limit_percent = 32;
+  }
+  oneof _bp_vol {
+    float bp_vol = 33;
+  }
+  oneof _bp_cur {
+    float bp_cur = 34;
+  }
+  oneof _bp_temp {
+    float bp_temp = 35;
+  }
+  oneof _inv_vol_a {
+    float inv_vol_a = 36;
+  }
+  oneof _inv_vol_b {
+    float inv_vol_b = 37;
+  }
+  oneof _inv_vol_c {
+    float inv_vol_c = 38;
+  }
+  oneof _inv_cur_a {
+    float inv_cur_a = 39;
+  }
+  oneof _inv_cur_b {
+    float inv_cur_b = 40;
+  }
+  oneof _inv_cur_c {
+    float inv_cur_c = 41;
+  }
+  oneof _inv_temp {
+    float inv_temp = 42;
+  }
+  oneof _inv_freq {
+    float inv_freq = 43;
+  }
+  oneof _pv_data {
+    .ThirdPvData pv_data = 44;
+  }
+  oneof _error_code_info {
+    .ThirdErrorCode error_code_info = 45;
+  }
+  oneof _bp_soc_info {
+    .ThirdBpSoc bp_soc_info = 46;
+  }
+  oneof _grid_total_energy_info {
+    .ThirdGridTotalEnergy grid_total_energy_info = 47;
+  }
+  oneof _inv_total_energy_info {
+    .ThirdInvTotalEnergy inv_total_energy_info = 48;
+  }
+  oneof _bp_total_energy_info {
+    .ThirdBpTotalEnergy bp_total_energy_info = 49;
+  }
+  oneof _grid_in_energy_info {
+    .ThirdGridInEnergy grid_in_energy_info = 50;
+  }
+  oneof _grid_out_energy_info {
+    .ThirdGridOutEnergy grid_out_energy_info = 51;
+  }
+  oneof _inv_in_energy_info {
+    .ThirdInvInEnergy inv_in_energy_info = 52;
+  }
+  oneof _inv_out_energy_info {
+    .ThirdInvOutEnergy inv_out_energy_info = 53;
+  }
+  oneof _bp_in_energy_info {
+    .ThirdBpInEnergy bp_in_energy_info = 54;
+  }
+  oneof _bp_out_energy_info {
+    .ThirdBpOutEnergy bp_out_energy_info = 55;
+  }
+  oneof _pv_energy_info {
+    .ThirdPvEnergy pv_energy_info = 56;
+  }
+}
+
+message EmsGetParam {
+}
+
+message EmsSafetyParamSet {
+  oneof _pcs_over_vol1 {
+    float pcs_over_vol1 = 1;
+  }
+  oneof _pcs_over_vol2 {
+    float pcs_over_vol2 = 2;
+  }
+  oneof _pcs_over_vol3 {
+    float pcs_over_vol3 = 3;
+  }
+  oneof _pcs_over_vol_time1 {
+    uint32 pcs_over_vol_time1 = 4;
+  }
+  oneof _pcs_over_vol_time2 {
+    uint32 pcs_over_vol_time2 = 5;
+  }
+  oneof _pcs_over_vol_time3 {
+    uint32 pcs_over_vol_time3 = 6;
+  }
+  oneof _pcs_low_vol1 {
+    float pcs_low_vol1 = 7;
+  }
+  oneof _pcs_low_vol2 {
+    float pcs_low_vol2 = 8;
+  }
+  oneof _pcs_low_vol3 {
+    float pcs_low_vol3 = 9;
+  }
+  oneof _pcs_low_vol_time1 {
+    uint32 pcs_low_vol_time1 = 10;
+  }
+  oneof _pcs_low_vol_time2 {
+    uint32 pcs_low_vol_time2 = 11;
+  }
+  oneof _pcs_low_vol_time3 {
+    uint32 pcs_low_vol_time3 = 12;
+  }
+  oneof _pcs_over_vol_recover {
+    float pcs_over_vol_recover = 13;
+  }
+  oneof _pcs_low_vol_recover {
+    float pcs_low_vol_recover = 14;
+  }
+  oneof _pcs_vol_recover_time {
+    uint32 pcs_vol_recover_time = 15;
+  }
+  oneof _pcs_10min_over_vol {
+    float pcs_10min_over_vol = 16;
+  }
+  oneof _pcs_10min_over_vol_time {
+    uint32 pcs_10min_over_vol_time = 17;
+  }
+  oneof _pcs_over_freq1 {
+    float pcs_over_freq1 = 18;
+  }
+  oneof _pcs_over_freq2 {
+    float pcs_over_freq2 = 19;
+  }
+  oneof _pcs_over_freq_time1 {
+    uint32 pcs_over_freq_time1 = 20;
+  }
+  oneof _pcs_over_freq_time2 {
+    uint32 pcs_over_freq_time2 = 21;
+  }
+  oneof _pcs_low_freq1 {
+    float pcs_low_freq1 = 22;
+  }
+  oneof _pcs_low_freq2 {
+    float pcs_low_freq2 = 23;
+  }
+  oneof _pcs_low_freq_time1 {
+    uint32 pcs_low_freq_time1 = 24;
+  }
+  oneof _pcs_low_freq_time2 {
+    uint32 pcs_low_freq_time2 = 25;
+  }
+  oneof _pcs_over_freq_recover {
+    float pcs_over_freq_recover = 26;
+  }
+  oneof _pcs_low_freq_recover {
+    float pcs_low_freq_recover = 27;
+  }
+  oneof _pcs_freq_recover_time {
+    uint32 pcs_freq_recover_time = 28;
+  }
+  oneof _pcs_hvrt_lvrt_switch {
+    uint32 pcs_hvrt_lvrt_switch = 29;
+  }
+  oneof _pcs_over_vol_ride_through_start1 {
+    float pcs_over_vol_ride_through_start1 = 30;
+  }
+  oneof _pcs_over_vol_ride_through_start2 {
+    float pcs_over_vol_ride_through_start2 = 31;
+  }
+  oneof _pcs_over_vol_ride_through_protect_time1 {
+    uint32 pcs_over_vol_ride_through_protect_time1 = 32;
+  }
+  oneof _pcs_over_vol_ride_through_protect_time2 {
+    uint32 pcs_over_vol_ride_through_protect_time2 = 33;
+  }
+  oneof _pcs_low_vol_ride_through_start1 {
+    float pcs_low_vol_ride_through_start1 = 34;
+  }
+  oneof _pcs_low_vol_ride_through_start2 {
+    float pcs_low_vol_ride_through_start2 = 35;
+  }
+  oneof _pcs_low_vol_ride_through_start3 {
+    float pcs_low_vol_ride_through_start3 = 36;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time1 {
+    uint32 pcs_low_vol_ride_through_protect_time1 = 37;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time2 {
+    uint32 pcs_low_vol_ride_through_protect_time2 = 38;
+  }
+  oneof _pcs_low_vol_ride_through_protect_time3 {
+    uint32 pcs_low_vol_ride_through_protect_time3 = 39;
+  }
+  oneof _pcs_high_vol_ride_through_recover {
+    float pcs_high_vol_ride_through_recover = 40;
+  }
+  oneof _pcs_low_vol_ride_through_recover {
+    float pcs_low_vol_ride_through_recover = 41;
+  }
+  oneof _pcs_island_detect_switch {
+    uint32 pcs_island_detect_switch = 42;
+  }
+  oneof _pcs_active_power_derating_switch {
+    uint32 pcs_active_power_derating_switch = 43;
+  }
+  oneof _pcs_active_power_derating_percent {
+    float pcs_active_power_derating_percent = 44;
+  }
+  oneof _pcs_active_power_gradient {
+    float pcs_active_power_gradient = 45;
+  }
+  oneof _pcs_active_power_softstart_switch {
+    uint32 pcs_active_power_softstart_switch = 46;
+  }
+  oneof _pcs_active_power_softstart_time {
+    uint32 pcs_active_power_softstart_time = 47;
+  }
+  oneof _pcs_over_freq_derating_switch {
+    uint32 pcs_over_freq_derating_switch = 48;
+  }
+  oneof _pcs_over_freq_derating_power_based {
+    float pcs_over_freq_derating_power_based = 49;
+  }
+  oneof _pcs_over_freq_derating_start {
+    float pcs_over_freq_derating_start = 50;
+  }
+  oneof _pcs_over_freq_derating_end {
+    float pcs_over_freq_derating_end = 51;
+  }
+  oneof _pcs_over_freq_derating_slope {
+    float pcs_over_freq_derating_slope = 52;
+  }
+  oneof _pcs_over_freq_derating_recover_slope {
+    float pcs_over_freq_derating_recover_slope = 53;
+  }
+  oneof _pcs_over_freq_derating_froze_switch {
+    uint32 pcs_over_freq_derating_froze_switch = 54;
+  }
+  oneof _pcs_over_freq_derating_cutoff_power {
+    float pcs_over_freq_derating_cutoff_power = 55;
+  }
+  oneof _pcs_under_freq_increment_switch {
+    uint32 pcs_under_freq_increment_switch = 56;
+  }
+  oneof _pcs_under_freq_increment_start {
+    float pcs_under_freq_increment_start = 57;
+  }
+  oneof _pcs_under_freq_increment_end {
+    float pcs_under_freq_increment_end = 58;
+  }
+  oneof _pcs_under_freq_increment_slope {
+    float pcs_under_freq_increment_slope = 59;
+  }
+  oneof _pcs_under_freq_increment_recover_slope {
+    float pcs_under_freq_increment_recover_slope = 60;
+  }
+  oneof _pcs_under_freq_increment_froze_switch {
+    uint32 pcs_under_freq_increment_froze_switch = 61;
+  }
+  oneof _pcs_anti_back_flow_switch {
+    uint32 pcs_anti_back_flow_switch = 62;
+  }
+  oneof _pcs_over_vol_derating_switch {
+    uint32 pcs_over_vol_derating_switch = 63;
+  }
+  oneof _pcs_over_vol_derating_start {
+    float pcs_over_vol_derating_start = 64;
+  }
+  oneof _pcs_over_vol_derating_end {
+    float pcs_over_vol_derating_end = 65;
+  }
+  oneof _pcs_over_vol_derating_starting_power {
+    float pcs_over_vol_derating_starting_power = 66;
+  }
+  oneof _pcs_over_vol_derating_end_power {
+    float pcs_over_vol_derating_end_power = 67;
+  }
+  oneof _pcs_over_vol_derating_time_const {
+    float pcs_over_vol_derating_time_const = 68;
+  }
+  oneof _pcs_react_pwr_mode_select {
+    uint32 pcs_react_pwr_mode_select = 69;
+  }
+  oneof _pcs_react_pwr_compensation {
+    float pcs_react_pwr_compensation = 70;
+  }
+  oneof _pcs_pf_value {
+    float pcs_pf_value = 71;
+  }
+  oneof _pcs_react_pwr_percent {
+    float pcs_react_pwr_percent = 72;
+  }
+  oneof _pcs_qu_v1 {
+    float pcs_qu_v1 = 73;
+  }
+  oneof _pcs_qu_v2 {
+    float pcs_qu_v2 = 74;
+  }
+  oneof _pcs_qu_v3 {
+    float pcs_qu_v3 = 75;
+  }
+  oneof _pcs_qu_v4 {
+    float pcs_qu_v4 = 76;
+  }
+  oneof _pcs_qu_q1 {
+    float pcs_qu_q1 = 77;
+  }
+  oneof _pcs_qu_q2 {
+    float pcs_qu_q2 = 78;
+  }
+  oneof _pcs_qu_q3 {
+    float pcs_qu_q3 = 79;
+  }
+  oneof _pcs_qu_q4 {
+    float pcs_qu_q4 = 80;
+  }
+  oneof _pcs_qu_time_const {
+    float pcs_qu_time_const = 81;
+  }
+  oneof _pcs_cosp_p1 {
+    float pcs_cosp_p1 = 82;
+  }
+  oneof _pcs_cosp_p2 {
+    float pcs_cosp_p2 = 83;
+  }
+  oneof _pcs_cosp_p3 {
+    float pcs_cosp_p3 = 84;
+  }
+  oneof _pcs_cosp_pf1 {
+    float pcs_cosp_pf1 = 85;
+  }
+  oneof _pcs_cosp_pf2 {
+    float pcs_cosp_pf2 = 86;
+  }
+  oneof _pcs_cosp_pf3 {
+    float pcs_cosp_pf3 = 87;
+  }
+  oneof _pcs_safety_country_code_selection {
+    uint32 pcs_safety_country_code_selection = 88;
+  }
+  oneof _pcs_reconnect_grid_detect_switch {
+    uint32 pcs_reconnect_grid_detect_switch = 89;
+  }
+  oneof _pcs_on_grid_wait_time {
+    uint32 pcs_on_grid_wait_time = 90;
+  }
+  oneof _pcs_high_vol_on_grid {
+    float pcs_high_vol_on_grid = 91;
+  }
+  oneof _pcs_low_vol_on_grid {
+    float pcs_low_vol_on_grid = 92;
+  }
+  oneof _pcs_high_freq_on_grid {
+    float pcs_high_freq_on_grid = 93;
+  }
+  oneof _pcs_low_freq_on_grid {
+    float pcs_low_freq_on_grid = 94;
+  }
+  oneof _pcs_fault_recover_on_grid_wait_time {
+    uint32 pcs_fault_recover_on_grid_wait_time = 95;
+  }
+  oneof _pcs_fault_recover_high_vol_on_grid {
+    float pcs_fault_recover_high_vol_on_grid = 96;
+  }
+  oneof _pcs_fault_recover_low_vol_on_grid {
+    float pcs_fault_recover_low_vol_on_grid = 97;
+  }
+  oneof _pcs_fault_recover_high_freq_on_grid {
+    float pcs_fault_recover_high_freq_on_grid = 98;
+  }
+  oneof _pcs_fault_recover_low_freq_on_grid {
+    float pcs_fault_recover_low_freq_on_grid = 99;
+  }
+  oneof _pcs_power_derating_flag {
+    uint32 pcs_power_derating_flag = 100;
+  }
+  oneof _pcs_power_derating_set {
+    uint32 pcs_power_derating_set = 101;
+  }
+  oneof _pcs_send_end {
+    uint32 pcs_send_end = 102;
+  }
+  oneof _pcs_10min_over_vol_switch {
+    uint32 pcs_10min_over_vol_switch = 103;
+  }
+  oneof _pcs_active_power_soft_start_rate {
+    float pcs_active_power_soft_start_rate = 104;
+  }
+  oneof _pcs_active_power_normal_ramp_up_rate {
+    float pcs_active_power_normal_ramp_up_rate = 105;
+  }
+  oneof _pcs_over_freq_derating_start_delay {
+    float pcs_over_freq_derating_start_delay = 106;
+  }
+  oneof _pcs_over_freq_derating_end_delay {
+    float pcs_over_freq_derating_end_delay = 107;
+  }
+  oneof _pcs_over_freq_derating_recover_slope_switch {
+    uint32 pcs_over_freq_derating_recover_slope_switch = 108;
+  }
+  oneof _pcs_under_freq_increment_start_delay {
+    float pcs_under_freq_increment_start_delay = 109;
+  }
+  oneof _pcs_under_freq_increment_end_delay {
+    float pcs_under_freq_increment_end_delay = 110;
+  }
+  oneof _pcs_over_vol_derating_delay_time {
+    uint32 pcs_over_vol_derating_delay_time = 111;
+  }
+  oneof _pcs_ongrid_reconnect_flag {
+    uint32 pcs_ongrid_reconnect_flag = 112;
+  }
+  oneof _pcs_qu_lockin_power {
+    float pcs_qu_lockin_power = 113;
+  }
+  oneof _pcs_qu_lockout_power {
+    float pcs_qu_lockout_power = 114;
+  }
+  oneof _pcs_qu_minimum_cosphi {
+    float pcs_qu_minimum_cosphi = 115;
+  }
+  oneof _pcs_fast_check {
+    uint32 pcs_fast_check = 116;
+  }
+  oneof _pcs_function_enable {
+    uint32 pcs_function_enable = 117;
+  }
+  oneof _pcs_under_freq_increment_recover_slope_switch {
+    uint32 pcs_under_freq_increment_recover_slope_switch = 118;
+  }
+  oneof _pcs_over_vol_derating_daley_time {
+    float pcs_over_vol_derating_daley_time = 119;
+  }
+  oneof _pcs_cosp_p4 {
+    float pcs_cosp_p4 = 120;
+  }
+  oneof _pcs_cosp_pf4 {
+    float pcs_cosp_pf4 = 121;
+  }
+  oneof _pcs_reserved1 {
+    uint32 pcs_reserved1 = 122;
+  }
+  oneof _pcs_reserved2 {
+    uint32 pcs_reserved2 = 123;
+  }
+  oneof _pcs_reserved3 {
+    uint32 pcs_reserved3 = 124;
+  }
+  oneof _pcs_reserved4 {
+    uint32 pcs_reserved4 = 125;
+  }
+  oneof _pcs_reserved5 {
+    uint32 pcs_reserved5 = 126;
+  }
+  oneof _pcs_uwn_pe_relay_close_enable {
+    uint32 pcs_uwn_pe_relay_close_enable = 127;
+  }
+  oneof _pcs_fvolt_rated {
+    float pcs_fvolt_rated = 128;
+  }
+  oneof _pcs_fIrated {
+    float pcs_fIrated = 129;
+  }
+  oneof _pcs_ffreq_rate {
+    float pcs_ffreq_rate = 130;
+  }
+  oneof _pcs_ffreq_deta_limit {
+    float pcs_ffreq_deta_limit = 131;
+  }
+  oneof _pcs_fapparent_rate {
+    float pcs_fapparent_rate = 132;
+  }
+  oneof _pcs_fapparent_max {
+    float pcs_fapparent_max = 133;
+  }
+  oneof _pcs_fact_power_rate {
+    float pcs_fact_power_rate = 134;
+  }
+  oneof _pcs_fact_power_max {
+    float pcs_fact_power_max = 135;
+  }
+  oneof _pcs_freact_power_max {
+    float pcs_freact_power_max = 136;
+  }
+  oneof _pcs_reserved16 {
+    float pcs_reserved16 = 137;
+  }
+  oneof _pcs_pcs_anti_back_flow_protect_switch {
+    uint32 pcs_pcs_anti_back_flow_protect_switch = 138;
+  }
+  oneof _pcs_anti_back_flow_export_current_limit {
+    float pcs_anti_back_flow_export_current_limit = 139;
+  }
+  oneof _pcs_anti_back_flow_import_current_limit {
+    float pcs_anti_back_flow_import_current_limit = 140;
+  }
+  oneof _pcs_freq_local_command {
+    uint32 pcs_freq_local_command = 141;
+  }
+  oneof _pcs_freq_external_signal {
+    uint32 pcs_freq_external_signal = 142;
+  }
+  oneof _pcs_auto_test_state {
+    uint32 pcs_auto_test_state = 143;
+  }
+  oneof _pcs_auto_test_flag {
+    uint32 pcs_auto_test_flag = 144;
+  }
+  oneof _pcs_avg_ovp_protect_cnt {
+    uint32 pcs_avg_ovp_protect_cnt = 145;
+  }
+  oneof _pcs_ovp_protect_cnt {
+    uint32 pcs_ovp_protect_cnt = 146;
+  }
+  oneof _pcs_uvp1_protect_cnt {
+    uint32 pcs_uvp1_protect_cnt = 147;
+  }
+  oneof _pcs_uvp2_protect_cnt {
+    uint32 pcs_uvp2_protect_cnt = 148;
+  }
+  oneof _pcs_ofp_protect_cnt {
+    uint32 pcs_ofp_protect_cnt = 149;
+  }
+  oneof _pcs_ufp_protect_cnt {
+    uint32 pcs_ufp_protect_cnt = 150;
+  }
+  oneof _pcs_avg_ovp_protect_value {
+    float pcs_avg_ovp_protect_value = 151;
+  }
+  oneof _pcs_ovp_protect_value {
+    float pcs_ovp_protect_value = 152;
+  }
+  oneof _pcs_uvp1_protect_value {
+    float pcs_uvp1_protect_value = 153;
+  }
+  oneof _pcs_uvp2_protect_value {
+    float pcs_uvp2_protect_value = 154;
+  }
+  oneof _pcs_ofp_protect_value {
+    float pcs_ofp_protect_value = 155;
+  }
+  oneof _pcs_ufp_protect_value {
+    float pcs_ufp_protect_value = 156;
+  }
+  oneof _pcs_auto_test_percent {
+    uint32 pcs_auto_test_percent = 157;
+  }
+  oneof _pcs_qu_k {
+    float pcs_qu_k = 158;
+  }
+  oneof _pcs_battery_storage_mode {
+    uint32 pcs_battery_storage_mode = 159;
+  }
+  oneof _pcs_dci_protect_switch {
+    uint32 pcs_dci_protect_switch = 160;
+  }
+  oneof _pcs_fact_power_max_each {
+    float pcs_fact_power_max_each = 161;
+  }
+  oneof _pcs_freact_power_max_each {
+    float pcs_freact_power_max_each = 162;
+  }
+  oneof _pcs_fapparent_max_each {
+    float pcs_fapparent_max_each = 163;
+  }
+  oneof _pcs_fapparent_rate_each {
+    float pcs_fapparent_rate_each = 164;
+  }
+  oneof _pcs_quick_selfcheck_en {
+    uint32 pcs_quick_selfcheck_en = 165;
+  }
+  oneof _pcs_qp_p1 {
+    float pcs_qp_p1 = 166;
+  }
+  oneof _pcs_qp_p2 {
+    float pcs_qp_p2 = 167;
+  }
+  oneof _pcs_qp_p3 {
+    float pcs_qp_p3 = 168;
+  }
+  oneof _pcs_qp_p4 {
+    float pcs_qp_p4 = 169;
+  }
+  oneof _pcs_qp_q1 {
+    float pcs_qp_q1 = 170;
+  }
+  oneof _pcs_qp_q2 {
+    float pcs_qp_q2 = 171;
+  }
+  oneof _pcs_qp_q3 {
+    float pcs_qp_q3 = 172;
+  }
+  oneof _pcs_qp_q4 {
+    float pcs_qp_q4 = 173;
+  }
+  oneof _pcs_under_freq_increment_transition_point {
+    float pcs_under_freq_increment_transition_point = 174;
+  }
+  oneof _pcs_over_freq_derating_transition_point {
+    float pcs_over_freq_derating_transition_point = 175;
+  }
+  oneof _pcs_charge_under_vol_derating_switch {
+    uint32 pcs_charge_under_vol_derating_switch = 176;
+  }
+  oneof _pcs_charge_under_vol_derating_start {
+    float pcs_charge_under_vol_derating_start = 177;
+  }
+  oneof _pcs_charge_under_vol_derating_end {
+    float pcs_charge_under_vol_derating_end = 178;
+  }
+  oneof _pcs_charge_under_vol_derating_starting_power {
+    float pcs_charge_under_vol_derating_starting_power = 179;
+  }
+  oneof _pcs_charge_under_vol_derating_end_power {
+    float pcs_charge_under_vol_derating_end_power = 180;
+  }
+  oneof _pcs_hard_export_limit {
+    float pcs_hard_export_limit = 181;
+  }
+}
+
+message EmsSafetyParamSetAck {
+  optional sint32 result = 1;
+}
+
+message ErrorChangeReport {
+  oneof _ems_err_code {
+    .ErrorCode ems_err_code = 1;
+    .ErrorCode bp_err_code = 3;
+  }
+  oneof _pcs_err_code {
+    .ErrorCode pcs_err_code = 2;
+  }
+}
+
+message EmsGetErrorCode {
+}
+
+message ErrorCodeErase {
+  oneof _ems_err_code {
+    .ErrorCode ems_err_code = 1;
+    .ErrorCode bp_err_code = 3;
+  }
+  oneof _pcs_err_code {
+    .ErrorCode pcs_err_code = 2;
+  }
+}
+
+message ErrorCodeEraseAck {
+  optional sint32 result = 1;
+}
+
+message ErrorCodeMaskReport {
+  repeated uint32 error_code = 1;
+}
+
+message ErrorCodeMaskReportAck {
+  optional sint32 result = 1;
+}
+
+message ErrorCodeMaskSet {
+  oneof _err_type {
+    uint32 err_type = 1;
+    uint32 error_code = 2;
+  }
+}
+
+message ErrorCodeMaskSetAck {
+  optional sint32 result = 1;
+}
+
+message SysLedBrightSet {
+  oneof _sys_led_type {
+    uint32 sys_led_type = 1;
+  }
+  oneof _sys_led_ctrl_bright {
+    uint32 sys_led_ctrl_bright = 2;
+  }
+}
+
+message SysLedBrightSetAck {
+  optional sint32 result = 1;
+}
+
+message SysFactoryReset {
+  oneof _sys_reset {
+    uint32 sys_reset = 1;
+  }
+}
+
+message SysFactoryResetAck {
+  optional sint32 result = 1;
+}
+
+message SysMulPeakSet {
+  oneof _sys_mul_peak_switch {
+    bool sys_mul_peak_switch = 1;
+  }
+  oneof _sys_mul_peak_time {
+    uint32 sys_mul_peak_time = 2;
+  }
+}
+
+message SysMulPeakSetAck {
+  optional sint32 result = 1;
+}
+
+message EmsSgReadySet {
+  oneof _ems_sg_ready {
+    .SgReadyParam ems_sg_ready = 1;
+  }
+  oneof _ems_sg_ready_en {
+    bool ems_sg_ready_en = 2;
+  }
+}
+
+message EmsSgReadySetAck {
+  optional sint32 result = 1;
+}
+
+message SgReadyItem {
+  oneof _sg_ready_stat {
+    uint32 sg_ready_stat = 1;
+  }
+  oneof _timestamp {
+    fixed32 timestamp = 2;
+  }
+  oneof _run_times {
+    uint32 run_times = 3;
+  }
+}
+
+message SgReadyDetail {
+  optional uint32 sys_seq = 1;
+  repeated .SgReadyItem sys_sg_ready_detail = 2;
+}
+
+message SgReadyDetailAck {
+  optional uint32 sys_seq = 1;
+  optional uint32 detail_num = 2;
+}
+
+message SysSelfSet {
+  oneof _sys_self_req {
+    uint32 sys_self_req = 1;
+  }
+}
+
+message SysSelfSetAck {
+  optional uint32 sys_self_result = 1;
+  optional uint32 sys_self_chk_stat = 2;
+}
+
+message EmsTimerTaskCfg {
+  oneof _is_effect {
+    uint32 role = 1;
+    uint32 is_cfg = 2;
+    uint32 task_index = 3;
+    bool is_enable = 4;
+    bool is_effect = 5;
+    uint32 time_table = 10;
+  }
+  oneof _type {
+    uint32 type = 6;
+  }
+  oneof _sys_chg_dsg_pwr {
+    uint32 sys_chg_dsg_pwr = 7;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 8;
+  }
+  oneof _time_param {
+    uint32 time_param = 9;
+  }
+}
+
+message EmsTimerTaskCfgAck {
+  optional uint32 type = 1;
+  optional uint32 task_index = 2;
+  optional uint32 sta = 3;
+}
+
+message EmsTimerTaskGet {
+  optional uint32 task_index = 1;
+  optional uint32 type = 2;
+}
+
+message EmsTimerTaskGetAck {
+  optional .EmsTimerTaskCfg time_task_cfg = 1;
+}
+
+message EmsAllTimerTaskGet {
+}
+
+message EmsAllTimerTaskGetAck {
+  repeated .EmsTimerTaskCfg time_task_cfg = 1;
+}
+
+message EmsAllTimerTaskReport {
+  repeated .EmsTimerTaskCfg time_task_cfg = 1;
+}
+
+message AfciParamSet {
+  optional uint32 switch_freq_ch1 = 1;
+  optional uint32 switch_freq_ch2 = 2;
+  optional float protect_value_ch1 = 3;
+  optional float protect_value_ch2 = 4;
+}
+
+message AfciParmInfo {
+  oneof _type {
+    uint32 switch_freq_ch1 = 1;
+    uint32 switch_freq_ch2 = 2;
+    float protect_value_ch1 = 3;
+    float protect_value_ch2 = 4;
+    uint32 module_en = 5;
+    bool type = 8;
+  }
+}
+
+message AfciParmState {
+  optional uint32 result = 1;
+  optional bool type = 2;
+}
+
+message AfciParmSelfCheck {
+  optional uint32 self_test = 1;
+}
+
+message AfciParmSelfCheckAck {
+  optional uint32 result = 1;
+}
+
+message AfciParmEraseError {
+  optional uint32 error_erase = 1;
+}
+
+message AfciParmEraseErrorAck {
+  optional uint32 result = 1;
+}
+
+message EmsPVInvMeterGet {
+}
+
+message EmsPVInvMeterGetAck {
+  optional uint32 result = 1;
+}
+
+message EmsPVInvMeterCfgSet {
+  optional bool pv_meter_cfg = 1;
+}
+
+message EmsPVInvMeterCfgSetAck {
+  optional uint32 result = 1;
+}
+
+message EmsPVInvEnergyStreamReport {
+  optional float pv_inv_pwr = 1;
+}
+
+message EmsEcologyDevGet {
+  optional uint32 product_detail = 1;
+}
+
+message EmsEcologyDevGetAck {
+  optional uint32 product_detail = 1;
+  optional uint32 local_connected = 2;
+  repeated string dev_sn = 3;
+}
+
+message EmsEcologyDevBind {
+  oneof _commute_type {
+    uint32 product_detail = 1;
+    string dev_sn = 2;
+    bool bind_flg = 3;
+    uint32 commute_type = 4;
+  }
+}
+
+message EmsEcologyDevBindAck {
+  optional uint32 product_detail = 1;
+  optional string dev_sn = 2;
+  optional bool bind_flg = 3;
+  optional int32 result = 4;
+  optional uint32 commute_type = 5;
+}
+
+message HPRTUParam {
+  optional uint32 address = 1;
+  optional int32 u_value = 2;
+}
+
+message HPParam {
+  oneof _dev_sn {
+    string dev_sn = 1;
+  }
+  oneof _online {
+    uint32 online = 2;
+  }
+  oneof _error_code {
+    bytes error_code = 7;
+  }
+}
+
+message EmsEcologyDevReport {
+  oneof _HP_report {
+    .HPParam HP_report = 1;
+  }
+}
+
+message HeatpumpEnergy {
+  optional float hp_pwr = 1;
+}
+
+message EmsEcologyDevEnergyStreamReport {
+  oneof _hp_energy {
+    .HeatpumpEnergy hp_energy = 1;
+  }
+}
+
+message HeatpumpEnergyItem {
+  optional float ev_pwr = 1;
+  optional float temp_sector_a = 2;
+  optional float temp_sector_b = 3;
+  optional float temp_ambient = 4;
+  optional float temp_dhw = 5;
+  optional fixed32 timestamp = 6;
+  repeated float param = 7;
+}
+
+message HeatpumpEnergyDetail {
+  optional string dev_sn = 1;
+  repeated .HeatpumpEnergyItem hp_energy = 2;
+}
+
+message EmsEcologyDevEnergyStreamDetail {
+  oneof _hp_detail {
+    uint32 sys_seq = 1;
+    uint32 product_detail = 2;
+    .HeatpumpEnergyDetail hp_detail = 3;
+  }
+}
+
+message EmsEcologyDevEnergyStreamDetailAck {
+  oneof _sys_energy_num {
+    uint32 sys_seq = 1;
+    uint32 product_detail = 2;
+    uint32 sys_energy_num = 3;
+  }
+}
+
+message EmsDeviceRole {
+  optional uint32 user_role = 1;
+}
+
+message EmsDeviceRoleAck {
+  optional uint32 result = 1;
+}
+
+message EmsCtrlChgDsgMode {
+  oneof _chg_dsg_pwr {
+    uint32 chg_dsg_mode = 1;
+    float chg_dsg_pwr = 2;
+  }
+}
+
+message EmsCtrlChgDsgModeAck {
+  optional uint32 result = 1;
+}
+
+message FCRCtrlRWParam {
+  oneof _inverter_ctrl_enable {
+    uint32 inverter_ctrl_enable = 1;
+  }
+  oneof _inverter_ctrl_mode {
+    .InverterCtrlMode inverter_ctrl_mode = 2;
+  }
+  oneof _inverter_ctrl_value {
+    int32 inverter_ctrl_value = 3;
+  }
+  oneof _inverter_ctrl_opt {
+    .InverterOperationOpt inverter_ctrl_opt = 4;
+  }
+  oneof _battery_chg_limit {
+    uint32 battery_chg_limit = 5;
+  }
+  oneof _battery_dsg_limit {
+    uint32 battery_dsg_limit = 6;
+  }
+  oneof _battery_backup_radio {
+    uint32 battery_backup_radio = 7;
+  }
+  oneof _mppt_ctrl_mode {
+    uint32 mppt_ctrl_mode = 8;
+  }
+  oneof _mppt_pwr_limit {
+    uint32 mppt_pwr_limit = 9;
+  }
+  oneof _ctrl_heatbeat {
+    uint32 ctrl_heatbeat = 10;
+  }
+}
+
+message FCRCtrlRWParamAck {
+  optional uint32 result = 1;
+}
+
+message ThirdPartyCtrlParam {
+  oneof _sys_ctrl_word {
+    uint32 sys_ctrl_word = 1;
+  }
+  oneof _backup_radio {
+    uint32 backup_radio = 2;
+  }
+  oneof _feed_mode_set {
+    uint32 feed_mode_set = 3;
+  }
+  oneof _max_feed_pwr {
+    uint32 max_feed_pwr = 4;
+  }
+  oneof _breaker_cap {
+    uint32 breaker_cap = 5;
+  }
+  oneof _led_bright {
+    uint32 led_bright = 6;
+  }
+  oneof _sys_pwr_set {
+    int32 sys_pwr_set = 7;
+  }
+  oneof _inv_pwr_set {
+    int32 inv_pwr_set = 8;
+  }
+  oneof _sys_workmode_set {
+    uint32 sys_workmode_set = 9;
+  }
+  oneof _bp_pwr_set {
+    int32 bp_pwr_set = 10;
+  }
+  oneof _feed_limit_percent {
+    uint32 feed_limit_percent = 11;
+  }
+  oneof _ctrl_hb {
+    uint32 ctrl_hb = 12;
+  }
+}
+
+message ThirdPartyCtrlParamAck {
+  optional uint32 result = 1;
+}
+
+message EmsEcologyDevParamSet {
+  oneof _hp_net_param {
+    uint32 product_detail = 1;
+    string dev_sn = 2;
+    .EcologyDevParamNet hp_net_param = 4;
+  }
+}
+
+message EcologyDevParamNet {
+  oneof _rated_power {
+    float rated_power = 1;
+  }
+}
+
+message EmsEcologyDevParamSetAck {
+  optional uint32 product_detail = 1;
+  optional string dev_sn = 2;
+  optional int32 result = 4;
+}
+
+message EmsParamSet {
+  oneof _smart_ctrl {
+    bool smart_ctrl = 1;
+  }
+  oneof _bp_burst {
+    bool bp_burst = 2;
+  }
+  oneof _price_update {
+    bool price_update = 3;
+  }
+}
+
+message EmsParamSetAck {
+  optional int32 result = 1;
+}
+
+message EmsEnergyEfficientSet {
+  oneof _energy_efficient_enable {
+    bool energy_efficient_enable = 1;
+  }
+  oneof _sys_zone {
+    uint32 sys_zone = 2;
+  }
+  oneof _sys_time_tab {
+    uint32 sys_time_tab = 3;
+  }
+}
+
+message EmsEnergyEfficientSetAck {
+  optional int32 result = 1;
+}
+
+message AppRuquestBpEuLawData {
+  oneof _app_to_bms_launch_date {
+    string bp_sn = 1;
+    uint32 app_to_bms_launch_date = 2;
+  }
+  oneof _app_launch_date_set_type {
+    uint32 app_launch_date_set_type = 3;
+  }
+  oneof _app_to_bms_reset_flag {
+    uint32 app_to_bms_reset_flag = 4;
+  }
+  oneof _bms_data_upload_en {
+    uint32 bms_data_upload_en = 5;
+  }
+}
+
+message AppRuquestBpEuLawDataAck {
+  oneof _soh {
+    string bp_sn = 1;
+    uint32 soh = 2;
+  }
+  oneof _accu_chg_cap {
+    uint32 accu_chg_cap = 3;
+  }
+  oneof _accu_dsg_cap {
+    uint32 accu_dsg_cap = 4;
+  }
+  oneof _accu_chg_energy {
+    uint32 accu_chg_energy = 5;
+  }
+  oneof _accu_dsg_energy {
+    uint32 accu_dsg_energy = 6;
+  }
+  oneof _deep_dsg_cnt {
+    uint32 deep_dsg_cnt = 7;
+  }
+  oneof _high_temp_use_time {
+    uint32 high_temp_use_time = 8;
+  }
+  oneof _low_temp_use_time {
+    uint32 low_temp_use_time = 9;
+  }
+  oneof _high_temp_chg_time {
+    uint32 high_temp_chg_time = 10;
+  }
+  oneof _low_temp_chg_time {
+    uint32 low_temp_chg_time = 11;
+  }
+  oneof _bp_launch_date {
+    uint32 bp_launch_date = 12;
+  }
+  oneof _bp_cycles {
+    uint32 bp_cycles = 13;
+  }
+  oneof _bp_power_capability {
+    float bp_power_capability = 14;
+  }
+  oneof _bp_round_trip_eff {
+    float bp_round_trip_eff = 15;
+  }
+  oneof _bp_self_dsg_rate {
+    float bp_self_dsg_rate = 16;
+  }
+  oneof _bp_ohm_res {
+    float bp_ohm_res = 17;
+  }
+  oneof _bp_reset_flag {
+    .BpResetType bp_reset_flag = 18;
+  }
+  oneof _bp_launch_date_flag {
+    .AppDateType bp_launch_date_flag = 19;
+  }
+}
+
+message BpCloudEdgeCtrlSta {
+  oneof _bp_cloud_ctrl_enable {
+    string bp_sn = 1;
+    uint32 bp_cloud_ctrl_enable = 2;
+  }
+  oneof _bp_cloud_ctrl_action {
+    .CLOUD_CTRL_ACTION bp_cloud_ctrl_action = 3;
+  }
+  oneof _bp_real_soh_calib_enable {
+    uint32 bp_real_soh_calib_enable = 4;
+  }
+  oneof _bp_real_soh {
+    uint32 bp_real_soh = 5;
+  }
+  oneof _bp_disp_soh_calib_enable {
+    uint32 bp_disp_soh_calib_enable = 6;
+  }
+  oneof _bp_disp_soh {
+    uint32 bp_disp_soh = 7;
+  }
+  oneof _bp_cycles_calib_enable {
+    uint32 bp_cycles_calib_enable = 8;
+  }
+  oneof _bp_cycles {
+    uint32 bp_cycles = 9;
+  }
+  oneof _bp_accu_chg_cap_calib_enable {
+    uint32 bp_accu_chg_cap_calib_enable = 10;
+  }
+  oneof _bp_accu_chg_cap {
+    uint32 bp_accu_chg_cap = 11;
+  }
+  oneof _bp_accu_dsg_cap_calib_enable {
+    uint32 bp_accu_dsg_cap_calib_enable = 12;
+  }
+  oneof _bp_accu_dsg_cap {
+    uint32 bp_accu_dsg_cap = 13;
+  }
+  oneof _bp_accu_chg_eng_calib_enable {
+    uint32 bp_accu_chg_eng_calib_enable = 14;
+  }
+  oneof _bp_accu_chg_eng {
+    uint32 bp_accu_chg_eng = 15;
+  }
+  oneof _bp_accu_dsg_eng_calib_enable {
+    uint32 bp_accu_dsg_eng_calib_enable = 16;
+  }
+  oneof _bp_accu_dsg_eng {
+    uint32 bp_accu_dsg_eng = 17;
+  }
+  oneof _bp_balance_enable {
+    uint32 bp_balance_enable = 18;
+  }
+  oneof _bp_balance_mode {
+    .CLOUD_EDGE_BALANCE bp_balance_mode = 19;
+  }
+  oneof _bp_max_ocv_soc_calib_enable {
+    uint32 bp_max_ocv_soc_calib_enable = 20;
+  }
+  oneof _bp_max_ocv_soc {
+    float bp_max_ocv_soc = 21;
+  }
+  oneof _bp_min_ocv_soc_calib_enable {
+    uint32 bp_min_ocv_soc_calib_enable = 22;
+  }
+  oneof _bp_min_ocv_soc {
+    float bp_min_ocv_soc = 23;
+  }
+  oneof _bp_cali_ocv_mode {
+    .CLOUD_EDGE_OCV bp_cali_ocv_mode = 24;
+  }
+}
+
+message BpCloudEdgeCtrlStaAck {
+  optional string bp_sn = 1;
+  optional uint32 result = 2;
+}
+
+message RoleHistoryItem {
+  optional uint32 start_time = 1;
+  optional uint32 end_time = 2;
+  optional uint32 role = 3;
+}
+
+message RoleHistoryReport {
+  optional uint32 seq = 1;
+  repeated .RoleHistoryItem role_history_items = 2;
+}
+
+message RoleHistoryReportAck {
+  optional uint32 seq = 1;
+  optional uint32 item_num = 2;
+}
+
+message PeaktaskInfo {
+  optional uint32 peak_pwr_max = 1;
+  optional uint32 peak_energy_max = 2;
+  optional uint32 peak_soc = 3;
+}
+
+message EmsPeakTaskCfg {
+  oneof _is_effect {
+    uint32 role = 1;
+    uint32 is_cfg = 2;
+    uint32 task_index = 3;
+    bool is_enable = 4;
+    bool is_effect = 5;
+    uint32 type = 6;
+    bytes peak_sub_info = 8;
+  }
+  oneof _Info {
+    .PeaktaskInfo Info = 7;
+  }
+}
+
+message EmsPeakSubTimeTaskInfo {
+  optional uint32 time_mode = 1;
+  optional uint32 time_param = 2;
+  repeated uint32 time_table = 3;
+}
+
+message EmsPeakPriceInfo {
+  optional int32 peak_price = 1;
+}
+
+message PeakTaskCfgAck {
+  optional uint32 type = 1;
+  optional uint32 task_index = 2;
+  optional uint32 result = 3;
+}
+
+message EmsPEAKTaskGet {
+  optional uint32 task_index = 1;
+  optional uint32 type = 2;
+}
+
+message EmsPeakShavingTaskGetAck {
+  optional .EmsPeakTaskCfg peak_task_cfg = 1;
+}
+
+message EmsAllPeakShavingTaskGet {
+}
+
+message EmsAllPeakShavingTaskGetAck {
+  repeated .EmsPeakTaskCfg peak_task_cfg = 1;
+}
+
+message EmsAllPeakTaskReport {
+  repeated .EmsPeakTaskCfg peak_task_cfg = 1;
+}
+
+message EmsAllPeakTaskReportAck {
+  optional int32 result = 1;
+}
+
+message EmsTouTaskCfg {
+  oneof _type {
+    uint32 role = 1;
+    uint32 is_cfg = 2;
+    uint32 task_index = 3;
+    bool is_enable = 4;
+    uint32 type = 5;
+  }
+  oneof _sys_meter_dsg_pwr {
+    uint32 sys_meter_dsg_pwr = 6;
+  }
+  oneof _is_effect {
+    bool is_effect = 7;
+  }
+  oneof _tou_sub_info {
+    bytes tou_sub_info = 8;
+  }
+}
+
+message EmsTouSubManualInfo {
+  optional uint32 manual_mode = 1;
+}
+
+message EmsTouSubTimerTaskInfo {
+  optional uint32 time_mode = 1;
+  optional uint32 time_param = 2;
+  repeated uint32 time_table = 3;
+}
+
+message EmsTouSubLowPriceInfo {
+  optional uint32 time_mode = 1;
+  optional uint32 time_param = 2;
+  repeated uint32 time_table = 3;
+}
+
+message EmsTouTaskCfgAck {
+  optional uint32 type = 1;
+  optional uint32 task_index = 2;
+  optional uint32 result = 3;
+}
+
+message EmsTouTaskGet {
+  optional uint32 task_index = 1;
+  optional uint32 type = 2;
+}
+
+message EmsTouTaskGetAck {
+  optional .EmsTouTaskCfg tou_task_cfg = 1;
+}
+
+message EmsAllTouTaskGet {
+}
+
+message EmsAllTouTaskGetAck {
+  repeated .EmsTouTaskCfg tou_task_cfg = 1;
+  repeated .EmsTouTaskCfg pou_task_cfg = 2;
+}
+
+message EmsAllTouTaskDel {
+}
+
+message EmsAllTouTaskDelAck {
+  optional int32 result = 1;
+}
+
+message EmsAllTouTaskReport {
+  repeated .EmsTouTaskCfg tou_task_cfg = 1;
+  repeated .EmsTouTaskCfg pou_task_cfg = 2;
+}
+
+message EmsTouSubDynamicPriceInfo {
+  optional uint32 ctrl_mode = 1;
+  optional uint32 ctrl_obj = 2;
+  optional int32 set_price = 3;
+}
+
+message EmsTaskTypeEnableFlagSet {
+  optional int32 task_type_enable_flag_set = 1;
+}
+
+message EmsTaskTypeEnableFlagSetAck {
+  oneof _task_type_enable_flag_set_ack {
+    int32 task_type_result_set_ack = 1;
+    int32 task_type_enable_flag_set_ack = 2;
+  }
+}
+
+message EmsSupplyTypeEnableFlagSet {
+  optional int32 supply_enable_flag_set = 1;
+}
+
+message EmsSupplyTypeEnableFlagSetAck {
+  oneof _supply_enable_flag_set_ack {
+    int32 supply_result_set_ack = 1;
+    int32 supply_enable_flag_set_ack = 2;
+  }
+}
+
+message TouPriceQuery {
+  optional uint32 startDate = 1;
+  optional uint32 endDate = 2;
+  optional uint32 type = 3;
+  optional string zoneId = 4;
+}
+
+message Item {
+  optional float price = 1;
+  optional uint32 startX = 2;
+  optional uint32 endX = 3;
+}
+
+message DataEntry {
+  optional uint32 electricityChargeType = 1;
+  repeated .Item items = 2;
+}
+
+message TouPriceResponse {
+  optional int32 ret = 1;
+  repeated map<uint32, int32> data = 2;
+}
+
+message SafetyFunRCRSet {
+  optional uint32 enable = 1;
+}
+
+message SafetyFunRCRSetAck {
+  optional uint32 result = 1;
+}
+
+message SafetyFunRCRParamReport {
+  optional uint32 enable = 1;
+  optional uint32 active_state = 2;
+}
+
+message ConfigRead {
+  repeated uint32 action_id = 1;
+}
+
+message ConfigReadAck {
+  oneof _cfg_read_intelligent_schedule {
+    .GetIntelligentSchedule cfg_read_intelligent_schedule = 545;
+  }
+}
+
+message GetIntelligentSchedule {
+  optional uint32 intelligent_schedule_mode = 1;
+  optional uint32 join_intelligent_schedule = 2;
+}
+
+message DevRequest {
+  oneof _require_intelligent_schedule {
+    uint32 dev_utc_time = 1;
+    float dev_utc_timezone = 2;
+    .ReqIntelligentSchedule require_intelligent_schedule = 11;
+  }
+}
+
+message ReqIntelligentSchedule {
+  optional uint32 req_intelligent_schedule_state = 1;
+}
+
+message Krakendatareport {
+  oneof _kraken_commit_id {
+    uint32 kraken_commit_id = 1;
+  }
+  oneof _kraken_mode_active {
+    uint32 kraken_mode_active = 2;
+  }
+  oneof _is_load_limit {
+    bool is_load_limit = 3;
+  }
+  oneof _inverter_State {
+    .inverterState inverter_State = 4;
+  }
+  oneof _interval {
+    .interval interval = 5;
+  }
+  oneof _battery_State {
+    .batteryState battery_State = 6;
+  }
+  oneof _kraken_cmd_support {
+    bool kraken_cmd_support = 7;
+  }
+  oneof _sys_bp_pwr {
+    float sys_bp_pwr = 8;
+  }
+  oneof _kraken_effect_staut {
+    float kraken_effect_staut = 9;
+  }
+  oneof _kraken_register_stayt {
+    float kraken_register_stayt = 10;
+  }
+}
+
+message interval {
+  optional float averageActivePower = 1;
+  optional uint32 duration = 2;
+  optional float energyCharged = 3;
+}
+
+message inverterState {
+  optional float solarActivePower = 1;
+  optional float inverterActivePower = 2;
+  optional float gridActivePower = 3;
+  optional uint32 exportToGridAllowed = 4;
+  optional uint32 importFromGridAllowed = 5;
+  optional float maximumExportPowerToGrid = 6;
+}
+
+message batteryState {
+  optional uint32 chargeStatus = 1;
+  optional uint32 mode = 2;
+  optional uint32 usableCapacity = 3;
+  optional uint32 reserveState0fCharge = 4;
+  optional uint32 stateOfCharge = 5;
+  optional uint32 currentEnergy = 6;
+}
+
+message KrakenSet {
+  optional uint32 kraken_switch = 1;
+}
+
+message KrakenSetAck {
+  optional uint32 result = 1;
+}
+
+message OilEngineTimerTask {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+    uint32 time_table = 9;
+  }
+  oneof _type {
+    uint32 type = 5;
+  }
+  oneof _param {
+    uint32 param = 6;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 7;
+  }
+  oneof _time_param {
+    uint32 time_param = 8;
+  }
+}
+
+message OilEngineBind {
+  oneof _oil_engine_para {
+    uint32 bind_ctrl = 1;
+    .OilEngineParaSet oil_engine_para = 2;
+  }
+}
+
+message OilEngineBindAck {
+  optional uint32 result = 1;
+}
+
+message OilEngineParaSet {
+  oneof _rated_power {
+    float rated_power = 1;
+  }
+  oneof _connect_type {
+    uint32 connect_type = 2;
+  }
+  oneof _control_type {
+    uint32 control_type = 3;
+  }
+  oneof _control_state {
+    uint32 control_state = 4;
+  }
+  oneof _start_threshold {
+    uint32 start_threshold = 5;
+  }
+  oneof _stop_threshold {
+    uint32 stop_threshold = 6;
+  }
+  oneof _time_para {
+    .OilEngineTimerTask time_para = 7;
+  }
+  oneof _start_control_io_bit {
+    uint32 start_control_io_bit = 8;
+  }
+  oneof _connect_io_bit {
+    uint32 connect_io_bit = 9;
+  }
+  oneof _connect_style_select {
+    uint32 connect_style_select = 11;
+  }
+}
+
+message OilEngineParaSetAck {
+  optional uint32 result = 1;
+}
+
+message OilEngineParaReport {
+  oneof _ctrl_state {
+    uint32 bind_state = 1;
+    uint32 ctrl_state = 2;
+  }
+  oneof _dry_contact_state {
+    uint32 dry_contact_state = 3;
+  }
+  oneof _work_state {
+    uint32 work_state = 4;
+  }
+  oneof _schedule_mode {
+    uint32 schedule_mode = 5;
+  }
+  oneof _oil_engine_para {
+    .OilEngineParaSet oil_engine_para = 10;
+  }
+}
+
+enum WorkMode {
+  WORKMODE_SELFUSE = 0;
+  WORKMODE_TOU = 1;
+  WORKMODE_BACKUP = 2;
+  WORKMODE_DBG = 3;
+  WORKMODE_AC_MAKEUP = 4;
+  WORKMODE_DRM_MODE = 5;
+  WORKMODE_REMOTE_SCHED = 6;
+  WORKMODE_STANDBY_MODE = 7;
+  WORKMODE_SOC_CALIB = 8;
+  WORKMODE_TIMER_MODE = 9;
+  WORKMODE_FCR_MODE = 10;
+  WORKMODE_THIRD_MODE = 11;
+  WORKMODE_AI_SCHEDULE = 12;
+  WORKMODE_KRAKEN = 13;
+  WORKMODE_OIL = 14;
+  WORKMODE_TIMER_HEAT_MODE = 15;
+  WORKMODE_IDLE = 255;
+}
+
+enum SgReadyMode {
+  SG_AUTO = 0;
+  SG_MANUAL = 1;
+}
+
+enum RunStaDef {
+  RUNSTA_STANDBY = 0;
+  RUNSTA_RUN = 1;
+  RUNSTA_STOP = 2;
+}
+
+enum bms_RunStaDef {
+  PB_BMS_STATE_SHUTDOWN = 0;
+  PB_BMS_STATE_NORMAL = 1;
+  PB_BMS_STATE_CHARGEABLE = 2;
+  PB_BMS_STATE_DISCHARGEABLE = 3;
+  PB_BMS_STATE_FAULT = 4;
+}
+
+enum bms_ChgDsgSta {
+  PB_STANDBY_STATE = 0;
+  PB_DSG_STATE = 1;
+  PB_CHG_STATE = 2;
+}
+
+enum dab_ModelStaDef {
+  PB_MOD_STA_NORMAL = 0;
+  PB_MOD_STA_WARNNING = 1;
+  PB_MOD_STA_FAULT = 2;
+}
+
+enum bms_HeatingExitEvent {
+  PB_PTC_OT_STATE = 0;
+  HEAT_EVENT_TEMP_OK = 1;
+  HEAT_EVENT_ABNORMAL = 2;
+  HEAT_EVENT_TEMP_DIFF = 3;
+  HEAT_EVENT_BMS_FAULT = 4;
+  HEAT_EVENT_OVERTIME = 5;
+  HEAT_EVENT_CHG_DISABLE = 6;
+  HEAT_EVENT_POWER_LOW = 7;
+  HEAT_EVENT_AB_DSG = 8;
+  HEAT_EVENT_DSG_SOC_LOW = 9;
+  HEAT_EVENT_DSG_VOL_LOW = 10;
+  HEAT_EVENT_DSG_DISABLE = 11;
+  HEAT_EVENT_AFE_FAULT = 12;
+  HEAT_EVENT_FTOP_FAULT = 13;
+  HEAT_EVENT_FVOP_FAULT = 14;
+  HEAT_EVENT_PWR_FAULT = 15;
+  HEAT_EVENT_PTC_SC = 16;
+  HEAT_EVENT_MOS_SC = 17;
+  HEAT_EVENT_PTC_TEMP_FAULT = 18;
+  HEAT_EVENT_PTC_TEMP_SOT = 19;
+}
+
+enum bms_SysState {
+  PRE_POWER_ON_STATE = 0;
+  CFM_POWER_ON_STATE = 1;
+  NORMAL_STATE = 2;
+  POWER_OFF_STATE = 3;
+  SLEEP_STATE = 4;
+}
+
+enum PeakShavingStatus {
+  NO_PEAK_SHAVING_TASK = 0;
+  PEAK_SHAVING_TASK_EXIST = 1;
+  PEAK_SHAVING_TASK_ACTIVE = 2;
+}
+
+enum SysFactoryResetEnum {
+  RESET_RESERVED = 0;
+  RESET_IOT_INFO = 1;
+  RESET_HISTORICAL_DATA = 2;
+  RESET_CONFIGURE_PARAM = 4;
+}
+
+enum InverterCtrlMode {
+  W_MAX_PCT = 0;
+  WATTS = 1;
+  BATTERY_WATTS = 3;
+}
+
+enum InverterOperationOpt {
+  STOP = 0;
+  START = 1;
+  ENTER_STANDBY = 2;
+  EXIT_STANDBY = 3;
+}
+
+enum AppDateType {
+  NONE_SET = 0;
+  APP_AUTO_SET = 1;
+  APP_MANUAL_SET = 2;
+  BMS_AUTO_SET = 3;
+}
+
+enum BpResetType {
+  NONE_RESET_VAL = 0;
+  HAS_RESET_VAL = 1;
+  NEED_RESET_VAL = 2;
+}
+
+enum CLOUD_CTRL_ACTION {
+  CLEAR_ACTION = 0;
+  PROHIBIT_CHG_DSG = 1;
+  LIMIT_POWER = 2;
+  SOC_UP_DOWN_LIMIT = 3;
+}
+
+enum CLOUD_EDGE_BALANCE {
+  MODE_0 = 0;
+  MODE_1 = 1;
+  MODE_2 = 2;
+  MODE_3 = 3;
+}
+
+enum CLOUD_EDGE_OCV {
+  NO_BASE_SOC_MODE = 0;
+  BASE_DISPLAY_SOC_MODE = 1;
+  BASE_MAX_OCV_SOC_MODE = 2;
+  BASE_MIN_OCV_SOC_MODE = 3;
+}
+

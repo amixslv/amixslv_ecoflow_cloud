@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+message HPRTUPoint {
+  oneof _u_value {
+    uint32 address = 1;
+    int32 u_value = 2;
+  }
+  oneof _value_type {
+    uint32 value_type = 3;
+  }
+}
+
+message HPParamSet {
+  optional string hp_sn = 1;
+  repeated .HPRTUPoint rtu_pt = 2;
+}
+
+message HPParamSetAck {
+  optional string hp_sn = 1;
+  optional int32 result = 2;
+  repeated .HPRTUPoint rtu_pt = 3;
+}
+
+message HPParamGet {
+  optional string hp_sn = 1;
+  repeated .HPRTUPoint rtu_pt = 2;
+}
+
+message HPParamGetAck {
+  optional string hp_sn = 1;
+  repeated .HPRTUPoint rtu_pt = 2;
+}
+
+message HPTempSector {
+  optional uint32 switch_stat = 1;
+  optional float temp_target = 2;
+  optional float temp_curr = 3;
+}
+
+message HPBoard {
+  oneof _run_mode {
+    uint32 hp_mode = 1;
+    uint32 switch_stat = 2;
+    float temp_ambient = 3;
+    float temp_inlet = 4;
+    float temp_outlet = 5;
+    uint32 run_mode = 6;
+  }
+  oneof _run_flg0 {
+    uint32 run_flg0 = 7;
+  }
+  oneof _run_flg1 {
+    uint32 run_flg1 = 8;
+  }
+  oneof _icon_bits {
+    uint32 icon_bits = 9;
+  }
+  oneof _spec_mode {
+    uint32 spec_mode = 10;
+  }
+  oneof _ext_info {
+    bytes ext_info = 11;
+  }
+}
+
+message HPUIReport {
+  oneof _hp_master {
+    string hp_sn = 1;
+    int32 result = 2;
+    .HPBoard hp_master = 3;
+  }
+  oneof _sector_a {
+    .HPTempSector sector_a = 4;
+  }
+  oneof _sector_b {
+    .HPTempSector sector_b = 5;
+  }
+  oneof _sector_dhw {
+    .HPTempSector sector_dhw = 6;
+  }
+}
+
+message HPRemoteStatGet {
+  optional string hp_sn = 1;
+}
+
+message HPRemoteStatGetAck {
+  oneof _hp_pwr {
+    string hp_sn = 1;
+    bool remote_online = 2;
+    float hp_pwr = 3;
+  }
+}
+
+message HPParamListGet {
+  optional string hp_sn = 1;
+}
+
+message HPParamListGetAck {
+  optional string hp_sn = 1;
+  repeated .HPRTUPoint rtu_pt = 2;
+}
+
+message HPTimerTaskCfg {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+    uint32 time_table = 9;
+  }
+  oneof _type {
+    uint32 type = 5;
+  }
+  oneof _param {
+    int32 param = 6;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 7;
+  }
+  oneof _time_param {
+    uint32 time_param = 8;
+  }
+}
+
+message HPTimerTaskCfgAck {
+  optional uint32 type = 1;
+  optional uint32 task_index = 2;
+  optional int32 result = 3;
+}
+
+message HPTimerTaskGet {
+}
+
+message HPTimerTaskReport {
+  repeated .HPTimerTaskCfg time_task_cfg = 1;
+}
+
+enum HPCmdSets {
+  HP_NONE_CMD_SETS = 0;
+  HP_CMD_SETS = 211;
+}
+
+enum HPCmdId {
+  HP_CMD_ID_NONE = 0;
+  HP_CMD_ID_HEATPUMP_UI_REPORT = 1;
+  HP_CMD_ID_HP_TIMERTASK_REPORT = 2;
+  HP_CMD_ID_HEATPUMP_PARAM_SET = 99;
+  HP_CMD_ID_HEATPUMP_PARAM_GET = 100;
+  HP_CMD_ID_HEATPUMP_PARAM_LIST_GET = 101;
+  HP_CMD_ID_TIMER_TASK_SET = 102;
+  HP_CMD_ID_HP_TIMERTASK_GET = 103;
+  HP_CMD_ID_HEATPUMP_REMOTE_STAT_GET = 33;
+}
+

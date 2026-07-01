@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+message EnergyFlowHistory {
+  optional uint32 time_stamp = 1;
+  optional float evcharging_power = 2;
+  optional float meter_power = 3;
+  optional uint32 order_id = 4;
+  optional float from_grid_power = 5;
+  optional float from_pv_power = 6;
+  optional float from_bp_power = 7;
+}
+
+message EnergyStatistics {
+  optional uint32 time_stamp = 1;
+  optional uint32 watth_type = 2;
+  repeated uint32 watth = 3;
+  optional uint32 order_id = 4;
+  repeated uint32 charging_time = 5;
+}
+
+message TimerTask {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+    uint32 time_table = 9;
+    uint32 current_table = 10;
+  }
+  oneof _type {
+    uint32 type = 5;
+  }
+  oneof _param {
+    uint32 param = 6;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 7;
+  }
+  oneof _time_param {
+    uint32 time_param = 8;
+  }
+  oneof _delay_start {
+    bool delay_start = 11;
+  }
+}
+
+message FaultHistroy {
+  optional fixed32 fault_time = 1;
+  optional fixed32 recover_time = 2;
+  optional uint32 fault_code = 3;
+  optional float fault_value = 4;
+}
+
+message MeterValueItem {
+  oneof _alive {
+    uint32 alive = 1;
+  }
+  oneof _active_energy {
+    uint32 active_energy = 2;
+  }
+  oneof _reactive_energy {
+    uint32 reactive_energy = 3;
+  }
+  oneof _active_power {
+    float active_power = 4;
+  }
+  oneof _reactive_power {
+    float reactive_power = 5;
+  }
+  oneof _frequency {
+    uint32 frequency = 6;
+  }
+  oneof _volt_l1 {
+    float volt_l1 = 7;
+  }
+  oneof _volt_l2 {
+    float volt_l2 = 8;
+  }
+  oneof _volt_l3 {
+    float volt_l3 = 9;
+  }
+  oneof _curr_l1 {
+    float curr_l1 = 10;
+  }
+  oneof _curr_l2 {
+    float curr_l2 = 11;
+  }
+  oneof _curr_l3 {
+    float curr_l3 = 12;
+  }
+  oneof _pf_t {
+    float pf_t = 13;
+  }
+  oneof _pf_l1 {
+    float pf_l1 = 14;
+  }
+  oneof _pf_l2 {
+    float pf_l2 = 15;
+  }
+  oneof _pf_l3 {
+    float pf_l3 = 16;
+  }
+}
+
+message CardWhiteListItem {
+  optional uint32 is_enable = 1;
+  optional string physical_card_id = 2;
+  optional string card_id = 3;
+  optional fixed32 life_time = 4;
+  optional string card_name = 5;
+  optional uint32 card_type = 6;
+}
+
+message SmartModeParameter {
+  oneof _time_to_use_car {
+    uint32 time_to_use_car = 1;
+  }
+  oneof _target_type {
+    uint32 target_type = 2;
+  }
+  oneof _charge_target {
+    uint32 charge_target = 3;
+  }
+  oneof _distance_target {
+    uint32 distance_target = 4;
+  }
+  oneof _keep_effective {
+    uint32 keep_effective = 5;
+  }
+}
+
+message SolarModeParameter {
+  oneof _keep_charging_en {
+    uint32 keep_charging_en = 1;
+  }
+  oneof _keep_charging_current {
+    uint32 keep_charging_current = 2;
+  }
+}
+
+message POLinkageParameter {
+  oneof _bind_state {
+    bool bind_state = 1;
+  }
+  oneof _online_state {
+    bool online_state = 2;
+  }
+  oneof _po_sn {
+    string po_sn = 3;
+  }
+  oneof _work_mode {
+    uint32 work_mode = 4;
+  }
+}
+
+enum Cmd_Set {
+  NONE = 0;
+  BASIC = 1;
+  EMS = 2;
+  IOT = 53;
+  EV = 209;
+  OCPP = 224;
+  EDEV = 241;
+  EEBUS = 242;
+  GENERAL = 254;
+}
+

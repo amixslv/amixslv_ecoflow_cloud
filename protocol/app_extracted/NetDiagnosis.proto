@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+option java_package = "com.ecoflow.common.proto";
+message UserInfo {
+  optional string user_id = 1;
+}
+
+message UserInfoAck {
+  optional uint32 ret = 1;
+}
+
+message IotStDiagnosis {
+  optional uint32 type = 1;
+  optional uint32 lan_diag_detail = 2;
+}
+
+message IotStDiagnosisAck {
+  optional uint32 result = 1;
+}
+
+message IotFeatureInfo {
+  oneof _diag_support {
+    uint32 flg_new_pwd_len = 1;
+    uint32 fastconfig = 2;
+    uint32 diag_support = 3;
+  }
+}
+
+message ReqLanDevInfo {
+  optional uint32 type = 1;
+}
+
+message RspLanDevInfo {
+  optional uint32 count = 1;
+  repeated string sn = 2;
+}
+
+message IotPingResult {
+  optional uint32 ratio = 1;
+  optional uint32 resp_min = 2;
+  optional uint32 resp_max = 3;
+  optional uint32 resp_lev = 4;
+  optional uint32 send_count = 5;
+  optional uint32 rec_count = 6;
+  optional bool result = 7;
+  optional uint64 running_time = 8;
+  optional .IoTPingType ping_type = 9;
+}
+
+message IotNetworkState {
+  oneof _curr_netif {
+    uint32 ble_state = 1;
+    uint32 mqtt_state = 2;
+    uint32 wifi_state = 3;
+    uint32 curr_netif = 4;
+  }
+  oneof _modem_state {
+    uint32 modem_state = 5;
+  }
+  oneof _eth_state {
+    uint32 eth_state = 6;
+  }
+  oneof _ble_cent_state {
+    uint32 ble_cent_state = 7;
+  }
+  oneof _wlan_state {
+    uint32 wlan_state = 8;
+  }
+}
+
+message ChannelStats {
+  oneof _same_channel_ap_cnt {
+    uint32 same_channel_ap_cnt = 1;
+  }
+  oneof _adjacent_channel_ap_cnt {
+    uint32 adjacent_channel_ap_cnt = 2;
+  }
+}
+
+message ApInfo {
+  oneof _bssid {
+    string ssid = 1;
+    uint32 wifi_auth_mode = 2;
+    string bssid = 3;
+  }
+  oneof _network_type {
+    uint32 network_type = 4;
+  }
+  oneof _bssid_count {
+    uint32 bssid_count = 5;
+  }
+  oneof _ap_channel {
+    uint32 ap_channel = 6;
+  }
+  oneof _bandwith {
+    uint32 bandwith = 7;
+  }
+  oneof _ap_rssi {
+    int32 ap_rssi = 8;
+  }
+  oneof _ap_wifiStandard {
+    uint32 ap_wifiStandard = 9;
+  }
+}
+
+message WifiLinkStats {
+  oneof _cur_bandwith {
+    int32 rssi_avg = 1;
+    int32 rssi_low = 2;
+    int32 rssi_high = 3;
+    uint32 tx_rate = 4;
+    uint32 rx_rate = 5;
+    uint32 assoc_rate = 6;
+    int64 tx_fail = 7;
+    int64 tx_success = 8;
+    int64 rx_fail = 10;
+    int64 rx_success = 11;
+    int64 beacon_rx = 12;
+    uint32 cur_bandwith = 13;
+    .ApInfo ap_info = 14;
+    .ChannelStats channel_stats = 15;
+  }
+}
+
+message NetDiagDetail {
+  oneof _wifi_link_stats {
+    int32 quality = 1;
+    uint32 poor_reason = 2;
+    .IotNetworkState network_state = 3;
+    .IotPingResult ping_gw = 4;
+    .IotPingResult ping_server = 5;
+    .WifiLinkStats wifi_link_stats = 11;
+  }
+}
+
+message LanDiagDetail {
+  optional uint32 count = 1;
+  repeated string sn = 2;
+}
+
+message IotDiagInfo {
+  oneof _net_diag {
+    uint32 type = 1;
+    uint32 state = 2;
+    .NetDiagDetail net_diag = 3;
+  }
+  oneof _lan_diag {
+    .LanDiagDetail lan_diag = 4;
+  }
+}
+
+enum IotEnDiagnosisType {
+  EF_DIAG_TYPE_INVALID = 0;
+  EF_DIAG_TYPE_NETWORK = 1;
+  EF_DIAG_TYPE_LAN = 2;
+}
+
+enum LanDevType {
+  EF_DEV_INVALID = 0;
+  EF_DEV_ALL = 1;
+  EF_DEV_MASTER = 2;
+}
+
+enum EN_DIAG_STATE {
+  EF_EN_DIAG_NOT_REQUEST = 0;
+  EF_EN_DIAG_FAIL = 1;
+  EF_EN_DIAG_IN_PROGRESS = 2;
+  EF_EN_DIAG_SUCCESS = 3;
+}
+
+enum IoTPingType {
+  EF_PING_TYPE_GW = 0;
+  EF_PING_TYPE_ECOFLOW_IP = 1;
+}
+
