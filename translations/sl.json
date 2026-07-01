@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Prijava v EcoFlow",
+        "description": "Vnesite poverila računa EcoFlow Cloud.",
+        "data": {
+          "username": "E-poštni naslov",
+          "password": "Geslo"
+        }
+      },
+      "device": {
+        "title": "Izberite napravo",
+        "description": "Izberite napravo iz računa EcoFlow Cloud ali ročno vnesite podatke.",
+        "data": {
+          "account_device": "Naprava na računu",
+          "device_label": "Tip naprave",
+          "device_sn": "Serijska številka (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Preslikava tipa naprave",
+        "description": "Izberite tip naprave, saj ga ni mogoče določiti iz imena oblaka.",
+        "data": {
+          "device_label": "Tip naprave"
+        }
+      },
+      "device_exists": {
+        "title": "Naprava je že konfigurirana",
+        "description": "Naprava s serijsko številko {sn} že obstaja. Kaj bi radi naredili?",
+        "data": {
+          "action": "Dejanje"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Prijava ni uspela. Preverite svoj e-poštni naslov in geslo.",
+      "unknown": "Neznana napaka. Prosim, poskusite znova.",
+      "device_list_unavailable": "Seznama naprav iz EcoFlow Cloud ni bilo mogoče pridobiti. Podatke lahko vnesete ročno."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti EcoFlow Cloud",
+        "description": "Uredite nastavitve integracije."
+      }
+    }
+  }
+}

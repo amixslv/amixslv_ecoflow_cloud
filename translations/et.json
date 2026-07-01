@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow sisselogimine",
+        "description": "Sisestage oma EcoFlow Cloud konto mandaadid.",
+        "data": {
+          "username": "E-posti aadress",
+          "password": "Parool"
+        }
+      },
+      "device": {
+        "title": "Valige seade",
+        "description": "Valige seade oma EcoFlow Cloud kontolt või sisestage teave käsitsi.",
+        "data": {
+          "account_device": "Konto seade",
+          "device_label": "Seadme tüüp",
+          "device_sn": "Seerianumber (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Seadme tüübi vastendamine",
+        "description": "Valige seadme tüüp, kuna seda ei saa pilveteenuse nimest määrata.",
+        "data": {
+          "device_label": "Seadme tüüp"
+        }
+      },
+      "device_exists": {
+        "title": "Seade on juba konfigureeritud",
+        "description": "Seade seerianumbriga {sn} on juba olemas. Mida soovite teha?",
+        "data": {
+          "action": "Tegevus"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Sisselogimine ebaõnnestus. Kontrollige oma e-posti aadressi ja parooli.",
+      "unknown": "Tundmatu viga. Palun proovige uuesti.",
+      "device_list_unavailable": "EcoFlow Cloud seadmete loendi hankimine ebaõnnestus. Saate teabe käsitsi sisestada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud suvandid",
+        "description": "Muutke integreerimise seadeid."
+      }
+    }
+  }
+}

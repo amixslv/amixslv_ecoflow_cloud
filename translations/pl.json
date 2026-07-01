@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Logowanie EcoFlow",
+        "description": "Wprowadź dane logowania do konta EcoFlow Cloud.",
+        "data": {
+          "username": "Adres e-mail",
+          "password": "Hasło"
+        }
+      },
+      "device": {
+        "title": "Wybierz urządzenie",
+        "description": "Wybierz urządzenie ze swojego konta EcoFlow Cloud lub wprowadź informacje ręcznie.",
+        "data": {
+          "account_device": "Urządzenie konta",
+          "device_label": "Typ urządzenia",
+          "device_sn": "Numer seryjny (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mapowanie typu urządzenia",
+        "description": "Wybierz typ urządzenia, ponieważ nie można go określić na podstawie nazwy chmury.",
+        "data": {
+          "device_label": "Typ urządzenia"
+        }
+      },
+      "device_exists": {
+        "title": "Urządzenie jest już skonfigurowane",
+        "description": "Urządzenie z numerem seryjnym {sn} już istnieje. Co chcesz zrobić?",
+        "data": {
+          "action": "Działanie"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Logowanie nie powiodło się. Sprawdź swój adres e-mail i hasło.",
+      "unknown": "Nieznany błąd. Spróbuj ponownie.",
+      "device_list_unavailable": "Nie udało się pobrać listy urządzeń z EcoFlow Cloud. Możesz wprowadzić informacje ręcznie."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje EcoFlow Cloud",
+        "description": "Edytuj ustawienia integracji."
+      }
+    }
+  }
+}

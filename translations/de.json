@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow-Anmeldung",
+        "description": "Geben Sie Ihre EcoFlow Cloud-Kontoanmeldedaten ein.",
+        "data": {
+          "username": "E-Mail-Adresse",
+          "password": "Passwort"
+        }
+      },
+      "device": {
+        "title": "Gerät auswählen",
+        "description": "Wählen Sie ein Gerät aus Ihrem EcoFlow Cloud-Konto aus oder geben Sie Informationen manuell ein.",
+        "data": {
+          "account_device": "Kontagerät",
+          "device_label": "Gerätetyp",
+          "device_sn": "Seriennummer (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Gerätetypzuordnung",
+        "description": "Wählen Sie den Gerätetyp aus, da er nicht aus dem Cloud-Namen bestimmt werden kann.",
+        "data": {
+          "device_label": "Gerätetyp"
+        }
+      },
+      "device_exists": {
+        "title": "Gerät bereits konfiguriert",
+        "description": "Gerät mit Seriennummer {sn} existiert bereits. Was möchten Sie tun?",
+        "data": {
+          "action": "Aktion"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Anmeldung fehlgeschlagen. Überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort.",
+      "unknown": "Unbekannter Fehler. Bitte versuchen Sie es erneut.",
+      "device_list_unavailable": "Die Geräteliste konnte nicht aus EcoFlow Cloud abgerufen werden. Sie können Informationen manuell eingeben."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud-Optionen",
+        "description": "Bearbeiten Sie die Integrationseinstellungen."
+      }
+    }
+  }
+}

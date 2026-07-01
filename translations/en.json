@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow Login",
+        "description": "Enter your EcoFlow Cloud account credentials.",
+        "data": {
+          "username": "Email address",
+          "password": "Password"
+        }
+      },
+      "device": {
+        "title": "Select Device",
+        "description": "Select a device from your EcoFlow Cloud account or enter information manually.",
+        "data": {
+          "account_device": "Account device",
+          "device_label": "Device type",
+          "device_sn": "Serial Number (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Device Type Mapping",
+        "description": "Select device type as it cannot be determined from the cloud name.",
+        "data": {
+          "device_label": "Device type"
+        }
+      },
+      "device_exists": {
+        "title": "Device Already Configured",
+        "description": "Device with serial number {sn} already exists. What would you like to do?",
+        "data": {
+          "action": "Action"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Login failed. Please check your email address and password.",
+      "unknown": "Unknown error. Please try again.",
+      "device_list_unavailable": "Could not retrieve device list from EcoFlow Cloud. You can enter information manually."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud Options",
+        "description": "Edit integration settings."
+      }
+    }
+  }
+}

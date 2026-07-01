@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Přihlášení do EcoFlow",
+        "description": "Zadejte přihlašovací údaje účtu EcoFlow Cloud.",
+        "data": {
+          "username": "E-mailová adresa",
+          "password": "Heslo"
+        }
+      },
+      "device": {
+        "title": "Vyberte zařízení",
+        "description": "Vyberte zařízení ze svého účtu EcoFlow Cloud nebo ručně zadejte informace.",
+        "data": {
+          "account_device": "Zařízení na účtu",
+          "device_label": "Typ zařízení",
+          "device_sn": "Sériové číslo (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mapování typu zařízení",
+        "description": "Vyberte typ zařízení, protože jej nelze určit z názvu v cloudu.",
+        "data": {
+          "device_label": "Typ zařízení"
+        }
+      },
+      "device_exists": {
+        "title": "Zařízení je již nakonfigurováno",
+        "description": "Zařízení se sériovým číslem {sn} již existuje. Co chcete dělat?",
+        "data": {
+          "action": "Akce"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Přihlášení se nezdařilo. Zkontrolujte e-mailovou adresu a heslo.",
+      "unknown": "Neznámá chyba. Zkuste znovu.",
+      "device_list_unavailable": "Nelze načíst seznam zařízení z EcoFlow Cloud. Informace můžete zadat ručně."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti EcoFlow Cloud",
+        "description": "Upravte nastavení integrace."
+      }
+    }
+  }
+}

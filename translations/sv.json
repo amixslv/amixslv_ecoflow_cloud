@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow-inloggning",
+        "description": "Ange dina autentiseringsuppgifter för EcoFlow Cloud-konto.",
+        "data": {
+          "username": "E-postadress",
+          "password": "Lösenord"
+        }
+      },
+      "device": {
+        "title": "Välj enhet",
+        "description": "Välj en enhet från ditt EcoFlow Cloud-konto eller ange information manuellt.",
+        "data": {
+          "account_device": "Kontoenhet",
+          "device_label": "Enhetstyp",
+          "device_sn": "Serienummer (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Enhetstypsmappning",
+        "description": "Välj enhetstyp eftersom den inte kan bestämmas från molnnamnet.",
+        "data": {
+          "device_label": "Enhetstyp"
+        }
+      },
+      "device_exists": {
+        "title": "Enheten är redan konfigurerad",
+        "description": "Enheten med serienummer {sn} finns redan. Vad vill du göra?",
+        "data": {
+          "action": "Åtgärd"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Inloggningen misslyckades. Kontrollera din e-postadress och lösenord.",
+      "unknown": "Okänt fel. Försök igen.",
+      "device_list_unavailable": "Det gick inte att hämta enhetslistan från EcoFlow Cloud. Du kan ange information manuellt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud-alternativ",
+        "description": "Redigera integrationsinställningar."
+      }
+    }
+  }
+}

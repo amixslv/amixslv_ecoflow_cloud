@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Logáil isteach do EcoFlow",
+        "description": "Cuir isteach do shonraí fúithneasanna cuntas EcoFlow Cloud.",
+        "data": {
+          "username": "Seol ríomhphost",
+          "password": "Pasfhocal"
+        }
+      },
+      "device": {
+        "title": "Roghnaigh gléas",
+        "description": "Roghnaigh gléas ó do chuntas EcoFlow Cloud nó cuir isteach faisnéis go manual.",
+        "data": {
+          "account_device": "Gléas an chuntas",
+          "device_label": "Cineál gléis",
+          "device_sn": "Uimhir sraithe (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mapáil chineál gléis",
+        "description": "Roghnaigh cineál gléis mar nach féidir a chinneadh ó ainm an scamall.",
+        "data": {
+          "device_label": "Cineál gléis"
+        }
+      },
+      "device_exists": {
+        "title": "Gléas ar cheangailte cheana",
+        "description": "Tá gléas le huimhir sraithe {sn} ann cheana. Cad ba bhreá leat a dhéanamh?",
+        "data": {
+          "action": "Gníomh"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Theip ar an logáil isteach. Dearbhaigh do sheol ríomhphost agus do phasfhocal.",
+      "unknown": "Earráid anaithnid. Déan iarracht arís, le do thoil.",
+      "device_list_unavailable": "Níorbh fhéidir liosta gléasanna a fháil ó EcoFlow Cloud. Is féidir leat faisnéis a chur isteach go manual."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Roghanna EcoFlow Cloud",
+        "description": "Cuir in eagar socruithe an chomhtháthú."
+      }
+    }
+  }
+}

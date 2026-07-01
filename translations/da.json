@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow-login",
+        "description": "Indtast dine EcoFlow Cloud-kontooplysninger.",
+        "data": {
+          "username": "E-mailadresse",
+          "password": "Adgangskode"
+        }
+      },
+      "device": {
+        "title": "Vælg enhed",
+        "description": "Vælg en enhed fra din EcoFlow Cloud-konto, eller angiv oplysninger manuelt.",
+        "data": {
+          "account_device": "Enhed på konto",
+          "device_label": "Enhedstype",
+          "device_sn": "Serienummer (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Kortlægning af enhedstype",
+        "description": "Vælg enhedstype, da den ikke kan bestemmes ud fra cloudnavnet.",
+        "data": {
+          "device_label": "Enhedstype"
+        }
+      },
+      "device_exists": {
+        "title": "Enheden er allerede konfigureret",
+        "description": "Enhed med serienummer {sn} eksisterer allerede. Hvad vil du gøre?",
+        "data": {
+          "action": "Handling"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Login mislykkedes. Kontroller e-mailadresse og adgangskode.",
+      "unknown": "Ukendt fejl. Prøv igen.",
+      "device_list_unavailable": "Kunne ikke hente enhedslisten fra EcoFlow Cloud. Du kan angive oplysninger manuelt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud-indstillinger",
+        "description": "Rediger integrationsindstillinger."
+      }
+    }
+  }
+}

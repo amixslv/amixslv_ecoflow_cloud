@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EcoFlow-aanmelding",
+        "description": "Voer uw EcoFlow Cloud-accountgegevens in.",
+        "data": {
+          "username": "E-mailadres",
+          "password": "Wachtwoord"
+        }
+      },
+      "device": {
+        "title": "Selecteer apparaat",
+        "description": "Selecteer een apparaat uit uw EcoFlow Cloud-account of voer handmatig informatie in.",
+        "data": {
+          "account_device": "Apparaat op account",
+          "device_label": "Apparaattype",
+          "device_sn": "Serienummer (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Toewijzing apparaattype",
+        "description": "Selecteer apparaattype, omdat dit niet uit de cloudnaam kan worden bepaald.",
+        "data": {
+          "device_label": "Apparaattype"
+        }
+      },
+      "device_exists": {
+        "title": "Apparaat is al geconfigureerd",
+        "description": "Apparaat met serienummer {sn} bestaat al. Wat wilt u doen?",
+        "data": {
+          "action": "Actie"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aanmelding mislukt. Controleer uw e-mailadres en wachtwoord.",
+      "unknown": "Onbekende fout. Probeer het opnieuw.",
+      "device_list_unavailable": "Kan apparaatlijst niet ophalen uit EcoFlow Cloud. U kunt informatie handmatig invoeren."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EcoFlow Cloud-opties",
+        "description": "Bewerk integratie-instellingen."
+      }
+    }
+  }
+}

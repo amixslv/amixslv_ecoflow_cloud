@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion EcoFlow",
+        "description": "Entrez vos identifiants de compte EcoFlow Cloud.",
+        "data": {
+          "username": "Adresse e-mail",
+          "password": "Mot de passe"
+        }
+      },
+      "device": {
+        "title": "Sélectionner un appareil",
+        "description": "Sélectionnez un appareil de votre compte EcoFlow Cloud ou entrez les informations manuellement.",
+        "data": {
+          "account_device": "Appareil du compte",
+          "device_label": "Type d'appareil",
+          "device_sn": "Numéro de série (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mappage du type d'appareil",
+        "description": "Sélectionnez le type d'appareil car il ne peut pas être déterminé à partir du nom du cloud.",
+        "data": {
+          "device_label": "Type d'appareil"
+        }
+      },
+      "device_exists": {
+        "title": "L'appareil est déjà configuré",
+        "description": "L'appareil portant le numéro de série {sn} existe déjà. Que souhaitez-vous faire ?",
+        "data": {
+          "action": "Action"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "La connexion a échoué. Veuillez vérifier votre adresse e-mail et votre mot de passe.",
+      "unknown": "Erreur inconnue. Veuillez réessayer.",
+      "device_list_unavailable": "Impossible de récupérer la liste des appareils depuis EcoFlow Cloud. Vous pouvez entrer les informations manuellement."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options EcoFlow Cloud",
+        "description": "Modifiez les paramètres d'intégration."
+      }
+    }
+  }
+}

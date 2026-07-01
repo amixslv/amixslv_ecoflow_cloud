@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Iniciar sessão do EcoFlow",
+        "description": "Introduza as suas credenciais de conta do EcoFlow Cloud.",
+        "data": {
+          "username": "Endereço de e-mail",
+          "password": "Senha"
+        }
+      },
+      "device": {
+        "title": "Selecione dispositivo",
+        "description": "Selecione um dispositivo da sua conta do EcoFlow Cloud ou introduza informações manualmente.",
+        "data": {
+          "account_device": "Dispositivo da conta",
+          "device_label": "Tipo de dispositivo",
+          "device_sn": "Número de série (SN)"
+        }
+      },
+      "device_type": {
+        "title": "Mapeamento de tipo de dispositivo",
+        "description": "Selecione o tipo de dispositivo pois não pode ser determinado a partir do nome da nuvem.",
+        "data": {
+          "device_label": "Tipo de dispositivo"
+        }
+      },
+      "device_exists": {
+        "title": "Dispositivo já configurado",
+        "description": "O dispositivo com número de série {sn} já existe. O que gostaria de fazer?",
+        "data": {
+          "action": "Ação"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "O início de sessão falhou. Verifique o seu endereço de e-mail e senha.",
+      "unknown": "Erro desconhecido. Por favor, tente novamente.",
+      "device_list_unavailable": "Não foi possível obter a lista de dispositivos do EcoFlow Cloud. Pode introduzir a informação manualmente."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções do EcoFlow Cloud",
+        "description": "Edite as configurações de integração."
+      }
+    }
+  }
+}
