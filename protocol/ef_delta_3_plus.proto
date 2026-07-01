@@ -1,4 +1,6 @@
-﻿syntax = "proto3";
+syntax = "proto3";
+
+package amixslv.ecoflow.delta3plus;
 
 //
 //  DELTA 3 PLUS — HEADER STRUCTURES
