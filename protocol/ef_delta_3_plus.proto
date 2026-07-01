@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 //
 //  DELTA 3 PLUS — HEADER STRUCTURES
@@ -591,9 +591,4 @@ message Delta3PlusBMSHeartBeatReport {
   optional string pack_sn = 81;            // Akumulatora pakas sērijas numurs
 
   optional uint32 water_in_flag = 82;      // Ūdens detektēts (0/1)
-}
-
-// Header Message Wrapper
-message Delta3PlusHeaderMessage {
-  repeated Delta3Header header = 1;
 }
