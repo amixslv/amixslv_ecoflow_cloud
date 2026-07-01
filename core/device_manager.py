@@ -143,7 +143,8 @@ class DeviceManager:
         except KeyError:
             raise ValueError(f"Unsupported device_label: {self.device_label}")
 
-        full_path = f"custom_components.amixslv_ecoflow_cloud.protocol.{proto_file}"
+        base_pkg = __package__.rsplit(".", 1)[0]
+        full_path = f"{base_pkg}.protocol.{proto_file}"
 
         try:
             self.pb2_module = await self.hass.async_add_executor_job(

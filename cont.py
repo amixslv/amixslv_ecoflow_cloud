@@ -1,4 +1,4 @@
-DOMAIN = "amixslv_ecoflow_cloud"
+DOMAIN = "ecoflow_cloud"
 
 PLATFORMS = [
     "sensor",
