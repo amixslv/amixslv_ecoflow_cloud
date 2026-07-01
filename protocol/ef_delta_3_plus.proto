@@ -50,6 +50,53 @@ message Delta3PlusHeaderMessage
 {
   repeated Delta3PlusHeader header = 1; // Header masīvs
 }
+
+// -----------------------------------------------------------------
+// Time task / TOU structures (ņemts no DP3 iobroker mapējuma)
+// -----------------------------------------------------------------
+enum Delta3PlusTimeTaskMode {
+  DELTA3_PLUS_TIME_TASK_MODE_RESV = 0;
+  DELTA3_PLUS_TIME_TASK_MODE_PER_WEEK = 1;
+  DELTA3_PLUS_TIME_TASK_MODE_ONCE = 2;
+}
+
+enum Delta3PlusTimeTaskType {
+  DELTA3_PLUS_TIME_TASK_TYPE_AC_CHG = 0;
+  DELTA3_PLUS_TIME_TASK_TYPE_AC_DSG = 1;
+  DELTA3_PLUS_TIME_TASK_TYPE_AC2_DSG = 2;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC_CHG = 3;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC2_CHG = 4;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC_DSG = 5;
+  DELTA3_PLUS_TIME_TASK_TYPE_OIL_ON = 6;
+  DELTA3_PLUS_TIME_TASK_TYPE_OIL_OFF = 7;
+  DELTA3_PLUS_TIME_TASK_TYPE_USB_CHG = 8;
+  DELTA3_PLUS_TIME_TASK_TYPE_USB_DSG = 9;
+}
+
+enum Delta3PlusTimeTaskDetailType {
+  DELTA3_PLUS_TIME_TASK_DETAIL_IDLE = 0;
+  DELTA3_PLUS_TIME_TASK_DETAIL_POW = 1;
+  DELTA3_PLUS_TIME_TASK_DETAIL_TEMP = 2;
+  DELTA3_PLUS_TIME_TASK_DETAIL_LEVEL = 3;
+}
+
+message Delta3PlusTimeTaskParamDetail {
+  optional Delta3PlusTimeTaskDetailType type = 1;
+  optional float val = 2;
+}
+
+message Delta3PlusTimeTaskItemV2 {
+  optional uint32 task_index = 1;
+  optional bool is_cfg = 2;
+  optional bool is_enable = 3;
+  optional uint32 conflict_flag = 4;
+  optional Delta3PlusTimeTaskMode time_mode = 5;
+  optional uint32 time_param = 6;
+  optional uint32 time_table = 7;
+  optional Delta3PlusTimeTaskType task_type = 8;
+  optional uint32 task_param = 9;
+  repeated Delta3PlusTimeTaskParamDetail task_param_detail = 10;
+}
 //
 //  DELTA 3 PLUS — DISPLAY PROPERTY UPLOAD
 //  (cmdFunc = 254, cmdId = 21)
@@ -135,6 +182,10 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 cms_chg_dsg_state = 282;         // Kombinētais uzlādes/izlādes stāvoklis
   optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
   optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
+  optional Delta3PlusTimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
+  optional uint32 cms_oil_on_soc = 272;            // Self-powered / generator start SOC (%)
+  optional uint32 cms_oil_off_soc = 273;           // Self-powered / generator stop SOC (%)
+  optional uint32 cms_oil_self_start = 274;        // Self-powered (0/1)
   optional uint32 ups_alram = 355;                 // UPS trauksme (0/1)
   optional uint32 plug_in_info_pv_dc_amp_max = 356; // PV max uzlādes strāva (A)
   optional uint32 led_mode = 357;                  // LED režīms
@@ -294,6 +345,14 @@ message Delta3PlusSetCommand {
         //   energy_backup_start_soc (%)
 
     optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+    optional int32 plug_in_info_5p8_chg_pow_max = 56;   // Papildus porta max uzlādes jauda (W)
+    optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
+    optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
+    optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
+    optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
+    optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
 
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
 
@@ -350,6 +409,14 @@ message Delta3PlusSetReply {
         //   energy_backup_start_soc (%)
 
     optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+    optional int32 plug_in_info_5p8_chg_pow_max = 56;   // Papildus porta max uzlādes jauda (W)
+    optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
+    optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
+    optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
+    optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
+    optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
 
     optional uint32 dc_out_open = 74;                 // DC izvade ieslēgta (0/1)
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
