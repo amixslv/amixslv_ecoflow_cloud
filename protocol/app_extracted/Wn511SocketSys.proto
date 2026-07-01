@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+message plug_ack_message {
+  optional uint32 ack = 1;
+}
+
+message plug_heartbeat_pack {
+  oneof _err_code {
+    int32 err_code = 1;
+  }
+  oneof _warn_code {
+    int32 warn_code = 2;
+  }
+  oneof _country {
+    uint32 country = 3;
+  }
+  oneof _town {
+    uint32 town = 4;
+  }
+  oneof _max_cur {
+    int32 max_cur = 5;
+  }
+  oneof _temp {
+    int32 temp = 6;
+  }
+  oneof _freq {
+    int32 freq = 7;
+  }
+  oneof _current {
+    int32 current = 8;
+  }
+  oneof _volt {
+    int32 volt = 9;
+  }
+  oneof _watts {
+    int32 watts = 10;
+  }
+  oneof _switch_sta {
+    bool switch_sta = 11;
+  }
+  oneof _brightness {
+    int32 brightness = 12;
+  }
+  oneof _max_watts {
+    int32 max_watts = 13;
+  }
+  oneof _heartbeat_frequency {
+    int32 heartbeat_frequency = 14;
+  }
+  oneof _mesh_enable {
+    int32 mesh_enable = 15;
+  }
+  oneof _reset_reason {
+    uint32 reset_reason = 16;
+  }
+  oneof _rtc_reset_reason {
+    uint32 rtc_reset_reason = 17;
+  }
+  oneof _reset_count {
+    uint32 reset_count = 18;
+  }
+  oneof _run_time {
+    uint32 run_time = 19;
+  }
+  oneof _lan_state {
+    uint32 lan_state = 20;
+  }
+  oneof _stack_free {
+    uint32 stack_free = 21;
+  }
+  oneof _stack_min_free {
+    uint32 stack_min_free = 22;
+  }
+  oneof _mesh_id {
+    uint32 mesh_id = 23;
+  }
+  oneof _mesh_layel {
+    uint32 mesh_layel = 24;
+  }
+  oneof _self_mac {
+    uint32 self_mac = 25;
+  }
+  oneof _parent_mac {
+    uint32 parent_mac = 26;
+  }
+  oneof _ota_dl_err {
+    int32 ota_dl_err = 27;
+  }
+  oneof _ota_dl_tls_err {
+    int32 ota_dl_tls_err = 28;
+  }
+  oneof _sta_ip_addr {
+    int32 sta_ip_addr = 29;
+  }
+  oneof _matter_fabric {
+    int32 matter_fabric = 30;
+  }
+  oneof _gene_num {
+    int32 gene_num = 31;
+  }
+  oneof _cons_num {
+    int32 cons_num = 32;
+  }
+  oneof _gene_watt {
+    int32 gene_watt = 33;
+  }
+  oneof _cons_watt {
+    int32 cons_watt = 34;
+  }
+  oneof _wifi_err {
+    int32 wifi_err = 35;
+  }
+  oneof _wifi_err_time {
+    int32 wifi_err_time = 36;
+  }
+  oneof _mqtt_err {
+    int32 mqtt_err = 37;
+  }
+  oneof _mqtt_err_time {
+    int32 mqtt_err_time = 38;
+  }
+  oneof _self_ems_switch {
+    int32 self_ems_switch = 39;
+  }
+  oneof _parent_wifi_rssi {
+    int32 parent_wifi_rssi = 40;
+  }
+  oneof _insights_switch {
+    int32 insights_switch = 41;
+  }
+  oneof _rssi_threshold {
+    int32 rssi_threshold = 42;
+  }
+  oneof _rssi_variance {
+    int32 rssi_variance = 43;
+  }
+  oneof _utc_time {
+    uint32 utc_time = 44;
+  }
+  oneof _time_zone {
+    int32 time_zone = 45;
+  }
+  oneof _dst_time {
+    int32 dst_time = 46;
+  }
+}
+
+message plug_switch_message {
+  optional bool plug_switch = 1;
+}
+
+message brightness_pack {
+  optional int32 brightness = 1;
+}
+
+message max_cur_pack {
+  optional int32 max_cur = 1;
+}
+
+message max_watts_pack {
+  optional int32 max_watts = 1;
+}
+
+message plug_power_item {
+  optional uint32 timestamp = 1;
+  optional sint32 timezone = 2;
+  optional uint32 plug_power = 3;
+}
+
+message plug_power_pack {
+  optional uint32 sys_seq = 1;
+  repeated .plug_power_item sys_power_stream = 2;
+}
+
+message plug_power_pack_ack {
+  optional uint32 sys_seq = 1;
+}
+
+message plug_led_test_pack {
+  optional uint32 led_test_mode = 1;
+}
+
+message plug_calibration_pack {
+  optional uint32 real_current = 1;
+  optional uint32 real_watt = 2;
+  optional uint32 real_volt = 3;
+}
+
+message plug_mesh_ctrl_pack {
+  optional uint32 mesh_enable = 1;
+}
+
+message ota_reboot_pack {
+  optional bool ota_reboot = 1;
+}
+
+message plug_ems_switch_message {
+  optional uint32 plug_ems_switch = 1;
+}
+

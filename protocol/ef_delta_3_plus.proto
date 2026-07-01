@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 //
 //  DELTA 3 PLUS — HEADER STRUCTURES
@@ -50,6 +50,53 @@ message Delta3PlusHeaderMessage
 {
   repeated Delta3PlusHeader header = 1; // Header masīvs
 }
+
+// -----------------------------------------------------------------
+// Time task / TOU structures (ņemts no DP3 iobroker mapējuma)
+// -----------------------------------------------------------------
+enum Delta3PlusTimeTaskMode {
+  DELTA3_PLUS_TIME_TASK_MODE_RESV = 0;
+  DELTA3_PLUS_TIME_TASK_MODE_PER_WEEK = 1;
+  DELTA3_PLUS_TIME_TASK_MODE_ONCE = 2;
+}
+
+enum Delta3PlusTimeTaskType {
+  DELTA3_PLUS_TIME_TASK_TYPE_AC_CHG = 0;
+  DELTA3_PLUS_TIME_TASK_TYPE_AC_DSG = 1;
+  DELTA3_PLUS_TIME_TASK_TYPE_AC2_DSG = 2;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC_CHG = 3;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC2_CHG = 4;
+  DELTA3_PLUS_TIME_TASK_TYPE_DC_DSG = 5;
+  DELTA3_PLUS_TIME_TASK_TYPE_OIL_ON = 6;
+  DELTA3_PLUS_TIME_TASK_TYPE_OIL_OFF = 7;
+  DELTA3_PLUS_TIME_TASK_TYPE_USB_CHG = 8;
+  DELTA3_PLUS_TIME_TASK_TYPE_USB_DSG = 9;
+}
+
+enum Delta3PlusTimeTaskDetailType {
+  DELTA3_PLUS_TIME_TASK_DETAIL_IDLE = 0;
+  DELTA3_PLUS_TIME_TASK_DETAIL_POW = 1;
+  DELTA3_PLUS_TIME_TASK_DETAIL_TEMP = 2;
+  DELTA3_PLUS_TIME_TASK_DETAIL_LEVEL = 3;
+}
+
+message Delta3PlusTimeTaskParamDetail {
+  optional Delta3PlusTimeTaskDetailType type = 1;
+  optional float val = 2;
+}
+
+message Delta3PlusTimeTaskItemV2 {
+  optional uint32 task_index = 1;
+  optional bool is_cfg = 2;
+  optional bool is_enable = 3;
+  optional uint32 conflict_flag = 4;
+  optional Delta3PlusTimeTaskMode time_mode = 5;
+  optional uint32 time_param = 6;
+  optional uint32 time_table = 7;
+  optional Delta3PlusTimeTaskType task_type = 8;
+  optional uint32 task_param = 9;
+  repeated Delta3PlusTimeTaskParamDetail task_param_detail = 10;
+}
 //
 //  DELTA 3 PLUS — DISPLAY PROPERTY UPLOAD
 //  (cmdFunc = 254, cmdId = 21)
@@ -77,6 +124,16 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 ac_always_on_mini_soc = 23;      // Min SOC AC always‑on režīmam (%)
   optional uint32 xboost_en = 25;                  // X‑Boost ieslēgts (0/1)
   optional uint32 pcs_fan_level = 30;              // PCS ventilatora līmenis
+  optional uint32 flow_info_pv_h = 31;             // PV H channel flow direction
+  optional uint32 flow_info_pv_l = 32;             // PV L channel flow direction
+  optional uint32 flow_info_24v = 34;              // 24V channel flow direction
+  optional float pow_get_pv_h = 35;                // PV H power (W)
+  optional float pow_get_pv_l = 36;                // PV L power (W)
+  optional float pow_get_24v = 38;                 // 24V power (W)
+  optional uint32 plug_in_info_pv_h_flag = 39;     // PV H plugged flag (0/1)
+  optional uint32 plug_in_info_pv_h_type = 40;     // PV H input type
+  optional uint32 plug_in_info_pv_l_flag = 42;     // PV L plugged flag (0/1)
+  optional uint32 plug_in_info_pv_l_type = 43;     // PV L input type
   optional uint32 flow_info_12v = 33;              // 12V DC plūsmas virziens
   optional float pow_get_12v = 37;                 // 12V DC jauda (W)
   optional uint32 flow_info_ac2dc = 45;            // AC→DC plūsmas virziens
@@ -105,6 +162,18 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 flow_info_bms_dsg = 152;         // BMS izlādes plūsma
   optional uint32 flow_info_bms_chg = 153;         // BMS uzlādes plūsma
   optional float pow_get_bms = 158;                // BMS jauda (W)
+  optional uint32 flow_info_4p8_1_in = 154;       // 4p8_1 iepl?des virziens
+  optional uint32 flow_info_4p8_1_out = 155;      // 4p8_1 izpl?des virziens
+  optional uint32 flow_info_4p8_2_in = 156;       // 4p8_2 iepl?des virziens
+  optional uint32 flow_info_4p8_2_out = 157;      // 4p8_2 izpl?des virziens
+  optional float pow_get_4p8_1 = 159;             // 4p8_1 jauda (W)
+  optional float pow_get_4p8_2 = 160;             // 4p8_2 jauda (W)
+  optional uint32 plug_in_info_4p8_1_in_flag = 161; // 4p8_1 piesl?guma karogs (0/1)
+  optional uint32 plug_in_info_4p8_1_type = 162;    // 4p8_1 tips
+  optional uint32 plug_in_info_4p8_1_detail = 163;  // 4p8_1 detaliz?ts tips
+  optional uint32 plug_in_info_4p8_2_in_flag = 164; // 4p8_2 piesl?guma karogs (0/1)
+  optional uint32 plug_in_info_4p8_2_type = 165;    // 4p8_2 tips
+  optional uint32 plug_in_info_4p8_2_detail = 166;  // 4p8_2 detaliz?ts tips
   optional uint32 en_beep = 195;                   // Skaņas signāls ieslēgts (0/1)
   optional uint32 plug_in_info_ac_charger_flag = 202; // AC lādētājs pieslēgts (0/1)
   optional uint32 plug_in_info_ac_in_chg_pow_max = 209; // AC max uzlādes jauda (W)
@@ -135,6 +204,13 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 cms_chg_dsg_state = 282;         // Kombinētais uzlādes/izlādes stāvoklis
   optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
   optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
+  optional Delta3PlusTimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
+  optional int32 utc_timezone = 133;              // UTC timezone offset (min)
+  optional string utc_timezone_id = 134;          // UTC timezone ID
+  optional uint32 utc_set_mode = 135;             // UTC set mode (0/1)
+  optional uint32 cms_oil_on_soc = 272;            // Self-powered / generator start SOC (%)
+  optional uint32 cms_oil_off_soc = 273;           // Self-powered / generator stop SOC (%)
+  optional uint32 cms_oil_self_start = 274;        // Self-powered (0/1)
   optional uint32 ups_alram = 355;                 // UPS trauksme (0/1)
   optional uint32 plug_in_info_pv_dc_amp_max = 356; // PV max uzlādes strāva (A)
   optional uint32 led_mode = 357;                  // LED režīms
@@ -294,6 +370,14 @@ message Delta3PlusSetCommand {
         //   energy_backup_start_soc (%)
 
     optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+    optional int32 plug_in_info_5p8_chg_pow_max = 56;   // Papildus porta max uzlādes jauda (W)
+    optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
+    optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
+    optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
+    optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
+    optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
 
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
 
@@ -350,6 +434,14 @@ message Delta3PlusSetReply {
         //   energy_backup_start_soc (%)
 
     optional int32 plug_in_info_ac_in_chg_pow_max = 54; // Max AC uzlādes jauda (W)
+    optional int32 plug_in_info_5p8_chg_pow_max = 56;   // Papildus porta max uzlādes jauda (W)
+    optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
+    optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
+    optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
+    optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
+    optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
 
     optional uint32 dc_out_open = 74;                 // DC izvade ieslēgta (0/1)
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
@@ -591,9 +683,4 @@ message Delta3PlusBMSHeartBeatReport {
   optional string pack_sn = 81;            // Akumulatora pakas sērijas numurs
 
   optional uint32 water_in_flag = 82;      // Ūdens detektēts (0/1)
-}
-
-// Header Message Wrapper
-message Delta3PlusHeaderMessage {
-  repeated Delta3Header header = 1;
 }

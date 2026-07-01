@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+message DevInfo {
+  optional uint32 dev_addr = 1;
+  optional string dev_sn = 2;
+}
+
+message ParallelEnergyStream {
+  optional float sys_load_pwr = 1;
+  optional float sys_grid_pwr = 2;
+  optional float mppt_pwr = 3;
+  optional float bp_pwr = 4;
+  optional uint32 bp_soc = 5;
+  optional string dev_sn = 6;
+}
+
+message ParallelEnergyStreamReport {
+  repeated .ParallelEnergyStream para_energy_stream = 1;
+}
+
+message ParallelEnergyStreamItem {
+  optional float load_pwr = 1;
+  optional float grid_pwr = 2;
+  optional float mppt_pwr = 3;
+  optional float bp_pwr = 4;
+  optional uint32 timestamp = 5;
+  optional uint32 bp_soc = 7;
+  optional string dev_sn = 8;
+}
+
+message ParallelEnergyStreamDetail {
+  repeated .ParallelEnergyStreamItem para_energy_stream_detail = 1;
+  optional uint32 para_sys_seq = 2;
+}
+
+message ParallelEnergyStreamDetailAck {
+  oneof _sys_energy_num {
+    uint32 sys_seq = 1;
+    uint32 sys_energy_num = 2;
+  }
+}
+
+message ParallelDevList {
+  repeated .DevInfo para_dev = 1;
+}
+
+message LanDevInfo {
+  oneof _groupid {
+    uint32 groupid = 1;
+    bool dev_online = 4;
+  }
+  oneof _sn {
+    string sn = 2;
+  }
+  oneof _id_pri {
+    uint32 id_pri = 3;
+  }
+}
+
+message ParallelLanDevList {
+  repeated .LanDevInfo lan_para_dev = 1;
+}
+
+message ParallelDevListReport {
+  oneof _para_dev_list {
+    .ParallelDevList para_dev_list = 1;
+  }
+  oneof _para_dev_onflict_list {
+    .ParallelDevList para_dev_onflict_list = 2;
+  }
+  oneof _para_lan_dev_list {
+    .ParallelLanDevList para_lan_dev_list = 3;
+  }
+}
+
+message ParallelMasterDevSet {
+  optional uint32 para_master_daddr = 1;
+}
+
+message ParallelMasterDevSetAck {
+  optional uint32 result = 1;
+}
+

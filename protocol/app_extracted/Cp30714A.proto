@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+message Sys14ADevBean {
+  oneof _name {
+    string ski = 1;
+    string name = 3;
+  }
+  oneof _model {
+    string model = 4;
+  }
+}
+
+message Sys14AGatewayInfoGet {
+}
+
+message Sys14AGatewayInfoGetAck {
+  oneof _name {
+    string ski = 1;
+    string shipId = 2;
+    string name = 3;
+    .Sys14ADevBean trustList = 5;
+  }
+  oneof _model {
+    string model = 4;
+  }
+}
+
+message Sys14AStatusSync {
+  oneof _type {
+    bool enable = 1;
+    uint32 type = 2;
+    uint32 seq = 5;
+  }
+  oneof _dev_curr_power {
+    uint32 dev_curr_power = 3;
+  }
+  oneof _dev_max_power {
+    uint32 dev_max_power = 4;
+  }
+  oneof _dev_max_num {
+    uint32 dev_max_num = 6;
+  }
+  oneof _fail_safe_power {
+    uint32 fail_safe_power = 7;
+  }
+}
+
+message Sys14AStatusSyncAck {
+  optional uint32 result = 1;
+  optional uint32 seq = 2;
+}
+
+message Sys14AStatusGet {
+}
+
+message Sys14AStatusAck {
+  oneof _type {
+    bool enable = 1;
+    uint32 type = 2;
+    uint32 seq = 5;
+  }
+  oneof _dev_curr_power {
+    uint32 dev_curr_power = 3;
+  }
+  oneof _dev_max_power {
+    uint32 dev_max_power = 4;
+  }
+  oneof _dev_max_num {
+    uint32 dev_max_num = 6;
+  }
+  oneof _fail_safe_power {
+    uint32 fail_safe_power = 7;
+  }
+}
+
+message Sys14AEEBUSCtrl {
+  optional uint32 ctrl_type = 1;
+  optional uint32 power = 2;
+  optional uint32 seq = 3;
+  optional uint32 end_timestamp = 4;
+  optional uint32 duration = 5;
+}
+
+message Sys14AEEBUSCtrlAck {
+  optional uint32 result = 1;
+  optional uint32 seq = 2;
+}
+
+message Sys14AStatusSet {
+  oneof _type {
+    bool enable = 1;
+    uint32 type = 2;
+  }
+}
+
+message Sys14AStatusSetAck {
+  optional uint32 result = 1;
+}
+
+enum EMS_SUB_CMD_ID_14A {
+  EEBUS_NONE = 0;
+  EEBUS_DATA_SYNC = 53;
+  EEBUS_DATA_GET = 98;
+  EEBUS_CTRL = 99;
+}
+

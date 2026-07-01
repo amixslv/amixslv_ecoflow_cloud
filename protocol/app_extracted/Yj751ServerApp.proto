@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+message SumBoxingData {
+  oneof _total_remain_cap {
+    uint32 total_remain_cap = 1;
+  }
+  oneof _total_remain_time {
+    uint32 total_remain_time = 2;
+  }
+  oneof _total_power_ac_in {
+    uint32 total_power_ac_in = 3;
+  }
+  oneof _total_power_pv_hign_in {
+    uint32 total_power_pv_hign_in = 4;
+  }
+  oneof _total_power_pv_low_in {
+    uint32 total_power_pv_low_in = 5;
+  }
+  oneof _total_power_pr_out {
+    uint32 total_power_pr_out = 6;
+  }
+  oneof _device_num {
+    uint32 device_num = 7;
+  }
+  oneof _ac_in_num {
+    uint32 ac_in_num = 8;
+  }
+  oneof _pv_in_num {
+    uint32 pv_in_num = 9;
+  }
+  oneof _left_power_sn {
+    uint32 left_power_sn = 10;
+  }
+  oneof _right_power_sn {
+    uint32 right_power_sn = 11;
+  }
+  oneof _left_cap_sn {
+    uint32 left_cap_sn = 12;
+  }
+  oneof _right_cap_sn {
+    uint32 right_cap_sn = 13;
+  }
+}
+

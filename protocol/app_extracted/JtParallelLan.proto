@@ -1,0 +1,207 @@
+syntax = "proto3";
+
+message ParallelDevID {
+  oneof _groupid {
+    uint32 groupid = 1;
+  }
+  oneof _sn {
+    string sn = 2;
+  }
+  oneof _id_pri {
+    uint32 id_pri = 3;
+  }
+}
+
+message ParLanSystemStatus {
+  oneof _id {
+    .ParallelDevID id = 1;
+  }
+  oneof _target_id {
+    .ParallelDevID target_id = 2;
+  }
+  oneof _feed_grid_mode {
+    uint32 feed_grid_mode = 3;
+  }
+  oneof _feed_grid_mode_pow_limit {
+    uint32 feed_grid_mode_pow_limit = 4;
+  }
+  oneof _sys_state {
+    uint32 sys_state = 5;
+  }
+  oneof _ongrid_power {
+    float ongrid_power = 6;
+  }
+  oneof _ongrid_power_out_limited {
+    uint32 ongrid_power_out_limited = 7;
+  }
+}
+
+message ParLanParallelInfo {
+  oneof _id {
+    .ParallelDevID id = 1;
+  }
+  oneof _target_id {
+    .ParallelDevID target_id = 2;
+  }
+  oneof _parallel_set_state {
+    uint32 parallel_set_state = 3;
+  }
+  oneof _parallel_force_sync {
+    bool parallel_force_sync = 4;
+  }
+  oneof _parallel_master_set_error {
+    uint32 parallel_master_set_error = 5;
+  }
+}
+
+message ParLanParallelInfoAck {
+  oneof _id {
+    .ParallelDevID id = 1;
+  }
+  oneof _target_id {
+    .ParallelDevID target_id = 2;
+  }
+  oneof _parallel_set_state {
+    uint32 parallel_set_state = 3;
+  }
+}
+
+message ParLanDeviceStatus {
+  oneof _id {
+    .ParallelDevID id = 1;
+  }
+  oneof _target_id {
+    .ParallelDevID target_id = 2;
+  }
+  oneof _product_detail {
+    uint32 product_detail = 3;
+  }
+  oneof _full_cap {
+    uint32 full_cap = 4;
+  }
+  oneof _soc {
+    uint32 soc = 5;
+  }
+  oneof _inout_power {
+    float inout_power = 6;
+  }
+  oneof _chg_power_max {
+    uint32 chg_power_max = 7;
+  }
+  oneof _dsg_power_max {
+    uint32 dsg_power_max = 8;
+  }
+  oneof _bp_soc {
+    float bp_soc = 9;
+  }
+  oneof _pv_power {
+    uint32 pv_power = 10;
+  }
+  oneof _ongrid {
+    bool ongrid = 11;
+  }
+  oneof _feed_grid_mode_pow_max {
+    uint32 feed_grid_mode_pow_max = 12;
+  }
+  oneof _ongrid_power_in_max {
+    uint32 ongrid_power_in_max = 13;
+  }
+  oneof _ongrid_power_out_max {
+    uint32 ongrid_power_out_max = 14;
+  }
+  oneof _work_mode {
+    uint32 work_mode = 15;
+  }
+  oneof _ongrid_power {
+    float ongrid_power = 16;
+  }
+  oneof _ongrid_power_out_limited {
+    uint32 ongrid_power_out_limited = 17;
+  }
+  oneof _inv_total_power {
+    float inv_total_power = 18;
+  }
+  oneof _connect_type {
+    uint32 connect_type = 19;
+  }
+  oneof _dev_type {
+    uint32 dev_type = 20;
+  }
+  oneof _attr {
+    uint32 attr = 21;
+  }
+  oneof _master_id {
+    .ParallelDevID master_id = 22;
+  }
+  oneof _bind_state {
+    uint32 bind_state = 23;
+  }
+  oneof _dev_stat {
+    uint32 dev_stat = 24;
+  }
+}
+
+message SlaveDiscoverBroadcast {
+  oneof _group_id {
+    uint32 group_id = 1;
+  }
+  oneof _src_sn {
+    string src_sn = 2;
+  }
+}
+
+message LanDevice {
+  optional .ParallelDevID lan_dev_id = 1;
+  optional uint32 virtual_addr = 2;
+}
+
+message ParLanDeviceSync {
+  repeated .LanDevice lan_dev_list = 1;
+}
+
+message ScanParallelDevListReq {
+}
+
+message ParaDevDevInfo {
+  optional .ParallelDevID dev_id = 1;
+}
+
+message ParallelDevList {
+  repeated .ParaDevDevInfo para_dev = 1;
+}
+
+message ScanParallelDevListAck {
+  oneof _para_dev_list {
+    .ParallelDevList para_dev_list = 1;
+  }
+}
+
+message BindParallelDevReq {
+  oneof _bind_dev_id {
+    .ParallelDevID bind_dev_id = 1;
+  }
+  oneof _bind_flg {
+    bool bind_flg = 2;
+  }
+}
+
+message BindParallelDevAck {
+  optional uint32 result = 1;
+}
+
+enum ParLanCmdSets {
+  ParLan_NONE_CMD_SETS = 0;
+  ParLan_CMD_SETS = 225;
+}
+
+enum ParLanCmdId {
+  ParLan_CMD_ID_NONE = 0;
+  ParLan_CMD_ID_PARALLEL_SCAN_LAN_DEVICE = 97;
+  ParLan_CMD_ID_PARALLEL_BIND_LAN_DEVICE = 98;
+  ParLan_CMD_ID_PARALLEL_POWER_SET = 161;
+  ParLan_CMD_ID_PARALLEL_STATE_SYNC = 162;
+  ParLan_CMD_ID_PARALLEL_DATA_SYNC = 163;
+  ParLan_CMD_ID_PARALLEL_SLAVE_BROADCAST = 164;
+  ParLan_CMD_ID_PARALLEL_DEVICE_LIST_SYNC = 165;
+}
+

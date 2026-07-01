@@ -1,0 +1,537 @@
+syntax = "proto3";
+
+message ErrorCodeHeartBeat {
+  repeated uint32 error_code = 1;
+}
+
+message HeatingRodHeartBeatParam {
+  oneof _heatingrod_state {
+    sint32 heatingrod_state = 1;
+  }
+  oneof _water_temperature {
+    float water_temperature = 2;
+  }
+  oneof _pcb_temperature {
+    float pcb_temperature = 3;
+  }
+  oneof _heatingrod_temperature_one {
+    float heatingrod_temperature_one = 4;
+  }
+  oneof _heatingrod_temperature_two {
+    float heatingrod_temperature_two = 5;
+  }
+  oneof _constant_power_heat_set_temperature {
+    sint32 constant_power_heat_set_temperature = 6;
+  }
+  oneof _constant_power_heat_set_power {
+    sint32 constant_power_heat_set_power = 7;
+  }
+  oneof _auto_adjust_heat_set_temperature_one {
+    sint32 auto_adjust_heat_set_temperature_one = 8;
+  }
+  oneof _auto_adjust_heat_set_time_one {
+    sint32 auto_adjust_heat_set_time_one = 9;
+  }
+  oneof _auto_adjust_heat_set_temperature_two {
+    sint32 auto_adjust_heat_set_temperature_two = 10;
+  }
+  oneof _auto_adjust_heat_set_time_two {
+    sint32 auto_adjust_heat_set_time_two = 11;
+  }
+  oneof _phase_a_voltage {
+    float phase_a_voltage = 12;
+  }
+  oneof _phase_b_voltage {
+    float phase_b_voltage = 13;
+  }
+  oneof _phase_c_voltage {
+    float phase_c_voltage = 14;
+  }
+  oneof _phase_a_current {
+    float phase_a_current = 15;
+  }
+  oneof _relay_state {
+    sint32 relay_state = 16;
+  }
+  oneof _heatingrod_power {
+    sint32 heatingrod_power = 17;
+  }
+  oneof _pv_power {
+    sint32 pv_power = 18;
+  }
+  oneof _timestamp {
+    sint32 timestamp = 19;
+  }
+  oneof _error_code {
+    .ErrorCodeHeartBeat error_code = 20;
+  }
+  oneof _is_sterilization {
+    sint32 is_sterilization = 21;
+  }
+  oneof _water_tank_volume {
+    sint32 water_tank_volume = 22;
+  }
+  oneof _network_type {
+    sint32 network_type = 23;
+  }
+  oneof _blue_state {
+    int32 blue_state = 24;
+  }
+  oneof _lastHeatingMode {
+    sint32 lastHeatingMode = 25;
+  }
+  oneof _run_state {
+    uint32 run_state = 26;
+  }
+  oneof _error_code_master {
+    uint32 error_code_master = 27;
+  }
+  oneof _target_temp {
+    uint32 target_temp = 28;
+  }
+  oneof _target_power {
+    uint32 target_power = 29;
+  }
+  oneof _target_run_state {
+    uint32 target_run_state = 30;
+  }
+  oneof _sterilization_remain_time {
+    sint32 sterilization_remain_time = 31;
+  }
+  oneof _sterilizaition_out_cmd {
+    sint32 sterilizaition_out_cmd = 32;
+  }
+  oneof _master_slave_flag {
+    sint32 master_slave_flag = 33;
+  }
+  oneof _selfcheck_flag {
+    sint32 selfcheck_flag = 34;
+  }
+  oneof _selfcheck_percent {
+    sint32 selfcheck_percent = 35;
+  }
+  oneof _run_flag_bit {
+    uint32 run_flag_bit = 36;
+  }
+  oneof _meter_state {
+    uint32 meter_state = 37;
+  }
+  oneof _pv_mode_set_temp {
+    uint32 pv_mode_set_temp = 38;
+  }
+  oneof _is_timer_heat_mode {
+    uint32 is_timer_heat_mode = 39;
+  }
+  oneof _nowater_fault_is_mask {
+    uint32 nowater_fault_is_mask = 40;
+  }
+  oneof _heating_rod_scene_cur {
+    sint32 heating_rod_scene_cur = 41;
+  }
+}
+
+message ErrorCode {
+  oneof _module_sn {
+    string module_sn = 1;
+    uint32 error_code = 2;
+    bool error_state = 3;
+  }
+}
+
+message ErrorCodeReport {
+  oneof _heatingrod_error_code {
+    .ErrorCode heatingrod_error_code = 1;
+  }
+}
+
+message HeatingRodSet {
+  oneof _close_heating_rod_cmd {
+    sint32 close_heating_rod_cmd = 1;
+  }
+  oneof _heating_rod_mode {
+    sint32 heating_rod_mode = 2;
+  }
+  oneof _constant_power_heat_set_temperature {
+    sint32 constant_power_heat_set_temperature = 3;
+  }
+  oneof _constant_power_heat_set_power {
+    sint32 constant_power_heat_set_power = 4;
+  }
+  oneof _auto_adjust_heat_set_temperature_one {
+    sint32 auto_adjust_heat_set_temperature_one = 5;
+  }
+  oneof _auto_adjust_heat_set_time_one {
+    sint32 auto_adjust_heat_set_time_one = 6;
+  }
+  oneof _auto_adjust_heat_set_temperature_two {
+    sint32 auto_adjust_heat_set_temperature_two = 7;
+  }
+  oneof _auto_adjust_heat_set_time_two {
+    sint32 auto_adjust_heat_set_time_two = 8;
+  }
+  oneof _water_tank_volume {
+    sint32 water_tank_volume = 9;
+  }
+  oneof _sterilizaition_out_cmd {
+    sint32 sterilizaition_out_cmd = 10;
+  }
+  oneof _pv_mode_set_temp {
+    sint32 pv_mode_set_temp = 11;
+  }
+  oneof _clear_nowater_fault {
+    sint32 clear_nowater_fault = 12;
+  }
+  oneof _mask_nowater_fault {
+    sint32 mask_nowater_fault = 13;
+  }
+  oneof _heating_rod_scene {
+    sint32 heating_rod_scene = 14;
+  }
+}
+
+message HeatingRodSetAck {
+  optional sint32 result = 1;
+}
+
+message GetHeatingRodSet {
+  optional bool has_close_heating_rod_cmd = 1;
+  optional bool has_heating_rod_mode = 2;
+  optional bool has_constant_power_heat_set_temperature = 3;
+  optional bool has_constant_power_heat_set_power = 4;
+  optional bool has_auto_adjust_heat_set_temperature_one = 5;
+  optional bool has_auto_adjust_heat_set_time_one = 6;
+  optional bool has_auto_adjust_heat_set_temperature_two = 7;
+  optional bool has_auto_adjust_heat_set_time_two = 8;
+  optional bool has_water_tank_volume = 9;
+  optional bool has_is_sterilization = 10;
+  optional bool has_sterilization_remain_time = 11;
+  optional bool has_sterilization_out_cmd = 12;
+  optional bool has_master_slave_flag = 13;
+  optional bool has_selfcheck_flag = 14;
+  optional bool has_selfcheck_percent = 15;
+  optional bool has_meter_state = 16;
+  optional bool has_pv_mode_set_temp = 17;
+  optional bool has_is_timer_heat_mode = 18;
+  optional bool has_nowater_fault_is_mask = 19;
+  optional bool has_heating_rod_scene_cur = 20;
+}
+
+message GetHeatingRodSetAck {
+  oneof _close_heating_rod_cmd {
+    sint32 close_heating_rod_cmd = 1;
+  }
+  oneof _heating_rod_mode {
+    sint32 heating_rod_mode = 2;
+  }
+  oneof _constant_power_heat_set_temperature {
+    sint32 constant_power_heat_set_temperature = 3;
+  }
+  oneof _constant_power_heat_set_power {
+    sint32 constant_power_heat_set_power = 4;
+  }
+  oneof _auto_adjust_heat_set_temperature_one {
+    sint32 auto_adjust_heat_set_temperature_one = 5;
+  }
+  oneof _auto_adjust_heat_set_time_one {
+    sint32 auto_adjust_heat_set_time_one = 6;
+  }
+  oneof _auto_adjust_heat_set_temperature_two {
+    sint32 auto_adjust_heat_set_temperature_two = 7;
+  }
+  oneof _auto_adjust_heat_set_time_two {
+    sint32 auto_adjust_heat_set_time_two = 8;
+  }
+  oneof _water_tank_volume {
+    sint32 water_tank_volume = 9;
+  }
+  oneof _is_sterilization {
+    sint32 is_sterilization = 10;
+  }
+  oneof _sterilization_remain_time {
+    sint32 sterilization_remain_time = 11;
+  }
+  oneof _has_sterilization_out_cmd {
+    sint32 has_sterilization_out_cmd = 12;
+  }
+  oneof _master_slave_flag {
+    sint32 master_slave_flag = 13;
+  }
+  oneof _selfcheck_flag {
+    sint32 selfcheck_flag = 14;
+  }
+  oneof _selfcheck_percent {
+    sint32 selfcheck_percent = 15;
+  }
+  oneof _meter_state {
+    sint32 meter_state = 16;
+  }
+  oneof _pv_mode_set_temp {
+    uint32 pv_mode_set_temp = 17;
+  }
+  oneof _is_timer_heat_mode {
+    uint32 is_timer_heat_mode = 18;
+  }
+  oneof _has_nowater_fault_is_mask {
+    uint32 has_nowater_fault_is_mask = 19;
+  }
+  oneof _heating_rod_scene_cur {
+    uint32 heating_rod_scene_cur = 20;
+  }
+}
+
+message SterilizationTimeTaskSet {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 5;
+  }
+  oneof _time_param {
+    uint32 time_param = 6;
+  }
+  oneof _time_table {
+    uint32 time_table = 7;
+  }
+}
+
+message SterilizationTimeTaskSetAck {
+  optional uint32 task_index = 1;
+  optional uint32 sta = 2;
+}
+
+message SterilizationTimeTaskGet {
+  optional uint32 task_index = 1;
+}
+
+message SterilizationTimeTaskGetAck {
+  optional .SterilizationTimeTaskSet time_task_cfg = 1;
+}
+
+message EmsAllTimerTaskGet {
+}
+
+message EmsAllTimerTaskGetAck {
+  repeated .SterilizationTimeTaskSet time_task_cfg = 1;
+}
+
+message FactoryReset {
+  oneof _sys_reset {
+    uint32 sys_reset = 1;
+  }
+}
+
+message FactoryResetAck {
+  optional sint32 result = 1;
+  optional uint32 sys_reset = 2;
+}
+
+message HeatingRodEnergyStreamReport {
+  oneof _constant_power_heat_forecast_time {
+    float water_temperature = 1;
+    sint32 heatingrod_power_watth = 2;
+    sint32 pv_power_watth = 3;
+    sint32 gird_power_watth = 4;
+    uint32 timestamp = 5;
+    sint32 constant_power_heat_forecast_time = 6;
+    sint32 timezone = 7;
+  }
+}
+
+message HeatingRodEnergyStreamHistoryReport {
+  repeated .HeatingRodEnergyStreamReport history_energy_stream = 1;
+  optional uint32 seq = 2;
+}
+
+message HeatingRodEnergyStreamHistoryReportAck {
+  optional uint32 seq = 1;
+}
+
+message HeatingRodEnergyStreamSet {
+  oneof _need_push_immediately {
+    bool open_energy_stream = 1;
+    bool need_push_immediately = 2;
+  }
+}
+
+message OnLineHeartbeat {
+  oneof _module_apl_sw_ver {
+    string module_sn = 1;
+    uint32 module_product_info = 2;
+    uint32 module_program_sta = 3;
+    uint32 module_apl_sw_ver = 4;
+  }
+  oneof _module_loader_sw_ver {
+    uint32 module_loader_sw_ver = 5;
+  }
+}
+
+message TemperatureSample {
+  oneof _water_temperature {
+    float water_temperature = 1;
+  }
+  oneof _heatingrod_temperature_one {
+    sint32 heatingrod_temperature_one = 2;
+  }
+  oneof _heatingrod_temperature_two {
+    sint32 heatingrod_temperature_two = 3;
+  }
+  oneof _heatingrod_temperature_fone {
+    float heatingrod_temperature_fone = 4;
+  }
+  oneof _heatingrod_temperature_ftwo {
+    float heatingrod_temperature_ftwo = 5;
+  }
+}
+
+message TemperatureSampleAck {
+  optional sint32 result = 1;
+}
+
+message StateSync {
+  oneof _heating_rod_state {
+    .HEATING_ROD_STATE_T heating_rod_state = 1;
+  }
+  oneof _target_temperature {
+    sint32 target_temperature = 2;
+  }
+}
+
+message StateSyncAck {
+  optional sint32 result = 1;
+}
+
+message KnobSample {
+  oneof _knob_temperature {
+    sint32 knob_temperature = 1;
+  }
+  oneof _knob_info {
+    .KNOB_INFO_T knob_info = 2;
+  }
+}
+
+message KnobSampleAck {
+  optional sint32 result = 1;
+}
+
+message TibberEnergyStreamReport {
+  oneof _power {
+    sint32 message_source = 1;
+    sint32 device_sta = 2;
+    sint32 timestamp = 3;
+    float power = 4;
+  }
+  oneof _min_power {
+    float min_power = 5;
+  }
+  oneof _max_power {
+    float max_power = 6;
+  }
+  oneof _accumulated_consumption {
+    float accumulated_consumption = 7;
+  }
+  oneof _power_production {
+    float power_production = 8;
+  }
+  oneof _min_power_production {
+    float min_power_production = 9;
+  }
+  oneof _max_power_production {
+    float max_power_production = 10;
+  }
+  oneof _accumulated_production {
+    float accumulated_production = 11;
+  }
+}
+
+message EmsAllTimerTaskReport {
+  repeated .SterilizationTimeTaskSet time_task_cfg = 1;
+}
+
+message UpdateTimeZone {
+}
+
+message UpdateTimeZoneAck {
+  optional uint32 unix_time = 1;
+  optional sint32 time_zone = 2;
+  optional sint32 decimal_zone = 3;
+}
+
+message OutRelayCtrl {
+  optional uint32 out_relay_ctrl = 1;
+}
+
+message MasterSetHeatingRod {
+  oneof _run_flag_bit {
+    uint32 target_temp = 1;
+    uint32 target_power = 2;
+    uint32 run_state_set = 3;
+    uint32 water_tank_volumn = 4;
+    uint32 run_flag_bit = 5;
+  }
+}
+
+message HeatTimeTaskSet {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+    uint32 time_table = 9;
+  }
+  oneof _type {
+    uint32 type = 5;
+  }
+  oneof _param {
+    int32 param = 6;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 7;
+  }
+  oneof _time_param {
+    uint32 time_param = 8;
+  }
+}
+
+message HeatTimeTaskSetAck {
+  optional uint32 task_index = 1;
+  optional uint32 sta = 2;
+}
+
+message HeatTimeTaskGet {
+  optional uint32 task_index = 1;
+}
+
+message HeatTimeTaskGetAck {
+  optional .HeatTimeTaskSet time_task_cfg = 1;
+}
+
+message AllHeatTimeTaskGet {
+}
+
+message AllHeatTimeTaskGetAck {
+  repeated .HeatTimeTaskSet time_task_cfg = 1;
+}
+
+message AllHeatTimeTaskReport {
+  repeated .HeatTimeTaskSet time_task_cfg = 1;
+}
+
+enum HEATING_ROD_STATE_T {
+  HEATING_ROD_STATE_NONE = 0;
+  HEATING_ROD_STATE_STANDBY = 1;
+  HEATING_ROD_STATE_ERROR = 2;
+  HEATING_ROD_STATE_HEATING = 3;
+  HEATING_ROD_STATE_DISINFECTION = 4;
+}
+
+enum KNOB_INFO_T {
+  KNOB_INFO_NONE = 0;
+  KNOB_INFO_SHORT = 1;
+  KNOB_INFO_LONG = 2;
+  KNOB_INFO_DOUBLE = 3;
+  KNOB_INFO_RESUME = 4;
+}
+

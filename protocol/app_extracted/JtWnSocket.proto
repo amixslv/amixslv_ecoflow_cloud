@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+message PlugSwitchCtrl {
+  optional uint32 plug_switch = 1;
+}
+
+message PlugSetCtrlAck {
+  optional uint32 ack = 1;
+}
+
+enum CmdSets {
+  NONE_CMD_SETS = 0;
+  CMD_SETS = 2;
+}
+
+enum CmdId {
+  CMD_ID_NONE = 0;
+  CMD_ID_SWITCH_ON_OFF_SET = 129;
+}
+

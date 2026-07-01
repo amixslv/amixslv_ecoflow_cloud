@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+message BpCloudHeartbeatReport {
+  oneof _bp_heartbeat_ver {
+    uint32 bp_package_index = 1;
+    uint32 bp_timestamp = 2;
+    string product_sn = 3;
+    uint32 bp_heartbeat_ver = 4;
+    float bp_cell_temp = 32;
+    float bp_env_temp = 35;
+    float bp_mos_temp = 36;
+    float bp_heat_temp = 37;
+    float bp_hts_temp = 38;
+    float bp_scrw_temp = 39;
+    float bp_bus_temp = 40;
+    float bp_bal_temp = 41;
+    float bp_cell_vol = 46;
+    uint32 bp_glb_fault = 52;
+  }
+  oneof _bp_dsrc {
+    uint32 bp_dsrc = 5;
+  }
+  oneof _module_product_info {
+    uint32 module_product_info = 6;
+  }
+  oneof _module_program_type {
+    uint32 module_program_type = 7;
+  }
+  oneof _module_apl_sw_ver {
+    uint32 module_apl_sw_ver = 8;
+  }
+  oneof _module_loader_sw_ver {
+    uint32 module_loader_sw_ver = 9;
+  }
+  oneof _bp_soc {
+    float bp_soc = 10;
+  }
+  oneof _bp_target_soc {
+    float bp_target_soc = 11;
+  }
+  oneof _bp_diff_soc {
+    float bp_diff_soc = 12;
+  }
+  oneof _bp_max_soc {
+    float bp_max_soc = 13;
+  }
+  oneof _bp_min_soc {
+    float bp_min_soc = 14;
+  }
+  oneof _bp_limit_soc {
+    float bp_limit_soc = 15;
+  }
+  oneof _bp_ecloud_soc {
+    uint32 bp_ecloud_soc = 16;
+  }
+  oneof _bp_down_limit_soc {
+    float bp_down_limit_soc = 17;
+  }
+  oneof _bp_up_limit_soc {
+    float bp_up_limit_soc = 18;
+  }
+  oneof _bp_soh {
+    float bp_soh = 19;
+  }
+  oneof _bp_cycle_soh {
+    float bp_cycle_soh = 20;
+  }
+  oneof _bp_real_soh {
+    float bp_real_soh = 21;
+  }
+  oneof _bp_cycles {
+    uint32 bp_cycles = 22;
+  }
+  oneof _bp_full_chg_cap {
+    uint32 bp_full_chg_cap = 23;
+  }
+  oneof _bp_design_cap {
+    uint32 bp_design_cap = 24;
+  }
+  oneof _bp_accu_chg_cap {
+    uint32 bp_accu_chg_cap = 25;
+  }
+  oneof _bp_accu_dsg_cap {
+    uint32 bp_accu_dsg_cap = 26;
+  }
+  oneof _bp_accu_chg_energy {
+    uint32 bp_accu_chg_energy = 27;
+  }
+  oneof _bp_accu_dsg_energy {
+    uint32 bp_accu_dsg_energy = 28;
+  }
+  oneof _bp_remain_energy {
+    float bp_remain_energy = 29;
+  }
+  oneof _bp_chg_limit_cur {
+    float bp_chg_limit_cur = 30;
+  }
+  oneof _bp_dsg_limit_cur {
+    float bp_dsg_limit_cur = 31;
+  }
+  oneof _bp_max_cell_temp {
+    float bp_max_cell_temp = 33;
+  }
+  oneof _bp_min_cell_temp {
+    float bp_min_cell_temp = 34;
+  }
+  oneof _bp_bal_sta {
+    uint32 bp_bal_sta = 42;
+  }
+  oneof _bp_bat_pwr {
+    float bp_bat_pwr = 43;
+  }
+  oneof _bp_bat_cur {
+    float bp_bat_cur = 44;
+  }
+  oneof _bp_bat_vol {
+    float bp_bat_vol = 45;
+  }
+  oneof _bp_cell_max_vol {
+    float bp_cell_max_vol = 47;
+  }
+  oneof _bp_cell_min_vol {
+    float bp_cell_min_vol = 48;
+  }
+  oneof _bp_bus_vol {
+    float bp_bus_vol = 49;
+  }
+  oneof _bp_bus_cur {
+    float bp_bus_cur = 50;
+  }
+  oneof _bp_heat_event {
+    uint32 bp_heat_event = 51;
+  }
+  oneof _bp_chg_dsg_allow {
+    uint32 bp_chg_dsg_allow = 53;
+  }
+  oneof _bp_sys_sta {
+    uint32 bp_sys_sta = 54;
+  }
+  oneof _bp_sys_evt {
+    uint32 bp_sys_evt = 55;
+  }
+  oneof _bp_run_sta {
+    uint32 bp_run_sta = 56;
+  }
+  oneof _bp_flag_bit {
+    uint32 bp_flag_bit = 57;
+  }
+}
+

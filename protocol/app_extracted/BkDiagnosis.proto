@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option java_package = "com.ecoflow.common.proto";
+message UserInfo {
+  optional string user_id = 1;
+}
+
+message UserInfoAck {
+  optional uint32 ret = 1;
+}
+
+message IotStDiagnosis {
+  oneof _lan_diag_detail {
+    uint32 type = 1;
+    uint32 lan_diag_detail = 2;
+  }
+}
+
+message IotStDiagnosisAck {
+  optional uint32 result = 1;
+}
+
+message ReqLanDevInfo {
+  optional uint32 type = 1;
+}
+
+message RspLanDevInfo {
+  optional uint32 count = 1;
+  repeated string sn = 2;
+}
+
+message LanDiagDetail {
+  optional uint32 count = 1;
+  repeated string sn = 2;
+}
+
+message IotDiagInfo {
+  oneof _lan_diag {
+    uint32 type = 1;
+    uint32 state = 2;
+    .LanDiagDetail lan_diag = 4;
+  }
+}
+
+enum IotEnDiagnosisType {
+  EF_DIAG_TYPE_INVALID = 0;
+  EF_DIAG_TYPE_NETWORK = 1;
+  EF_DIAG_TYPE_LAN = 2;
+}
+
+enum LanDevType {
+  EF_DEV_INVALID = 0;
+  EF_DEV_ALL = 1;
+  EF_DEV_MASTER = 2;
+}
+
+enum EN_DIAG_STATE {
+  EF_EN_DIAG_NOT_REQUEST = 0;
+  EF_EN_DIAG_FAIL = 1;
+  EF_EN_DIAG_IN_PROGRESS = 2;
+  EF_EN_DIAG_SUCCESS = 3;
+}
+

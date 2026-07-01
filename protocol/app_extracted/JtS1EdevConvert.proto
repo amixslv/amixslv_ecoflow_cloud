@@ -1,0 +1,529 @@
+syntax = "proto3";
+
+message EdevBaseInfo {
+  oneof _dev_sn {
+    uint32 dev_addr = 1;
+    string dev_sn = 2;
+  }
+  oneof _sub_addr {
+    uint32 sub_addr = 3;
+  }
+}
+
+message EDevParamSet {
+  oneof _plugParam {
+    .EdevBaseInfo dev_info = 1;
+    .EDevSmartPlugParam plugParam = 2;
+  }
+  oneof _thirdPlugParam {
+    .EDevSmartPlugThirdParam thirdPlugParam = 3;
+  }
+  oneof _pileParamSet {
+    .EDevPileParamSet pileParamSet = 4;
+  }
+}
+
+message EDevParamSetAck {
+  optional .EdevBaseInfo dev_info = 1;
+  optional uint32 result = 2;
+}
+
+message EDevExpendCtrl {
+  oneof _pileVehicleSet {
+    .EdevBaseInfo dev_info = 1;
+    uint32 expend_cmd = 2;
+    .EDevPileVehicleSet pileVehicleSet = 3;
+  }
+}
+
+message EDevExpendCtrlAck {
+  optional .EdevBaseInfo dev_info = 1;
+  optional uint32 expend_cmd = 2;
+  optional int32 result = 3;
+}
+
+message EDevParamReport {
+  oneof _plugParam {
+    .EdevBaseInfo dev_info = 1;
+    .EDevSmartPlugParamReport plugParam = 2;
+  }
+  oneof _thirdPlugParamReport {
+    .EDevSmartPlugThirdParamReport thirdPlugParamReport = 3;
+  }
+  oneof _pileChargingParamReport {
+    .EDevPileChargingParamReport pileChargingParamReport = 4;
+  }
+}
+
+message BatchBind {
+  oneof _commute_type {
+    .EdevBaseInfo dev_info = 1;
+    bool bind_flg = 2;
+    uint32 commute_type = 3;
+  }
+}
+
+message BatchBindAck {
+  repeated .BatchBindAckItem bindAckItem = 1;
+  optional bool bind_flg = 2;
+  optional int32 result = 3;
+  optional uint32 commute_type = 4;
+  optional uint32 remain_num = 5;
+}
+
+message BatchBindAckItem {
+  optional .EdevBaseInfo dev_info = 1;
+  optional int32 result = 2;
+}
+
+message EDevRemotCtrlSet {
+  oneof _mart_plug_ctrl {
+    .EdevBaseInfo dev_info = 1;
+    .EDevSmartPlugCtrl mart_plug_ctrl = 2;
+  }
+  oneof _third_plug_ctrl {
+    .EDevSmartThirdPlugCtrl third_plug_ctrl = 3;
+  }
+  oneof _pilremoteCtrl {
+    .PileRemoteCtrl pilremoteCtrl = 4;
+  }
+}
+
+message EDevRunDataSync {
+  repeated .EDevRunData runData = 1;
+}
+
+message EDevRunData {
+  oneof _plugRunData {
+    .EdevBaseInfo dev_info = 1;
+    .EDevSmartPlugRunDataSync plugRunData = 2;
+  }
+  oneof _third_plug_runData {
+    .EDevSmartPlugThirdRunDataSync third_plug_runData = 3;
+  }
+  oneof _pile_charging_runData {
+    .EDevPileChargingRunData pile_charging_runData = 4;
+  }
+  oneof _remote_online_state {
+    uint32 remote_online_state = 31;
+  }
+  oneof _edev_version {
+    fixed32 edev_version = 32;
+  }
+}
+
+message EDevSmartPlugRunDataSync {
+  oneof _real_pwr {
+    float real_pwr = 1;
+    bytes error_code = 4;
+  }
+  oneof _switch_stat {
+    uint32 switch_stat = 2;
+  }
+  oneof _remote_online {
+    bool remote_online = 3;
+  }
+}
+
+message EDevSmartPlugCtrl {
+  oneof _switch_stat {
+    uint32 switch_stat = 1;
+  }
+}
+
+message EDevSmartPlugParam {
+  oneof _household_pwr {
+    float household_pwr = 1;
+  }
+  oneof _max_pwr {
+    float max_pwr = 2;
+  }
+}
+
+message EDevSmartPlugParamReport {
+  oneof _household_pwr {
+    float household_pwr = 1;
+    bytes error_code = 4;
+  }
+  oneof _max_pwr {
+    float max_pwr = 2;
+  }
+  oneof _switch_stat {
+    uint32 switch_stat = 3;
+  }
+}
+
+message EDevSmartThirdPlugCtrl {
+  oneof _switch_stat {
+    uint32 switch_stat = 1;
+    .EDevSmartPlugThirdSocketCtrlItem socket_ctrl = 3;
+  }
+  oneof _sub_type {
+    uint32 sub_type = 2;
+  }
+}
+
+message EDevSmartPlugThirdSocketCtrlItem {
+  oneof _socket_sn {
+    string socket_sn = 1;
+    uint32 ctrl_stat = 3;
+  }
+  oneof _socket_idx {
+    uint32 socket_idx = 2;
+  }
+}
+
+message EDevSmartPlugThirdRunDataSync {
+  oneof _real_pwr {
+    float real_pwr = 1;
+    .EDevSmartPlugThirdSocketReportItem socket_info = 6;
+    bytes error_code = 7;
+  }
+  oneof _switch_stat {
+    uint32 switch_stat = 2;
+  }
+  oneof _remote_online {
+    bool remote_online = 3;
+  }
+  oneof _sub_type {
+    uint32 sub_type = 4;
+  }
+  oneof _socket_num {
+    uint32 socket_num = 5;
+  }
+}
+
+message EDevSmartPlugThirdSocketReportItem {
+  oneof _socket_sn {
+    string socket_sn = 1;
+  }
+  oneof _socket_idx {
+    uint32 socket_idx = 2;
+  }
+  oneof _socket_stat {
+    uint32 socket_stat = 3;
+  }
+  oneof _socket_pwr {
+    float socket_pwr = 4;
+  }
+}
+
+message EDevSmartPlugThirdParamReport {
+  oneof _household_pwr {
+    float household_pwr = 1;
+    .EDevSmartPlugThirdSocketReportItem socket_info = 6;
+    bytes error_code = 7;
+  }
+  oneof _max_pwr {
+    float max_pwr = 2;
+  }
+  oneof _switch_stat {
+    uint32 switch_stat = 3;
+  }
+  oneof _sub_idx {
+    uint32 sub_idx = 4;
+  }
+  oneof _socket_num {
+    uint32 socket_num = 5;
+  }
+}
+
+message EDevSmartPlugThirdParam {
+  oneof _household_pwr {
+    float household_pwr = 1;
+  }
+  oneof _max_pwr {
+    float max_pwr = 2;
+  }
+}
+
+message EDevPileVehicleSet {
+  oneof _default_vehicle_id {
+    string default_vehicle_id = 1;
+  }
+  oneof _charge_vehicle_id {
+    string charge_vehicle_id = 2;
+  }
+  oneof _default_vehicle_comsumption {
+    uint32 default_vehicle_comsumption = 3;
+  }
+  oneof _current_vehicle_comsumption {
+    uint32 current_vehicle_comsumption = 4;
+  }
+}
+
+message EDevPileParamSet {
+  oneof _switch_bits {
+    uint32 switch_bits = 1;
+  }
+  oneof _work_mode {
+    uint32 work_mode = 2;
+  }
+  oneof _current_ouput_max {
+    uint32 current_ouput_max = 3;
+  }
+  oneof _solar_current_min {
+    uint32 solar_current_min = 4;
+  }
+  oneof _phase_specified {
+    uint32 phase_specified = 5;
+  }
+  oneof _user_current_set {
+    uint32 user_current_set = 6;
+  }
+  oneof _smart_mode {
+    .SmartModeParameter smart_mode = 7;
+  }
+  oneof _ocpp_paramset {
+    .EDevOCPPParmSet ocpp_paramset = 8;
+  }
+  oneof _ext_param {
+    bytes ext_param = 21;
+  }
+}
+
+message EDevPileOrderRealStatus {
+  oneof _order_id {
+    uint32 order_id = 1;
+  }
+  oneof _order_state {
+    uint32 order_state = 2;
+  }
+  oneof _order_start_timestamp {
+    fixed32 order_start_timestamp = 3;
+  }
+  oneof _order_end_timestamp {
+    fixed32 order_end_timestamp = 4;
+  }
+  oneof _order_charging_energy {
+    uint32 order_charging_energy = 5;
+  }
+  oneof _order_time {
+    uint32 order_time = 6;
+  }
+}
+
+message EDevPileDebugInfo {
+  oneof _charging_current {
+    uint32 charging_current = 1;
+  }
+  oneof _phase_req {
+    uint32 phase_req = 2;
+  }
+}
+
+message EDevPileChargingParamReport {
+  oneof _param_set {
+    .EDevPileParamSet param_set = 1;
+    .EDevPileVoltCurrInfo volt_curr = 9;
+  }
+  oneof _flag_state {
+    uint32 flag_state = 2;
+  }
+  oneof _online_bits {
+    uint32 online_bits = 3;
+  }
+  oneof _charging_status {
+    uint32 charging_status = 4;
+  }
+  oneof _error_code {
+    bytes error_code = 5;
+  }
+  oneof _charging_pwr {
+    uint32 charging_pwr = 6;
+  }
+  oneof _vehicle_info {
+    .EDevPileVehicleSet vehicle_info = 7;
+  }
+  oneof _order_real_status {
+    .EDevPileOrderRealStatus order_real_status = 8;
+  }
+  oneof _grid_phase_input {
+    uint32 grid_phase_input = 10;
+  }
+  oneof _ocpp_ctrl {
+    uint32 ocpp_ctrl = 12;
+  }
+  oneof _dbg_info {
+    .EDevPileDebugInfo dbg_info = 21;
+  }
+}
+
+message EDevOCPPParmSet {
+  oneof _device_id {
+    string device_id = 1;
+  }
+  oneof _url {
+    string url = 2;
+  }
+  oneof _vendor {
+    string vendor = 3;
+  }
+  oneof _cpo_name {
+    string cpo_name = 4;
+  }
+  oneof _profile {
+    uint32 profile = 5;
+  }
+  oneof _auth_key {
+    string auth_key = 6;
+  }
+  oneof _ocpp_enable {
+    uint32 ocpp_enable = 7;
+  }
+}
+
+message SmartModeParameter {
+  oneof _time_to_use_car {
+    uint32 time_to_use_car = 1;
+  }
+  oneof _target_type {
+    uint32 target_type = 2;
+  }
+  oneof _charge_target {
+    uint32 charge_target = 3;
+  }
+  oneof _distance_target {
+    uint32 distance_target = 4;
+  }
+}
+
+message PileRemoteParamSet {
+  oneof _switch_bits {
+    uint32 switch_bits = 1;
+    .EDevTimerTaskCfg timer_task = 3;
+  }
+  oneof _work_mode {
+    uint32 work_mode = 2;
+  }
+  oneof _current_ouput_max {
+    float current_ouput_max = 4;
+  }
+  oneof _vehicle_info {
+    .EDevPileVehicleSet vehicle_info = 5;
+  }
+  oneof _solar_current_min {
+    float solar_current_min = 6;
+  }
+  oneof _phase_specified {
+    uint32 phase_specified = 7;
+  }
+  oneof _user_current_set {
+    uint32 user_current_set = 8;
+  }
+  oneof _ext_param {
+    bytes ext_param = 21;
+  }
+  oneof _ocpp_paramset {
+    .EDevOCPPParmSet ocpp_paramset = 9;
+  }
+  oneof _smart_info {
+    .SmartModeParameter smart_info = 31;
+  }
+}
+
+message EDevPileVoltCurrInfo {
+  optional uint32 volt = 1;
+  optional uint32 curr = 2;
+}
+
+message EDevPileChargingRunData {
+  oneof _obd_phase_detect {
+    .EDevPileVoltCurrInfo volt_curr = 1;
+    uint32 obd_phase_detect = 2;
+  }
+  oneof _grid_phase_input {
+    uint32 grid_phase_input = 3;
+  }
+  oneof _charging_pwr {
+    uint32 charging_pwr = 4;
+  }
+  oneof _charging_energy {
+    uint32 charging_energy = 5;
+  }
+  oneof _charging_status {
+    uint32 charging_status = 6;
+  }
+  oneof _error_code {
+    bytes error_code = 7;
+  }
+  oneof _param_set {
+    .PileRemoteParamSet param_set = 8;
+  }
+  oneof _ocpp_paramset {
+    .EDevOCPPParmSet ocpp_paramset = 16;
+  }
+}
+
+message EDevPilePO2EVHeartBeat {
+  oneof _param_set {
+    .PileRemoteParamSet param_set = 1;
+    uint32 power_from = 2;
+  }
+}
+
+message EDevPileEV2POHeartBeat {
+  oneof _param_set {
+    .PileRemoteParamSet param_set = 1;
+  }
+}
+
+message PileRemoteCtrl {
+  oneof _charging_ctrl {
+    uint32 charging_ctrl = 1;
+    uint32 power_from = 5;
+  }
+  oneof _charging_current {
+    float charging_current = 2;
+  }
+  oneof _work_mode {
+    uint32 work_mode = 3;
+  }
+  oneof _phase_req {
+    uint32 phase_req = 4;
+  }
+}
+
+message EDevTimerTaskCfg {
+  oneof _is_effect {
+    uint32 is_cfg = 1;
+    uint32 task_index = 2;
+    bool is_enable = 3;
+    bool is_effect = 4;
+    uint32 time_table = 8;
+    int32 param = 9;
+  }
+  oneof _type {
+    uint32 type = 5;
+  }
+  oneof _time_mode {
+    uint32 time_mode = 6;
+  }
+  oneof _time_param {
+    uint32 time_param = 7;
+  }
+  oneof _task_type {
+    uint32 task_type = 10;
+  }
+}
+
+enum CmdSets {
+  NONE_CMD_SETS = 0;
+  EDEV_CONVERT_CMD_SETS = 241;
+}
+
+enum EdevConvertCmdId {
+  CMD_ID_NONE = 0;
+  EDEV_CMD_ID_PARAM_REPORT = 3;
+  EDEV_CMD_ID_EDEV_PARAM_SET = 102;
+  EDEV_CMD_ID_BATCH_BIND = 113;
+  EDEV_CMD_ID_EDEV_BIND_LIST_GET = 109;
+  EDEV_CMD_ID_EDEV_RUN_DATA_SYNC = 44;
+  EDEV_CMD_ID_EDEV_REMOTE_CTRL = 40;
+}
+
+enum PileExpendCmd {
+  PILE_EXPEND_NONE = 0;
+  PILE_EXPEND_VEHICLE_SET = 1;
+}
+
