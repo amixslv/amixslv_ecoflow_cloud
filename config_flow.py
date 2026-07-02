@@ -229,8 +229,8 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     {
                         vol.Required("action", default="keep"): vol.In(
                             {
-                                "keep": "Paturēt esošo konfigurāciju",
-                                "reset": "Dzēst veco un uzstādīt no jauna",
+                                "keep": "keep",
+                                "reset": "reset",
                             }
                         )
                     }

@@ -44,7 +44,18 @@
       "init": {
         "title": "Opțiuni EcoFlow Cloud",
         "description": "Editați setările de integrare."
+      },
+      "device_exists": {
+        "title": "Dispozitivul este deja configurat",
+        "description": "Dispozitivul cu num?rul de serie {sn} exist? deja. Ce dori?i s? face?i?",
+        "data": {
+          "action": "Ac?iune"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Configura?ia existent? a fost salvat?",
+    "reconfigure_failed": "Reconfigurarea a e?uat"
   }
 }

@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud -asetukset",
         "description": "Muokkaa integraation asetuksia."
+      },
+      "device_exists": {
+        "title": "Laite on jo konfiguroitu",
+        "description": "Laite, jonka sarjanumero on {sn}, on jo olemassa. Mit? haluat tehd??",
+        "data": {
+          "action": "Toiminto"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Olemassa oleva m??ritys on tallennettu",
+    "reconfigure_failed": "Uudelleenkonfigurointi ep?onnistui"
   }
 }

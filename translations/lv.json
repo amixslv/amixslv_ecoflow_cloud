@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud opcijas",
         "description": "Rediģējiet integrācijas iestatījumus."
+      },
+      "device_exists": {
+        "title": "Ier?ce jau konfigur?ta",
+        "description": "Ier?ce ar s?rijas numuru {sn} jau eksist?. Ko v?laties dar?t?",
+        "data": {
+          "action": "Darb?ba"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Eso?? konfigur?cija ir saglab?ta",
+    "reconfigure_failed": "Rekonfigur?cija neizdev?s"
   }
 }

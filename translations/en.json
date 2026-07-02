@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud Options",
         "description": "Edit integration settings."
+      },
+      "device_exists": {
+        "title": "Device Already Configured",
+        "description": "Device with serial number {sn} already exists. What would you like to do?",
+        "data": {
+          "action": "Action"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Existing configuration has been saved",
+    "reconfigure_failed": "Reconfiguration failed"
   }
 }

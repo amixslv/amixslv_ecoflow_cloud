@@ -44,7 +44,18 @@
       "init": {
         "title": "Možnosti EcoFlow Cloud",
         "description": "Upravte nastavení integrace."
+      },
+      "device_exists": {
+        "title": "Za??zen? je ji? nakonfigurov?no",
+        "description": "Za??zen? se s?riov?m ??slem {sn} ji? existuje. Co chcete d?lat?",
+        "data": {
+          "action": "Akce"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Existuj?c? konfigurace byla ulo?ena",
+    "reconfigure_failed": "Rekonfiguraci se nepoda?ilo"
   }
 }

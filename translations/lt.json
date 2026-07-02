@@ -44,7 +44,18 @@
       "init": {
         "title": "EcoFlow Cloud parinktys",
         "description": "Redaguokite integracijos nustatymus."
+      },
+      "device_exists": {
+        "title": "?renginys jau sukonfig?ruotas",
+        "description": "?renginys su serijauiniu numeriu {sn} jau yra. K? nor?tum?te daryti?",
+        "data": {
+          "action": "Veiksmas"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Esama konfig?racija buvo i?saugota",
+    "reconfigure_failed": "Perkonfig?ravimas nepavyko"
   }
 }

@@ -56,6 +56,9 @@ class FieldMap:
             clean = clean.split(".")[-1]
         return clean
 
+    def normalize_field(self, field: str) -> str:
+        return self._normalize_field(field)
+
     # ------------------------------------------------------------------
     # AUTO NAME
     # ------------------------------------------------------------------
@@ -277,6 +280,8 @@ class FieldMap:
     def get_control_type(self, field: str):
         normalized = self._normalize_field(field).lower()
 
+        if normalized == "cfg_power_off":
+            return "switch"
         if any(x in normalized for x in ("power_off", "reconnect", "reset", "clear", "restart", "shutdown")):
             return "button"
         if normalized.endswith(("_en", "_enable", "_enabled", "_flag", "_switch", "_open", "_close")):
@@ -335,4 +340,3 @@ class FieldMap:
             return list(self.AUTO_ENUMS[normalized].values())
 
         return None
-

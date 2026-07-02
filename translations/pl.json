@@ -44,7 +44,18 @@
       "init": {
         "title": "Opcje EcoFlow Cloud",
         "description": "Edytuj ustawienia integracji."
+      },
+      "device_exists": {
+        "title": "Urz?dzenie jest ju? skonfigurowane",
+        "description": "Urz?dzenie z numerem seryjnym {sn} ju? istnieje. Co chcesz zrobi??",
+        "data": {
+          "action": "Dzia?anie"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Istniej?ca konfiguracja zosta?a zapisana",
+    "reconfigure_failed": "Ponowna konfiguracja nie powiod?a si?"
   }
 }

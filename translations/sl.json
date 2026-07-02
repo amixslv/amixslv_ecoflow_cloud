@@ -44,7 +44,18 @@
       "init": {
         "title": "Možnosti EcoFlow Cloud",
         "description": "Uredite nastavitve integracije."
+      },
+      "device_exists": {
+        "title": "Naprava je ?e konfigurirana",
+        "description": "Naprava s serijsko ?tevilko {sn} ?e obstaja. Kaj bi radi naredili?",
+        "data": {
+          "action": "Dejanje"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Obstoje?a konfiguracija je bila shranjena",
+    "reconfigure_failed": "Ponovna konfiguracija je bila neuspe?na"
   }
 }

@@ -44,7 +44,18 @@
       "init": {
         "title": "Għażliet EcoFlow Cloud",
         "description": "Immodifika l-issettings tal-integrazzjoni."
+      },
+      "device_exists": {
+        "title": "Tag?mir di?? kkonfigurat",
+        "description": "Tag?mir bin-numru serjali {sn} di?? je?isti. X'inti tixtieq tag?mel?",
+        "data": {
+          "action": "Azzjoni"
+        }
       }
     }
+  },
+  "abort": {
+    "keep_existing": "Il-konfigurazzjoni e?istenti ?iet salvata",
+    "reconfigure_failed": "Il-konfigurazzjoni mill-?did falliet"
   }
 }
