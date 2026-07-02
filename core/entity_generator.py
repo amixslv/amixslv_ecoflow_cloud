@@ -177,6 +177,10 @@ class EntityGenerator:
         entity_category = self.field_map.get_category(field_path, is_control)
 
         state_field_paths = [field_path]
+        if field_path.startswith("flow_info_"):
+            flow_alias = field_path.replace("flow_info_", "pow_get_", 1)
+            if flow_alias not in state_field_paths:
+                state_field_paths.append(flow_alias)
         if is_control:
             alias = field_path
             if field_path.startswith("cfg_energy_backup."):
@@ -439,6 +443,11 @@ class EntityGenerator:
             return
 
         self.raw_json = decoded
+        normalized_decoded: dict[str, Any] = {}
+        for key, value in decoded.items():
+            normalized_key = self.field_map.normalize_field(key)
+            if normalized_key and normalized_key not in normalized_decoded:
+                normalized_decoded[normalized_key] = value
 
         diag = self.entities.get("diagnostics")
         if diag and hasattr(diag, "set_last_message_type"):
@@ -473,6 +482,11 @@ class EntityGenerator:
             for candidate in state_paths:
                 if candidate and candidate in decoded:
                     val = decoded[candidate]
+                    found = True
+                    break
+                normalized_candidate = self.field_map.normalize_field(candidate) if candidate else None
+                if normalized_candidate and normalized_candidate in normalized_decoded:
+                    val = normalized_decoded[normalized_candidate]
                     found = True
                     break
             if not found:

@@ -287,6 +287,7 @@ class DeviceManager:
             else {}
         )
         return {
+            "direction": "incoming",
             "received_at": datetime.now(timezone.utc).isoformat(),
             "device_sn": self.device_sn,
             "device_type": self.device_type,
@@ -298,6 +299,29 @@ class DeviceManager:
             "message_type": getattr(self.entity_generator, "_last_msg_type", None) if self.entity_generator else None,
             "proto_debug": proto_debug,
             "decode_error": decode_error,
+        }
+
+    def _build_command_debug_record(
+        self,
+        field: str,
+        value,
+        topic: str,
+        topic_alt: str | None,
+        payload: bytes,
+        used_proto: bool,
+    ) -> dict:
+        return {
+            "direction": "outgoing",
+            "sent_at": datetime.now(timezone.utc).isoformat(),
+            "device_sn": self.device_sn,
+            "device_type": self.device_type,
+            "field": field,
+            "value": value,
+            "used_proto": used_proto,
+            "topic": topic,
+            "topic_alt": topic_alt,
+            "payload_len": len(payload),
+            "payload_hex": payload.hex(),
         }
 
     def _queue_debug_record(self, record: dict):
@@ -484,6 +508,16 @@ class DeviceManager:
         )
 
         _LOGGER.debug("DM: SEND SET %s=%s topic=%s proto=%s", field, value, topic, used_proto)
+        self._queue_debug_record(
+            self._build_command_debug_record(
+                field=field,
+                value=value,
+                topic=topic,
+                topic_alt=topic_alt,
+                payload=payload,
+                used_proto=used_proto,
+            )
+        )
         self.mqtt.publish(topic, payload, qos=0)
         if topic_alt and topic_alt != topic:
             self.mqtt.publish(topic_alt, payload, qos=0)
