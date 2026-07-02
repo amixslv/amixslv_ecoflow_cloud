@@ -197,12 +197,11 @@ class FieldMap:
             return "power"
         if "freq" in f:
             return "frequency"
-        if f.endswith("_soc") and not any(x in f for x in ("min_","mini_","max_","backup","always_on","reserve","alarm","protect")):
+        if f == "cms_batt_soc":
             return "battery"
-        # Keep station-level battery class on explicit battery fields only.
-        # Bare "soc"/"soh" often come from extra-battery heartbeat frames and
-        # can hijack HA's primary battery badge for the main station device.
-        if f in ("batt_soh", "bms_batt_soh"):
+        # Keep battery class explicit to avoid generic *_soc fields
+        # hijacking HA's primary battery badge for the main station device.
+        if f in ("bms_batt_soc", "batt_soh", "bms_batt_soh"):
             return "battery"
         if "time" in f:
             return "duration"
