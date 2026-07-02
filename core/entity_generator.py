@@ -322,24 +322,19 @@ class EntityGenerator:
                         header.enc_type, header.seq,
                     )
 
-                    _bsh, _bdh, _bsc = None, {}, -1
-                    for suffix in PROTO_MESSAGE_SUFFIXES:
-                        message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
-                        if not message_cls:
-                            continue
+                    forced_source = PROTO_MSG_MAP.get((header.cmd_func, header.cmd_id))
+                    if forced_source:
+                        forced_suffix = self._suffix_for_source(forced_source)
+                        if forced_suffix:
+                            _f_sfx, _f_decoded, _f_score = self._decode_with_suffixes(prefix, pdata, [forced_suffix])
+                            if _f_decoded:
+                                self._last_decode_debug["decode_path"] = "header_message_forced"
+                                self._last_decode_debug["matched_proto"] = _f_sfx
+                                self._last_decode_debug["matched_fields"] = _f_score
+                                self._last_decode_debug["forced_source"] = forced_source
+                                return _f_sfx, _f_decoded
 
-                        try:
-                            msg = message_cls()
-                            msg.ParseFromString(pdata)
-                            raw = MessageToDict(msg, preserving_proto_field_name=True)
-                            _dd = flatten_dict(raw)
-                            if not _dd:
-                                continue
-                            _sc = sum(1 for k in _dd if k in self._field_index)
-                            if _sc > _bsc:
-                                _bsc, _bsh, _bdh = _sc, suffix, _dd
-                        except Exception:
-                            continue
+                    _bsh, _bdh, _bsc = self._decode_with_suffixes(prefix, pdata, PROTO_MESSAGE_SUFFIXES)
                     if _bdh:
                         self._last_decode_debug["decode_path"] = "header_message"
                         self._last_decode_debug["matched_proto"] = _bsh
@@ -379,8 +374,29 @@ class EntityGenerator:
         if header.enc_type == 1 and header.src != PROTO_HEADER_SRC_CLOUD:
             pdata = bytes([(b ^ header.seq) & 0xFF for b in pdata])
 
-        _bsb, _bdb, _bscb = None, {}, -1
-        for suffix in PROTO_MESSAGE_SUFFIXES:
+        forced_source = PROTO_MSG_MAP.get((header.cmd_func, header.cmd_id))
+        if forced_source:
+            forced_suffix = self._suffix_for_source(forced_source)
+            if forced_suffix:
+                _f_sfx, _f_decoded, _f_score = self._decode_with_suffixes(prefix, pdata, [forced_suffix])
+                if _f_decoded:
+                    self._last_decode_debug["decode_path"] = "header_parser_forced"
+                    self._last_decode_debug["matched_proto"] = _f_sfx
+                    self._last_decode_debug["matched_fields"] = _f_score
+                    self._last_decode_debug["forced_source"] = forced_source
+                    return _f_sfx, _f_decoded
+
+        _bsb, _bdb, _bscb = self._decode_with_suffixes(prefix, pdata, PROTO_MESSAGE_SUFFIXES)
+
+        if _bdb:
+            self._last_decode_debug["decode_path"] = "header_parser"
+            self._last_decode_debug["matched_proto"] = _bsb
+            self._last_decode_debug["matched_fields"] = _bscb
+        return (_bsb, _bdb) if _bdb else (None, {})
+
+    def _decode_with_suffixes(self, prefix: str, pdata: bytes, suffixes: list[str]) -> tuple[str | None, dict, int]:
+        best_suffix, best_decoded, best_score = None, {}, -1
+        for suffix in suffixes:
             message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
             if not message_cls:
                 continue
@@ -389,20 +405,21 @@ class EntityGenerator:
                 msg = message_cls()
                 msg.ParseFromString(pdata)
                 raw = MessageToDict(msg, preserving_proto_field_name=True)
-                _dd = flatten_dict(raw)
-                if not _dd:
+                decoded = flatten_dict(raw)
+                if not decoded:
                     continue
-                _sc = sum(1 for k in _dd if k in self._field_index)
-                if _sc > _bscb:
-                    _bscb, _bsb, _bdb = _sc, suffix, _dd
+                score = sum(1 for key in decoded if key in self._field_index)
+                if score > best_score:
+                    best_suffix, best_decoded, best_score = suffix, decoded, score
             except Exception:
                 continue
+        return best_suffix, best_decoded, best_score
 
-        if _bdb:
-            self._last_decode_debug["decode_path"] = "header_parser"
-            self._last_decode_debug["matched_proto"] = _bsb
-            self._last_decode_debug["matched_fields"] = _bscb
-        return (_bsb, _bdb) if _bdb else (None, {})
+    def _suffix_for_source(self, source: str) -> str | None:
+        for suffix, mapped_source in PROTO_MESSAGE_SOURCE_BY_SUFFIX.items():
+            if mapped_source == source:
+                return suffix
+        return None
 
     def decode_message(self, payload: bytes) -> dict:
         """Decode MQTT payload to a flattened proto dictionary."""
