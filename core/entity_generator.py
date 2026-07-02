@@ -177,6 +177,9 @@ class EntityGenerator:
         entity_category = self.field_map.get_category(field_path, is_control)
 
         state_field_paths = [field_path]
+        if field_path == "pow_out_sum_w":
+            # App-level "total output power" aligns with BMS output_watts.
+            state_field_paths = ["output_watts", field_path]
         if field_path.startswith("flow_info_"):
             flow_alias = field_path.replace("flow_info_", "pow_get_", 1)
             if flow_alias not in state_field_paths:
