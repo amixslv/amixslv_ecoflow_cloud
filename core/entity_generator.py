@@ -1,4 +1,5 @@
 import base64
+import copy
 import logging
 from typing import Any
 
@@ -102,6 +103,7 @@ class EntityGenerator:
         self._platform_callbacks: dict[str, AddEntitiesCallback] = {}
         self._last_msg_type: str | None = None
         self._last_proto_key: str | None = None
+        self._last_decode_debug: dict[str, Any] = {}
 
         if self.pb2:
             self._load_proto_definitions()
@@ -261,7 +263,21 @@ class EntityGenerator:
 
     def _decode_proto_payload(self, payload: bytes) -> tuple[str | None, dict]:
         if not self.pb2:
+            self._last_decode_debug = {
+                "decode_path": None,
+                "matched_proto": None,
+                "matched_fields": 0,
+                "header": None,
+                "note": "pb2_not_loaded",
+            }
             return None, {}
+
+        self._last_decode_debug = {
+            "decode_path": None,
+            "matched_proto": None,
+            "matched_fields": 0,
+            "header": None,
+        }
 
         try:
             payload = base64.b64decode(payload, validate=True)
@@ -282,6 +298,20 @@ class EntityGenerator:
                     header_msg.ParseFromString(payload)
                     header = header_msg.header[-1]
                     pdata = header.pdata
+                    self._last_decode_debug["header"] = {
+                        "parser": "header_message",
+                        "src": getattr(header, "src", None),
+                        "dest": getattr(header, "dest", None),
+                        "d_src": getattr(header, "d_src", None),
+                        "d_dest": getattr(header, "d_dest", None),
+                        "cmd_func": getattr(header, "cmd_func", None),
+                        "cmd_id": getattr(header, "cmd_id", None),
+                        "enc_type": getattr(header, "enc_type", None),
+                        "seq": getattr(header, "seq", None),
+                        "time_snap": getattr(header, "time_snap", None),
+                        "device_sn": getattr(header, "device_sn", None),
+                        "from": getattr(header, "from", None),
+                    }
                     _LOGGER.debug(
                         "PROTO header: src=%s dest=%s cmd_func=%s cmd_id=%s enc=%s seq=%s",
                         header.src, header.dest, header.cmd_func, header.cmd_id,
@@ -307,13 +337,31 @@ class EntityGenerator:
                         except Exception:
                             continue
                     if _bdh:
+                        self._last_decode_debug["decode_path"] = "header_message"
+                        self._last_decode_debug["matched_proto"] = _bsh
+                        self._last_decode_debug["matched_fields"] = _bsc
                         return _bsh, _bdh
                 except Exception as exc:
                     _LOGGER.debug("PROTO-first decode failed: %s", exc)
+                    self._last_decode_debug["header_message_error"] = str(exc)
 
         header = EcoFlowHeader(payload)
         if not header.valid:
+            self._last_decode_debug["note"] = "invalid_header"
             return None, {}
+
+        self._last_decode_debug["header"] = {
+            "parser": "legacy_header",
+            "src": header.src,
+            "dest": header.dest,
+            "d_src": header.d_src,
+            "d_dest": header.d_dest,
+            "cmd_func": header.cmd_func,
+            "cmd_id": header.cmd_id,
+            "enc_type": header.enc_type,
+            "seq": header.seq,
+            "data_len": header.data_len,
+        }
 
         try:
             prefix = DEVICE_TYPE_MAP[self.manager.entry.data["device_label"]]["proto_prefix"]
@@ -346,6 +394,10 @@ class EntityGenerator:
             except Exception:
                 continue
 
+        if _bdb:
+            self._last_decode_debug["decode_path"] = "header_parser"
+            self._last_decode_debug["matched_proto"] = _bsb
+            self._last_decode_debug["matched_fields"] = _bscb
         return (_bsb, _bdb) if _bdb else (None, {})
 
     def decode_message(self, payload: bytes) -> dict:
@@ -488,3 +540,6 @@ class EntityGenerator:
 
     def get_raw_json(self):
         return self.raw_json
+
+    def get_last_decode_debug(self):
+        return copy.deepcopy(self._last_decode_debug)

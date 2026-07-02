@@ -1,6 +1,9 @@
+import json
 import logging
+from datetime import datetime, timezone
 import importlib
 import time
+from pathlib import Path
 
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import async_get as async_get_device_registry
@@ -11,6 +14,7 @@ from ..core.entity_generator import EntityGenerator
 from ..supported_devices import DEVICE_TYPE_MAP
 from ..api.message import JSONMessage
 from ..cont import (
+    DOMAIN,
     MQTT_TOPIC_DEVICE_PROP_LEGACY,
     MQTT_TOPIC_DEVICE_PROPERTY,
     MQTT_TOPIC_USER_DEVICE_PROPERTY,
@@ -65,6 +69,11 @@ class DeviceManager:
         self._update_interval = 0.5  # seconds
         self._pending_decoded: dict | None = None
         self._update_scheduled = False
+        self._pending_debug_records: list[dict] = []
+        self._debug_flush_scheduled = False
+        self._debug_root = Path(self.hass.config.path(f"{DOMAIN}_debug")) / self.device_sn
+        self._debug_latest_path = self._debug_root / "latest.json"
+        self._debug_history_path = self._debug_root / "history.jsonl"
 
     # ----------------------------------------------------------------------
     # MAIN SETUP
@@ -120,6 +129,13 @@ class DeviceManager:
             _LOGGER.info("DM: MQTT setup OK")
         except Exception as e:
             _LOGGER.error("DM: MQTT setup FAILED: %s", e)
+            raise
+
+        try:
+            await self.hass.async_add_executor_job(self._prepare_debug_dump_dir)
+            _LOGGER.info("DM: Debug dump path ready at %s", self._debug_root)
+        except Exception as e:
+            _LOGGER.error("DM: Debug dump setup FAILED: %s", e)
             raise
 
         # 5. Register device in HA
@@ -200,7 +216,23 @@ class DeviceManager:
             decoded = self.entity_generator.decode_message(payload)
         except Exception as e:
             _LOGGER.error("DM: Failed to decode MQTT message: %s", e)
+            self._queue_debug_record(
+                self._build_debug_record(
+                    topic=topic,
+                    payload=payload,
+                    decoded={},
+                    decode_error=str(e),
+                )
+            )
             return
+
+        self._queue_debug_record(
+            self._build_debug_record(
+                topic=topic,
+                payload=payload,
+                decoded=decoded,
+            )
+        )
 
         if not decoded:
             return
@@ -238,6 +270,76 @@ class DeviceManager:
             if self._pending_decoded is not None:
                 self._update_scheduled = True
                 self.hass.loop.call_soon(self._apply_pending_update)
+
+    def _prepare_debug_dump_dir(self):
+        self._debug_root.mkdir(parents=True, exist_ok=True)
+
+    def _build_debug_record(
+        self,
+        topic: str,
+        payload: bytes,
+        decoded: dict,
+        decode_error: str | None = None,
+    ) -> dict:
+        proto_debug = (
+            self.entity_generator.get_last_decode_debug()
+            if self.entity_generator and hasattr(self.entity_generator, "get_last_decode_debug")
+            else {}
+        )
+        return {
+            "received_at": datetime.now(timezone.utc).isoformat(),
+            "device_sn": self.device_sn,
+            "device_type": self.device_type,
+            "topic": topic,
+            "payload_len": len(payload),
+            "payload_hex": payload.hex(),
+            "decoded_field_count": len(decoded or {}),
+            "decoded": decoded or {},
+            "message_type": getattr(self.entity_generator, "_last_msg_type", None) if self.entity_generator else None,
+            "proto_debug": proto_debug,
+            "decode_error": decode_error,
+        }
+
+    def _queue_debug_record(self, record: dict):
+        self._pending_debug_records.append(record)
+        if self._debug_flush_scheduled:
+            return
+
+        self._debug_flush_scheduled = True
+        self.hass.loop.call_soon_threadsafe(self._flush_debug_records)
+
+    def _flush_debug_records(self):
+        records = self._pending_debug_records
+        self._pending_debug_records = []
+        self._debug_flush_scheduled = False
+        if not records:
+            return
+
+        self.hass.async_create_task(self._async_write_debug_records(records))
+
+    async def _async_write_debug_records(self, records: list[dict]):
+        try:
+            await self.hass.async_add_executor_job(self._write_debug_records, records)
+        except Exception as exc:
+            _LOGGER.error("DM: Failed to write debug dump: %s", exc)
+
+    def _write_debug_records(self, records: list[dict]):
+        self._prepare_debug_dump_dir()
+
+        with self._debug_history_path.open("a", encoding="utf-8") as history_file:
+            for record in records:
+                history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+        latest = {
+            "updated_at": records[-1]["received_at"],
+            "device_sn": self.device_sn,
+            "device_type": self.device_type,
+            "last_record": records[-1],
+        }
+        self._debug_latest_path.write_text(
+            json.dumps(latest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     # ----------------------------------------------------------------------
     # DEVICE REGISTRATION
