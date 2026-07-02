@@ -316,6 +316,9 @@ class EntityGenerator:
                         "device_sn": getattr(header, "device_sn", None),
                         "from": getattr(header, "from", None),
                     }
+                    if getattr(header, "enc_type", 0) == 1 and getattr(header, "src", None) != PROTO_HEADER_SRC_CLOUD:
+                        seq = int(getattr(header, "seq", 0) or 0)
+                        pdata = bytes([(b ^ seq) & 0xFF for b in pdata])
                     _LOGGER.debug(
                         "PROTO header: src=%s dest=%s cmd_func=%s cmd_id=%s enc=%s seq=%s",
                         header.src, header.dest, header.cmd_func, header.cmd_id,
@@ -323,6 +326,11 @@ class EntityGenerator:
                     )
 
                     forced_source = PROTO_MSG_MAP.get((header.cmd_func, header.cmd_id))
+                    if forced_source == "set_cmd" and getattr(header, "src", None) == PROTO_HEADER_SRC_CLOUD:
+                        self._last_decode_debug["decode_path"] = "header_message_ignored"
+                        self._last_decode_debug["forced_source"] = forced_source
+                        self._last_decode_debug["note"] = "ignore_self_set_command_echo"
+                        return None, {}
                     if forced_source:
                         forced_suffix = self._suffix_for_source(forced_source)
                         if forced_suffix:
