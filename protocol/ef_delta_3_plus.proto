@@ -164,6 +164,13 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 flow_info_bms_dsg = 152;         // BMS izlādes plūsma
   optional uint32 flow_info_bms_chg = 153;         // BMS uzlādes plūsma
   optional float pow_get_bms = 158;                // BMS jauda (W)
+  optional float pow_get_sys_grid = 515;           // Tīkla ieguldījums kopējā jaudas bilancē (W)
+  optional float pow_get_sys_load = 516;           // Kopējā stacijas slodze (W)
+  optional float pow_get_pv_sum = 517;             // Kopējā PV ieeja (W)
+  optional float pow_get_bp_cms = 518;             // CMS/BP jaudas bilance (W)
+  optional float pow_get_sys_load_from_pv = 1002;  // Slodzes daļa no PV (W)
+  optional float pow_get_sys_load_from_bp = 1003;  // Slodzes daļa no baterijas (W)
+  optional float pow_get_sys_load_from_grid = 1004; // Slodzes daļa no tīkla (W)
   optional uint32 flow_info_4p8_1_in = 154;       // 4p8_1 iepl?des virziens
   optional uint32 flow_info_4p8_1_out = 155;      // 4p8_1 izpl?des virziens
   optional uint32 flow_info_4p8_2_in = 156;       // 4p8_2 iepl?des virziens
@@ -204,6 +211,8 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 cms_bms_run_state = 275;         // Kombinētā BMS darbības stāvoklis
   optional uint32 bms_chg_dsg_state = 281;         // Uzlādes/izlādes stāvoklis (0/1/2)
   optional uint32 cms_chg_dsg_state = 282;         // Kombinētais uzlādes/izlādes stāvoklis
+  optional uint32 cms_batt_pow_out_max = 459;      // CMS maksimālā izvades jauda (W)
+  optional uint32 cms_batt_pow_in_max = 460;       // CMS maksimālā ievades jauda (W)
   optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
   optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
   optional Delta3PlusTimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
