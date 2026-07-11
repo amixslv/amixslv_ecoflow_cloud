@@ -202,9 +202,10 @@ class DeviceManager:
 
         topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
         topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
+        topic3 = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(user_id=self.user_id, sn=self.device_sn)
 
-        self.mqtt.subscribe([topic1, topic2])
-        _LOGGER.info("DM: Subscribed to topics %s and %s", topic1, topic2)
+        self.mqtt.subscribe([topic1, topic2, topic3])
+        _LOGGER.info("DM: Subscribed to topics %s, %s, %s", topic1, topic2, topic3)
 
     # ----------------------------------------------------------------------
     # MQTT MESSAGE HANDLER
