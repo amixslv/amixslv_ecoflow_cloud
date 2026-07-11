@@ -23,7 +23,9 @@ class Number(EcoFlowBaseEntity, NumberEntity):
 
     async def async_set_native_value(self, value):
         """Send SET command to EcoFlow Cloud."""
-        await self.generator.manager.send_set_command(self._field, value)
+        sent = await self.generator.manager.send_set_command(self._field, value)
+        if not sent:
+            return
 
         # Uzreiz atjaunojam UI (pirms MQTT atnāk atpakaļ)
         self._attr_native_value = value

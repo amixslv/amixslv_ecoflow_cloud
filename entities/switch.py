@@ -19,7 +19,9 @@ class Switch(EcoFlowBaseEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs):
         """Send SET command to EcoFlow Cloud."""
-        await self.generator.manager.send_set_command(self._field, 1)
+        sent = await self.generator.manager.send_set_command(self._field, 1)
+        if not sent:
+            return
 
         # Uzreiz atjaunojam UI (pirms MQTT atnāk atpakaļ)
         self._attr_is_on = True
@@ -27,7 +29,9 @@ class Switch(EcoFlowBaseEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs):
         """Send SET command to EcoFlow Cloud."""
-        await self.generator.manager.send_set_command(self._field, 0)
+        sent = await self.generator.manager.send_set_command(self._field, 0)
+        if not sent:
+            return
 
         # Uzreiz atjaunojam UI (pirms MQTT atnāk atpakaļ)
         self._attr_is_on = False

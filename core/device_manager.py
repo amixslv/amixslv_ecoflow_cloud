@@ -237,7 +237,10 @@ class DeviceManager:
         if not decoded:
             return
 
-        self._pending_decoded = decoded
+        if self._pending_decoded:
+            self._pending_decoded.update(decoded)
+        else:
+            self._pending_decoded = dict(decoded)
 
         if self._update_scheduled:
             return
@@ -427,10 +430,10 @@ class DeviceManager:
 
     # SEND SET COMMAND
     # ----------------------------------------------------------------------
-    async def send_set_command(self, field: str, value):
+    async def send_set_command(self, field: str, value) -> bool:
         if not self.mqtt:
             _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
-            return
+            return False
 
         data = {
             "sn": self.device_sn,
@@ -486,14 +489,14 @@ class DeviceManager:
         if not payload:
             if not data["params"]:
                 _LOGGER.error("DM: Invalid set command field: %s", field)
-                return
+                return False
 
             msg = JSONMessage(data)
             payload = msg.to_mqtt_payload()
 
             if not payload:
                 _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
-                return
+                return False
 
         # Primary topic same as telemetry topic (App API community-verified).
         # Also send to userId-prefixed topic as fallback in case broker routing differs.
@@ -518,6 +521,13 @@ class DeviceManager:
                 used_proto=used_proto,
             )
         )
-        self.mqtt.publish(topic, payload, qos=0)
+        sent_primary = self.mqtt.publish(topic, payload, qos=1)
+        sent_alt = False
         if topic_alt and topic_alt != topic:
-            self.mqtt.publish(topic_alt, payload, qos=0)
+            sent_alt = self.mqtt.publish(topic_alt, payload, qos=1)
+
+        if not sent_primary and not sent_alt:
+            _LOGGER.error("DM: Failed to publish set command %s=%s", field, value)
+            return False
+
+        return True

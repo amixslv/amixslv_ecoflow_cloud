@@ -39,7 +39,9 @@ class Select(EcoFlowBaseEntity, SelectEntity):
             # STRING
             send_value = option
 
-        await self.generator.manager.send_set_command(self._field, send_value)
+        sent = await self.generator.manager.send_set_command(self._field, send_value)
+        if not sent:
+            return
 
         # Uzreiz atjaunojam UI (pirms MQTT atnāk atpakaļ)
         self._attr_current_option = option
