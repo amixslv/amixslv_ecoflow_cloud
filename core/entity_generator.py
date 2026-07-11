@@ -467,7 +467,7 @@ class EntityGenerator:
         if not decoded:
             return
 
-        self.raw_json = decoded
+        self.raw_json.update(decoded)
         normalized_decoded: dict[str, Any] = {}
         for key, value in decoded.items():
             normalized_key = self.field_map.normalize_field(key)

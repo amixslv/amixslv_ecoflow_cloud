@@ -96,13 +96,18 @@ class MQTTClient:
             self._client.subscribe(topic_pairs)
             _LOGGER.info("Subscribed to MQTT topics: %s", topic_pairs)
 
-    def publish(self, topic: str, payload: bytes, qos: int = 0):
-        """Publish a message. Default QoS 0 (fire-and-forget) for device commands."""
+    def publish(self, topic: str, payload: bytes, qos: int = 0) -> bool:
+        """Publish a message."""
+        if not self.connected:
+            _LOGGER.error("MQTT publish skipped (not connected): topic=%s", topic)
+            return False
         try:
             info = self._client.publish(topic, payload, qos=qos)
             _LOGGER.debug("MQTT publish qos=%s topic=%s rc=%s", qos, topic, info.rc)
+            return info.rc == 0
         except Exception as e:
             _LOGGER.error("MQTT publish error: %s", e)
+            return False
 
     def stop(self):
         """Stop MQTT client (sync)."""
@@ -170,4 +175,3 @@ class MQTTClient:
                 message.topic,
                 exc_info=True,
             )
-
