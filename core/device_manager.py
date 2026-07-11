@@ -41,6 +41,18 @@ class DeviceManager:
     - inicializē EntityGenerator vienu reizi
     - apstrādā MQTT ziņas (runtime values)
     """
+    WRITE_FIELD_ALIASES = {
+        "en_beep": "cfg_beep_en",
+        "cms_max_chg_soc": "cfg_max_chg_soc",
+        "cms_min_dsg_soc": "cfg_min_dsg_soc",
+        "xboost_en": "cfg_xboost_en",
+        "cfg_dc12v_out_open": "cfg_dc_12v_out_open",
+        "cfg_dc_12v_out_open": "cfg_dc12v_out_open",
+        "plug_in_info_ac_in_chg_pow_max": "cfg_plug_in_info_ac_in_chg_pow_max",
+        "cms_oil_self_start": "cfg_cms_oil_self_start",
+        "cms_oil_on_soc": "cfg_cms_oil_on_soc",
+        "cms_oil_off_soc": "cfg_cms_oil_off_soc",
+    }
 
     def __init__(self, hass: HomeAssistant, config_entry):
         self.hass = hass
@@ -307,6 +319,7 @@ class DeviceManager:
     def _build_command_debug_record(
         self,
         field: str,
+        write_field: str,
         value,
         topic: str,
         topic_alt: str | None,
@@ -319,6 +332,7 @@ class DeviceManager:
             "device_sn": self.device_sn,
             "device_type": self.device_type,
             "field": field,
+            "write_field": write_field,
             "value": value,
             "used_proto": used_proto,
             "topic": topic,
@@ -358,7 +372,7 @@ class DeviceManager:
                 history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
 
         latest = {
-            "updated_at": records[-1]["received_at"],
+            "updated_at": records[-1].get("received_at") or records[-1].get("sent_at"),
             "device_sn": self.device_sn,
             "device_type": self.device_type,
             "last_record": records[-1],
@@ -395,6 +409,40 @@ class DeviceManager:
         for part in reversed(parts):
             payload = {part: payload}
         return payload
+
+    def _get_set_field_candidates(self, field: str) -> list[str]:
+        candidates = [field]
+        alias = self.WRITE_FIELD_ALIASES.get(field)
+        if alias:
+            candidates.append(alias)
+
+        if field.startswith("cfg_"):
+            candidates.append(field.removeprefix("cfg_"))
+        else:
+            candidates.append(f"cfg_{field}")
+
+        if "dc12v" in field:
+            candidates.append(field.replace("dc12v", "dc_12v"))
+        if "dc_12v" in field:
+            candidates.append(field.replace("dc_12v", "dc12v"))
+
+        deduped: list[str] = []
+        for candidate in candidates:
+            if candidate and candidate not in deduped:
+                deduped.append(candidate)
+        return deduped
+
+    def _set_first_matching_proto_field(self, msg, field: str, value) -> str:
+        last_error = None
+        for candidate in self._get_set_field_candidates(field):
+            try:
+                self._set_proto_field_value(msg, candidate, value)
+                return candidate
+            except Exception as exc:
+                last_error = exc
+                continue
+
+        raise ValueError(f"No matching SetCommand field for {field}: {last_error}")
 
     # ----------------------------------------------------------------------
     def _set_proto_field_value(self, msg, field_path: str, value):
@@ -435,9 +483,10 @@ class DeviceManager:
             _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
             return False
 
+        write_field = field
         data = {
             "sn": self.device_sn,
-            "params": self._build_set_params(field, value),
+            "params": self._build_set_params(write_field, value),
         }
 
         payload = b""
@@ -451,7 +500,8 @@ class DeviceManager:
 
             if cmd_cls and header_cls and send_cls:
                 cmd_msg = cmd_cls()
-                self._set_proto_field_value(cmd_msg, field, value)
+                write_field = self._set_first_matching_proto_field(cmd_msg, field, value)
+                data["params"] = self._build_set_params(write_field, value)
 
                 header = header_cls()
                 header.pdata = cmd_msg.SerializeToString()
@@ -479,9 +529,9 @@ class DeviceManager:
                 payload = wrapper.SerializeToString()
                 used_proto = True
                 _LOGGER.debug(
-                    "DM: PROTO CMD header src=%s dest=%s cmd_func=%s cmd_id=%s seq=%s field=%s val=%s payload_hex=%s",
+                    "DM: PROTO CMD header src=%s dest=%s cmd_func=%s cmd_id=%s seq=%s req_field=%s write_field=%s val=%s payload_hex=%s",
                     header.src, header.dest, header.cmd_func, header.cmd_id, header.seq,
-                    field, value, payload.hex()[:80],
+                    field, write_field, value, payload.hex()[:80],
                 )
         except Exception as e:
             _LOGGER.debug("DM: Proto command build failed, falling back to JSON: %s", e)
@@ -514,6 +564,7 @@ class DeviceManager:
         self._queue_debug_record(
             self._build_command_debug_record(
                 field=field,
+                write_field=write_field,
                 value=value,
                 topic=topic,
                 topic_alt=topic_alt,
@@ -529,5 +580,10 @@ class DeviceManager:
         if not sent_primary and not sent_alt:
             _LOGGER.error("DM: Failed to publish set command %s=%s", field, value)
             return False
+
+        if self.entity_generator and hasattr(self.entity_generator, "register_pending_write"):
+            self.entity_generator.register_pending_write(field, value)
+            if write_field != field:
+                self.entity_generator.register_pending_write(write_field, value)
 
         return True
