@@ -137,7 +137,13 @@ class MQTTClient:
         rc: ReasonCode,
         properties: Properties | None = None,
     ):
-        if rc == 0:
+        is_success = False
+        try:
+            is_success = int(rc) == 0
+        except Exception:
+            is_success = not getattr(rc, "is_failure", True)
+
+        if is_success:
             self.connected = True
             if self._topics:
                 topic_pairs = [(t, 1) for t in self._topics]
