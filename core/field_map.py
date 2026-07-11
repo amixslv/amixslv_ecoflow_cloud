@@ -20,7 +20,13 @@ class FieldMap:
     # ------------------------------------------------------------------
     # MANUĀLIE OVERRIDES
     # ------------------------------------------------------------------
-    NAME_MAP = {}
+    NAME_MAP = {
+        "pow_get_pv": "PV Input 1 Power",
+        "pow_get_pv2": "PV Input 2 Power",
+        "pow_get_pv_sum": "PV Total Input Power",
+        "pow_get_sys_grid": "Grid Input Power",
+        "pow_get_sys_load_from_grid": "Load From Grid Power",
+    }
     UNIT_MAP = {}
     ICON_MAP = {}
     DEVICE_CLASS_MAP = {}
@@ -294,7 +300,19 @@ class FieldMap:
         return None
 
     def is_default_enabled(self, field: str, is_control: bool, source: str | None = None):
-        return bool(is_control)
+        if is_control:
+            return True
+
+        normalized = self._normalize_field(field).lower()
+        energy_focus = {
+            "pow_get_pv",
+            "pow_get_pv2",
+            "pow_get_pv_sum",
+            "pow_get_sys_grid",
+            "pow_get_sys_load_from_grid",
+            "pow_get_ac_in",
+        }
+        return normalized in energy_focus
 
     # ------------------------------------------------------------------
     # AUTO ENUM OPTIONS

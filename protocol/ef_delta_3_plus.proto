@@ -145,6 +145,7 @@ message Delta3PlusDisplayPropertyUpload {
   optional float pow_get_ac_in = 54;               // AC ievades jauda (W)
   optional uint32 plug_in_info_ac_in_flag = 61;    // AC ievade pieslēgta (0/1)
   optional uint32 plug_in_info_ac_in_feq = 62;     // AC ievades frekvence (Hz)
+  optional float pow_get_pv2 = 70;                 // Otrā PV ieeja (W)
   optional uint32 dc_out_open = 74;                // DC izvade ieslēgta (0/1)
   optional uint32 cfg_ac_out_open = 76;            // AC izvade ieslēgta (0/1)
   optional float pow_get_dcp2 = 77;                // DCP2 jauda (W)
@@ -158,6 +159,9 @@ message Delta3PlusDisplayPropertyUpload {
   optional string plug_in_info_dcp2_sn = 88;       // DCP2 sērijas numurs
   optional uint32 plug_in_info_dcp2_run_state = 89;// DCP2 darbības stāvoklis
   optional uint32 plug_in_info_dcp2_firm_ver = 90; // DCP2 FW versija
+  optional uint32 plug_in_info_pv2_dc_amp_max = 80; // PV2 max DC strāva (A)
+  optional uint32 plug_in_info_pv2_chg_amp_max = 81; // PV2 max uzlādes strāva (A)
+  optional uint32 plug_in_info_pv2_chg_vol_max = 82; // PV2 max uzlādes spriegums (V)
   optional uint32 bms_err_code = 140;              // BMS kļūdas kods
   optional uint32 output_power_off_memory = 147;   // Power‑off memory (READ lauks)
   optional uint32 pv_chg_type = 148;               // PV uzlādes tips (0=Auto,1=Solar,2=Car)
@@ -234,6 +238,10 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 plug_in_info_pv_charger_flag = 364; // PV lādētājs pieslēgts (0/1)
   optional uint32 plug_in_info_pv_chg_amp_max = 365; // PV max strāva (A)
   optional uint32 plug_in_info_pv_chg_vol_max = 366; // PV max spriegums (V)
+  optional uint32 flow_info_pv2 = 414;             // PV2 plūsmas virziens
+  optional uint32 plug_in_info_pv2_flag = 421;     // PV2 pieslēgts (0/1)
+  optional uint32 plug_in_info_pv2_type = 422;     // PV2 tips
+  optional uint32 plug_in_info_pv2_charger_flag = 430; // PV2 lādētājs pieslēgts (0/1)
   optional uint32 flow_info_ac_out = 367;          // AC izvades plūsmas virziens
   optional float pow_get_ac_out = 368;             // AC izvades jauda (W)
   optional uint32 flow_info_dcp_in = 423;          // DCP ievades plūsma
