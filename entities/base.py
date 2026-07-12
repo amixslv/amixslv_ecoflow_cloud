@@ -19,6 +19,7 @@ class EcoFlowBaseEntity(Entity):
         # -----------------------------
         # BASIC ATTRIBUTES
         # -----------------------------
+        self._attr_has_entity_name = False
         self._attr_name = meta.get("name", field)
         self._attr_icon = meta.get("icon")
         self._attr_entity_category = meta.get("entity_category")
@@ -110,5 +111,3 @@ class EcoFlowBaseEntity(Entity):
             return self._attr_is_on is not None
 
         return True
-
-
