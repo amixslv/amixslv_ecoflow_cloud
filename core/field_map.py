@@ -1,3 +1,5 @@
+﻿import json
+import pathlib
 import re
 from homeassistant.helpers.entity import EntityCategory
 
@@ -5,20 +7,20 @@ from homeassistant.helpers.entity import EntityCategory
 class FieldMap:
     """
     PROTO-first FieldMap:
-    - automātiski ģenerē cilvēkam draudzīgus nosaukumus
-    - automātiski piešķir vienības
-    - automātiski piešķir ikonas
-    - automātiski piešķir device_class
-    - automātiski piešķir state_class
-    - automātiski piešķir entity_category
-    - automātiski piešķir min/max/step
-    - automātiski piešķir select opcijas
-    - atbalsta manuālos override (NAME_MAP, UNIT_MAP, ICON_MAP, OPTIONS_MAP, MIN/MAX/STEP)
+    - automÄtiski Ä£enerÄ“ cilvÄ“kam draudzÄ«gus nosaukumus
+    - automÄtiski pieÅÄ·ir vienÄ«bas
+    - automÄtiski pieÅÄ·ir ikonas
+    - automÄtiski pieÅÄ·ir device_class
+    - automÄtiski pieÅÄ·ir state_class
+    - automÄtiski pieÅÄ·ir entity_category
+    - automÄtiski pieÅÄ·ir min/max/step
+    - automÄtiski pieÅÄ·ir select opcijas
+    - atbalsta manuÄlos override (NAME_MAP, UNIT_MAP, ICON_MAP, OPTIONS_MAP, MIN/MAX/STEP)
     - atbalsta nested laukus (cfg_energy_backup.energy_backup_en)
     """
 
     # ------------------------------------------------------------------
-    # MANUĀLIE OVERRIDES
+    # MANUÄ€LIE OVERRIDES
     # ------------------------------------------------------------------
     NAME_MAP = {
         "pow_in_sum_w": "Total Input Power",
@@ -120,6 +122,37 @@ class FieldMap:
         "chg": "Charge",
     }
 
+    _TRANSLATIONS_DIR = pathlib.Path(__file__).parent.parent / "translations"
+    _translation_cache: dict[str, dict] = {}
+
+    @classmethod
+    def _load_translations(cls, lang: str) -> dict:
+        if lang in cls._translation_cache:
+            return cls._translation_cache[lang]
+        for candidate in (lang, lang.split("-")[0], "en"):
+            p = cls._TRANSLATIONS_DIR / f"{candidate}.json"
+            if p.exists():
+                try:
+                    data = json.loads(p.read_text(encoding="utf-8"))
+                    entity_section = data.get("entity", {})
+                    flat: dict[str, str] = {}
+                    for _platform, fields in entity_section.items():
+                        for key, val in fields.items():
+                            name = val.get("name") if isinstance(val, dict) else None
+                            if name:
+                                flat[key] = name
+                    cls._translation_cache[lang] = flat
+                    return flat
+                except Exception:
+                    pass
+        cls._translation_cache[lang] = {}
+        return {}
+
+    def get_localized_name(self, field: str, lang: str) -> str | None:
+        translations = self._load_translations(lang)
+        key = self._normalize_field(field).lower()
+        return translations.get(key) or translations.get(field)
+
     _PREFIX_RE = re.compile(r"^(?:display|runtime|set_cmd|setcmd|set_reply|cms|bms)\.")
     _MSG_PREFIX_RE = re.compile(r"^msg\d+_\d+_\d+\.")
 
@@ -147,10 +180,10 @@ class FieldMap:
         clean = normalized
         clean = re.sub(r"^cfg_", "", clean)
 
-        # Noņem vienību sufiksus
+        # NoÅ†em vienÄ«bu sufiksus
         clean = re.sub(r"(_mv|_ma|_v|_a|_w)$", "", clean)
 
-        # Cilvēcīgs nosaukums ar saīsinājumu normalizāciju
+        # CilvÄ“cÄ«gs nosaukums ar saÄ«sinÄjumu normalizÄciju
         words = clean.split("_")
         pretty_words = []
         for word in words:
@@ -208,7 +241,7 @@ class FieldMap:
         if "time" in f:
             return "min"
         if "temp" in f:
-            return "°C"
+            return "Ā°C"
         if f in ("soc", "soh", "batt_soc", "batt_soh", "bms_soc", "bms_soh"):
             return "%"
         if f.endswith("_soc") or f.endswith("_soh") or f.endswith("_pct") or "percent" in f:
@@ -425,3 +458,5 @@ class FieldMap:
             return list(self.AUTO_ENUMS[normalized].values())
 
         return None
+
+
