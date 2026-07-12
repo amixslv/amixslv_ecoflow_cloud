@@ -122,10 +122,12 @@ class FieldMap:
 
     _STRINGS_PATH = pathlib.Path(__file__).parent.parent / "strings.json"
     _TRANSLATIONS_DIR = pathlib.Path(__file__).parent.parent / "translations"
-    _translation_cache: dict[str, dict] = {}
+
+    def __init__(self, localized_names: dict[str, str] | None = None):
+        self._localized_names = localized_names or {}
 
     @classmethod
-    def _load_entity_names(cls, path: pathlib.Path) -> dict[str, str]:
+    def _load_entity_names_from_file(cls, path: pathlib.Path) -> dict[str, str]:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
@@ -141,24 +143,18 @@ class FieldMap:
         return flat
 
     @classmethod
-    def _load_translations(cls, lang: str) -> dict:
-        if lang in cls._translation_cache:
-            return cls._translation_cache[lang]
-
-        merged = cls._load_entity_names(cls._STRINGS_PATH)
+    def load_localized_names(cls, lang: str) -> dict[str, str]:
+        merged = cls._load_entity_names_from_file(cls._STRINGS_PATH)
         for candidate in (lang, lang.split("-")[0]):
             p = cls._TRANSLATIONS_DIR / f"{candidate}.json"
             if p.exists():
-                merged.update(cls._load_entity_names(p))
+                merged.update(cls._load_entity_names_from_file(p))
                 break
-
-        cls._translation_cache[lang] = merged
         return merged
 
     def get_localized_name(self, field: str, lang: str) -> str | None:
-        translations = self._load_translations(lang)
         key = self._normalize_field(field).lower()
-        return translations.get(key) or translations.get(field)
+        return self._localized_names.get(key) or self._localized_names.get(field)
 
     _PREFIX_RE = re.compile(r"^(?:display|runtime|set_cmd|setcmd|set_reply|cms|bms)\.")
     _MSG_PREFIX_RE = re.compile(r"^msg\d+_\d+_\d+\.")
@@ -463,5 +459,4 @@ class FieldMap:
             return list(self.AUTO_ENUMS[normalized].values())
 
         return None
-
 

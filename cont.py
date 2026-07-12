@@ -1,5 +1,5 @@
-DOMAIN = "ecoflow"
-LEGACY_DOMAIN = "amixslv_ecoflow_cloud"
+DOMAIN = "amixslv_ecoflow_cloud"
+LEGACY_DOMAIN = "ecoflow"
 
 PLATFORMS = [
     "sensor",

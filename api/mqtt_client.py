@@ -53,7 +53,6 @@ class MQTTClient:
         self._client.on_disconnect = self._on_disconnect
         self._client.on_message = self._on_message
         self._client.on_socket_close = self._on_socket_close
-        self._client.on_subscribe = self._on_subscribe
 
     # ----------------------------------------------------------------------
     # ASYNC SETUP (TLS + CONNECT)
@@ -94,21 +93,16 @@ class MQTTClient:
 
         if self.connected and self._topics:
             topic_pairs = [(t, 1) for t in self._topics]
-            rc, mid = self._client.subscribe(topic_pairs)
-            _LOGGER.info("MQTT subscribe requested: rc=%s mid=%s topics=%s", rc, mid, topic_pairs)
+            self._client.subscribe(topic_pairs)
+            _LOGGER.info("Subscribed to MQTT topics: %s", topic_pairs)
 
-    def publish(self, topic: str, payload: bytes, qos: int = 0) -> bool:
+    def publish(self, topic: str, payload: bytes):
         """Publish a message."""
-        if not self.connected:
-            _LOGGER.error("MQTT publish skipped (not connected): topic=%s", topic)
-            return False
         try:
-            info = self._client.publish(topic, payload, qos=qos)
-            _LOGGER.debug("MQTT publish qos=%s topic=%s rc=%s", qos, topic, info.rc)
-            return info.rc == 0
+            info = self._client.publish(topic, payload, qos=1)
+            _LOGGER.debug("Published to %s: %s (%s)", topic, payload, info.is_published())
         except Exception as e:
             _LOGGER.error("MQTT publish error: %s", e)
-            return False
 
     def stop(self):
         """Stop MQTT client (sync)."""
@@ -138,18 +132,12 @@ class MQTTClient:
         rc: ReasonCode,
         properties: Properties | None = None,
     ):
-        is_success = False
-        try:
-            is_success = int(rc) == 0
-        except Exception:
-            is_success = not getattr(rc, "is_failure", True)
-
-        if is_success:
+        if rc == 0:
             self.connected = True
             if self._topics:
                 topic_pairs = [(t, 1) for t in self._topics]
-                rc_sub, mid_sub = self._client.subscribe(topic_pairs)
-                _LOGGER.info("MQTT subscribe on connect: rc=%s mid=%s topics=%s", rc_sub, mid_sub, topic_pairs)
+                self._client.subscribe(topic_pairs)
+                _LOGGER.info("Subscribed to MQTT topics: %s", topic_pairs)
         else:
             _LOGGER.error("MQTT connect error: %s", rc.getName())
 
@@ -169,17 +157,6 @@ class MQTTClient:
     @callback
     def _on_socket_close(self, client: Client, userdata, sock):
         _LOGGER.info("MQTT socket closed: %s", sock)
-
-    @callback
-    def _on_subscribe(
-        self,
-        client: Client,
-        userdata,
-        mid: int,
-        reason_codes,
-        properties: Properties | None = None,
-    ):
-        _LOGGER.info("MQTT subscribe ACK: mid=%s reason_codes=%s", mid, reason_codes)
 
     @callback
     def _on_message(self, client, userdata, message: MQTTMessage):
