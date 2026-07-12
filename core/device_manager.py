@@ -11,12 +11,10 @@ from homeassistant.helpers.device_registry import async_get as async_get_device_
 from ..api.cloud_client import CloudClient
 from ..api.mqtt_client import MQTTClient
 from ..core.entity_generator import EntityGenerator
-from ..core.field_map import FieldMap
 from ..supported_devices import DEVICE_TYPE_MAP
 from ..api.message import JSONMessage
 from ..cont import (
     DOMAIN,
-    LEGACY_DOMAIN,
     MQTT_TOPIC_DEVICE_PROP_LEGACY,
     MQTT_TOPIC_DEVICE_PROPERTY,
     MQTT_TOPIC_USER_DEVICE_PROPERTY,
@@ -43,18 +41,6 @@ class DeviceManager:
     - inicializē EntityGenerator vienu reizi
     - apstrādā MQTT ziņas (runtime values)
     """
-    WRITE_FIELD_ALIASES = {
-        "en_beep": "cfg_beep_en",
-        "cms_max_chg_soc": "cfg_max_chg_soc",
-        "cms_min_dsg_soc": "cfg_min_dsg_soc",
-        "xboost_en": "cfg_xboost_en",
-        "cfg_dc12v_out_open": "cfg_dc_12v_out_open",
-        "cfg_dc_12v_out_open": "cfg_dc12v_out_open",
-        "plug_in_info_ac_in_chg_pow_max": "cfg_plug_in_info_ac_in_chg_pow_max",
-        "cms_oil_self_start": "cfg_cms_oil_self_start",
-        "cms_oil_on_soc": "cfg_cms_oil_on_soc",
-        "cms_oil_off_soc": "cfg_cms_oil_off_soc",
-    }
 
     def __init__(self, hass: HomeAssistant, config_entry):
         self.hass = hass
@@ -86,10 +72,6 @@ class DeviceManager:
         self._pending_debug_records: list[dict] = []
         self._debug_flush_scheduled = False
         self._debug_root = Path(self.hass.config.path(f"{DOMAIN}_debug")) / self.device_sn
-        self._legacy_debug_root = Path(self.hass.config.path(f"{LEGACY_DOMAIN}_debug")) / self.device_sn
-        self._debug_roots = [self._debug_root]
-        if self._legacy_debug_root != self._debug_root:
-            self._debug_roots.append(self._legacy_debug_root)
         self._debug_latest_path = self._debug_root / "latest.json"
         self._debug_history_path = self._debug_root / "history.jsonl"
 
@@ -129,17 +111,12 @@ class DeviceManager:
 
         # 3. Create EntityGenerator ONCE
         try:
-            lang = getattr(self.hass.config, "language", "en")
-            localized_names = await self.hass.async_add_executor_job(
-                FieldMap.load_localized_names, lang
-            )
             self.entity_generator = EntityGenerator(
                 manager=self,
                 hass=self.hass,
                 device_sn=self.device_sn,
                 device_type=self.device_type,
                 pb2_module=self.pb2_module,
-                localized_names=localized_names,
             )
             _LOGGER.info("DM: EntityGenerator initialized")
         except Exception as e:
@@ -160,14 +137,6 @@ class DeviceManager:
         except Exception as e:
             _LOGGER.error("DM: Debug dump setup FAILED: %s", e)
             raise
-
-        try:
-            cached_decoded = await self.hass.async_add_executor_job(self._load_cached_decoded_snapshot)
-            if cached_decoded and self.entity_generator:
-                self.entity_generator.raw_json.update(cached_decoded)
-                _LOGGER.info("DM: Restored %s cached telemetry fields", len(cached_decoded))
-        except Exception as e:
-            _LOGGER.debug("DM: Cached telemetry restore skipped: %s", e)
 
         # 5. Register device in HA
         try:
@@ -202,28 +171,6 @@ class DeviceManager:
             _LOGGER.error("DM: Failed to load PB2 module %s: %s", full_path, e)
             raise
 
-    def _build_mqtt_subscription_topics(self) -> list[str]:
-        topics: set[str] = set()
-        base = [
-            MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn),
-            MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn),
-        ]
-
-        for topic in base:
-            topics.add(topic)
-            topics.add(topic.lstrip("/"))
-
-        if self.user_id:
-            user_topic = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(user_id=self.user_id, sn=self.device_sn)
-            topics.add(user_topic)
-            topics.add(user_topic.lstrip("/"))
-
-        wildcard_user = f"/app/+/device/property/{self.device_sn}"
-        topics.add(wildcard_user)
-        topics.add(wildcard_user.lstrip("/"))
-
-        return sorted(topics)
-
     # ----------------------------------------------------------------------
     # MQTT SETUP
     # ----------------------------------------------------------------------
@@ -241,10 +188,11 @@ class DeviceManager:
         await self.mqtt.async_setup(self.hass)
         _LOGGER.debug("DM: MQTT async_setup completed")
 
-        topics = self._build_mqtt_subscription_topics()
-        self.mqtt.subscribe(topics)
-        _LOGGER.info("DM: Subscribed to %s MQTT topics", len(topics))
-        _LOGGER.debug("DM: MQTT subscription topics: %s", topics)
+        topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
+        topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
+
+        self.mqtt.subscribe([topic1, topic2])
+        _LOGGER.info("DM: Subscribed to topics %s and %s", topic1, topic2)
 
     # ----------------------------------------------------------------------
     # MQTT MESSAGE HANDLER
@@ -289,10 +237,7 @@ class DeviceManager:
         if not decoded:
             return
 
-        if self._pending_decoded:
-            self._pending_decoded.update(decoded)
-        else:
-            self._pending_decoded = dict(decoded)
+        self._pending_decoded = decoded
 
         if self._update_scheduled:
             return
@@ -327,48 +272,7 @@ class DeviceManager:
                 self.hass.loop.call_soon(self._apply_pending_update)
 
     def _prepare_debug_dump_dir(self):
-        for root in self._debug_roots:
-            root.mkdir(parents=True, exist_ok=True)
-
-    def _load_cached_record_from_root(self, root: Path) -> dict | None:
-        latest_path = root / "latest.json"
-        history_path = root / "history.jsonl"
-
-        latest_record = None
-        if latest_path.exists():
-            try:
-                latest_payload = json.loads(latest_path.read_text(encoding="utf-8"))
-                latest_record = latest_payload.get("last_record") if isinstance(latest_payload, dict) else None
-            except Exception:
-                latest_record = None
-
-        if isinstance(latest_record, dict):
-            decoded = latest_record.get("decoded")
-            if isinstance(decoded, dict) and decoded:
-                return decoded
-
-        if history_path.exists():
-            try:
-                lines = history_path.read_text(encoding="utf-8").splitlines()
-            except Exception:
-                lines = []
-            for line in reversed(lines[-200:]):
-                try:
-                    record = json.loads(line)
-                except Exception:
-                    continue
-                decoded = record.get("decoded") if isinstance(record, dict) else None
-                if isinstance(decoded, dict) and decoded:
-                    return decoded
-
-        return None
-
-    def _load_cached_decoded_snapshot(self) -> dict:
-        for root in self._debug_roots:
-            decoded = self._load_cached_record_from_root(root)
-            if decoded:
-                return decoded
-        return {}
+        self._debug_root.mkdir(parents=True, exist_ok=True)
 
     def _build_debug_record(
         self,
@@ -383,7 +287,6 @@ class DeviceManager:
             else {}
         )
         return {
-            "direction": "incoming",
             "received_at": datetime.now(timezone.utc).isoformat(),
             "device_sn": self.device_sn,
             "device_type": self.device_type,
@@ -395,31 +298,6 @@ class DeviceManager:
             "message_type": getattr(self.entity_generator, "_last_msg_type", None) if self.entity_generator else None,
             "proto_debug": proto_debug,
             "decode_error": decode_error,
-        }
-
-    def _build_command_debug_record(
-        self,
-        field: str,
-        write_field: str,
-        value,
-        topic: str,
-        topic_alt: str | None,
-        payload: bytes,
-        used_proto: bool,
-    ) -> dict:
-        return {
-            "direction": "outgoing",
-            "sent_at": datetime.now(timezone.utc).isoformat(),
-            "device_sn": self.device_sn,
-            "device_type": self.device_type,
-            "field": field,
-            "write_field": write_field,
-            "value": value,
-            "used_proto": used_proto,
-            "topic": topic,
-            "topic_alt": topic_alt,
-            "payload_len": len(payload),
-            "payload_hex": payload.hex(),
         }
 
     def _queue_debug_record(self, record: dict):
@@ -448,21 +326,20 @@ class DeviceManager:
     def _write_debug_records(self, records: list[dict]):
         self._prepare_debug_dump_dir()
 
+        with self._debug_history_path.open("a", encoding="utf-8") as history_file:
+            for record in records:
+                history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
         latest = {
-            "updated_at": records[-1].get("received_at") or records[-1].get("sent_at"),
+            "updated_at": records[-1]["received_at"],
             "device_sn": self.device_sn,
             "device_type": self.device_type,
             "last_record": records[-1],
         }
-        latest_payload = json.dumps(latest, ensure_ascii=False, indent=2) + "\n"
-
-        for root in self._debug_roots:
-            history_path = root / "history.jsonl"
-            latest_path = root / "latest.json"
-            with history_path.open("a", encoding="utf-8") as history_file:
-                for record in records:
-                    history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
-            latest_path.write_text(latest_payload, encoding="utf-8")
+        self._debug_latest_path.write_text(
+            json.dumps(latest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     # ----------------------------------------------------------------------
     # DEVICE REGISTRATION
@@ -491,40 +368,6 @@ class DeviceManager:
         for part in reversed(parts):
             payload = {part: payload}
         return payload
-
-    def _get_set_field_candidates(self, field: str) -> list[str]:
-        candidates = [field]
-        alias = self.WRITE_FIELD_ALIASES.get(field)
-        if alias:
-            candidates.append(alias)
-
-        if field.startswith("cfg_"):
-            candidates.append(field.removeprefix("cfg_"))
-        else:
-            candidates.append(f"cfg_{field}")
-
-        if "dc12v" in field:
-            candidates.append(field.replace("dc12v", "dc_12v"))
-        if "dc_12v" in field:
-            candidates.append(field.replace("dc_12v", "dc12v"))
-
-        deduped: list[str] = []
-        for candidate in candidates:
-            if candidate and candidate not in deduped:
-                deduped.append(candidate)
-        return deduped
-
-    def _set_first_matching_proto_field(self, msg, field: str, value) -> str:
-        last_error = None
-        for candidate in self._get_set_field_candidates(field):
-            try:
-                self._set_proto_field_value(msg, candidate, value)
-                return candidate
-            except Exception as exc:
-                last_error = exc
-                continue
-
-        raise ValueError(f"No matching SetCommand field for {field}: {last_error}")
 
     # ----------------------------------------------------------------------
     def _set_proto_field_value(self, msg, field_path: str, value):
@@ -560,15 +403,14 @@ class DeviceManager:
 
     # SEND SET COMMAND
     # ----------------------------------------------------------------------
-    async def send_set_command(self, field: str, value) -> bool:
+    async def send_set_command(self, field: str, value):
         if not self.mqtt:
             _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
-            return False
+            return
 
-        write_field = field
         data = {
             "sn": self.device_sn,
-            "params": self._build_set_params(write_field, value),
+            "params": self._build_set_params(field, value),
         }
 
         payload = b""
@@ -582,8 +424,7 @@ class DeviceManager:
 
             if cmd_cls and header_cls and send_cls:
                 cmd_msg = cmd_cls()
-                write_field = self._set_first_matching_proto_field(cmd_msg, field, value)
-                data["params"] = self._build_set_params(write_field, value)
+                self._set_proto_field_value(cmd_msg, field, value)
 
                 header = header_cls()
                 header.pdata = cmd_msg.SerializeToString()
@@ -611,9 +452,9 @@ class DeviceManager:
                 payload = wrapper.SerializeToString()
                 used_proto = True
                 _LOGGER.debug(
-                    "DM: PROTO CMD header src=%s dest=%s cmd_func=%s cmd_id=%s seq=%s req_field=%s write_field=%s val=%s payload_hex=%s",
+                    "DM: PROTO CMD header src=%s dest=%s cmd_func=%s cmd_id=%s seq=%s field=%s val=%s payload_hex=%s",
                     header.src, header.dest, header.cmd_func, header.cmd_id, header.seq,
-                    field, write_field, value, payload.hex()[:80],
+                    field, value, payload.hex()[:80],
                 )
         except Exception as e:
             _LOGGER.debug("DM: Proto command build failed, falling back to JSON: %s", e)
@@ -621,14 +462,14 @@ class DeviceManager:
         if not payload:
             if not data["params"]:
                 _LOGGER.error("DM: Invalid set command field: %s", field)
-                return False
+                return
 
             msg = JSONMessage(data)
             payload = msg.to_mqtt_payload()
 
             if not payload:
                 _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
-                return False
+                return
 
         # Primary topic same as telemetry topic (App API community-verified).
         # Also send to userId-prefixed topic as fallback in case broker routing differs.
@@ -643,29 +484,6 @@ class DeviceManager:
         )
 
         _LOGGER.debug("DM: SEND SET %s=%s topic=%s proto=%s", field, value, topic, used_proto)
-        self._queue_debug_record(
-            self._build_command_debug_record(
-                field=field,
-                write_field=write_field,
-                value=value,
-                topic=topic,
-                topic_alt=topic_alt,
-                payload=payload,
-                used_proto=used_proto,
-            )
-        )
-        sent_primary = self.mqtt.publish(topic, payload, qos=1)
-        sent_alt = False
+        self.mqtt.publish(topic, payload, qos=0)
         if topic_alt and topic_alt != topic:
-            sent_alt = self.mqtt.publish(topic_alt, payload, qos=1)
-
-        if not sent_primary and not sent_alt:
-            _LOGGER.error("DM: Failed to publish set command %s=%s", field, value)
-            return False
-
-        if self.entity_generator and hasattr(self.entity_generator, "register_pending_write"):
-            self.entity_generator.register_pending_write(field, value)
-            if write_field != field:
-                self.entity_generator.register_pending_write(write_field, value)
-
-        return True
+            self.mqtt.publish(topic_alt, payload, qos=0)

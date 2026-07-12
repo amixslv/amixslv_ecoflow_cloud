@@ -1,7 +1,6 @@
 import base64
 import copy
 import logging
-import time
 from typing import Any
 
 from google.protobuf.descriptor import FieldDescriptor
@@ -66,7 +65,6 @@ def load_proto_messages(pb2_module: Any) -> dict[str, Any]:
 
 
 class EntityGenerator:
-    PENDING_WRITE_TTL_SECONDS = 5.0
     CONTROL_SWITCH_HINTS = (
         "flag",
         "enable",
@@ -90,21 +88,13 @@ class EntityGenerator:
         "led_mode",
     )
 
-    def __init__(
-        self,
-        manager,
-        hass,
-        device_sn: str,
-        device_type: str,
-        pb2_module: Any,
-        localized_names: dict[str, str] | None = None,
-    ):
+    def __init__(self, manager, hass, device_sn: str, device_type: str, pb2_module: Any):
         self.manager = manager
         self.hass = hass
         self.device_sn = device_sn
         self.device_type = device_type
         self.pb2 = pb2_module
-        self.field_map = FieldMap(localized_names=localized_names)
+        self.field_map = FieldMap()
 
         self.entities: dict[str, object] = {}
         self._field_meta: dict[str, dict] = {}
@@ -114,7 +104,6 @@ class EntityGenerator:
         self._last_msg_type: str | None = None
         self._last_proto_key: str | None = None
         self._last_decode_debug: dict[str, Any] = {}
-        self._pending_writes: dict[str, dict[str, Any]] = {}
 
         if self.pb2:
             self._load_proto_definitions()
@@ -180,8 +169,7 @@ class EntityGenerator:
             self._add_index(field_path, entity_key)
 
     def _build_field_meta(self, field: FieldDescriptor, field_path: str, source: str, is_control: bool) -> dict:
-        lang = getattr(self.hass.config, "language", "en") if self.hass else "en"
-        name = self.field_map.get_localized_name(field_path, lang) or self.field_map.get_name(field_path)
+        name = self.field_map.get_name(field_path)
         unit = self.field_map.get_unit(field_path)
         icon = self.field_map.get_icon(field_path)
         device_class = self.field_map.get_device_class(field_path)
@@ -189,14 +177,18 @@ class EntityGenerator:
         entity_category = self.field_map.get_category(field_path, is_control)
 
         state_field_paths = [field_path]
-        if field_path.startswith("flow_info_"):
-            flow_alias = field_path.replace("flow_info_", "pow_get_", 1)
-            if flow_alias not in state_field_paths:
-                state_field_paths.append(flow_alias)
         if is_control:
-            for alias in self._control_state_aliases(field_path):
-                if alias not in state_field_paths:
-                    state_field_paths.append(alias)
+            alias = field_path
+            if field_path.startswith("cfg_energy_backup."):
+                alias = field_path.split(".", 1)[1]
+            elif field_path == "cfg_dc12v_out_open":
+                alias = "dc_out_open"
+            elif field_path == "cfg_led_mode":
+                alias = "led_mode"
+            elif field_path.startswith("cfg_"):
+                alias = field_path.removeprefix("cfg_")
+            if alias not in state_field_paths:
+                state_field_paths.append(alias)
 
         meta: dict[str, Any] = {
             "name": name,
@@ -269,93 +261,6 @@ class EntityGenerator:
         field_name = field_path.split(".")[-1].lower()
         return any(hint in field_name for hint in self.CONTROL_SELECT_HINTS)
 
-    def _control_state_aliases(self, field_path: str) -> list[str]:
-        aliases = [field_path]
-        if field_path.startswith("cfg_energy_backup."):
-            aliases.append(field_path.split(".", 1)[1])
-
-        special_aliases = {
-            "cfg_dc12v_out_open": ("dc_out_open", "cfg_dc_12v_out_open"),
-            "cfg_dc_12v_out_open": ("dc_out_open", "cfg_dc12v_out_open"),
-            "cfg_led_mode": ("led_mode",),
-            "en_beep": ("cfg_beep_en",),
-            "cms_max_chg_soc": ("cfg_max_chg_soc",),
-            "cms_min_dsg_soc": ("cfg_min_dsg_soc",),
-            "xboost_en": ("cfg_xboost_en",),
-        }
-        aliases.extend(special_aliases.get(field_path, ()))
-
-        if field_path.startswith("cfg_"):
-            aliases.append(field_path.removeprefix("cfg_"))
-        else:
-            aliases.append(f"cfg_{field_path}")
-
-        deduped: list[str] = []
-        for alias in aliases:
-            if alias and alias not in deduped:
-                deduped.append(alias)
-        return deduped
-
-    def register_pending_write(self, field_path: str, value: Any, ttl_seconds: float = PENDING_WRITE_TTL_SECONDS):
-        expires_at = time.monotonic() + ttl_seconds
-        keys = set(self._control_state_aliases(field_path))
-        keys.add(field_path)
-
-        normalized_keys = set()
-        for key in keys:
-            normalized = self.field_map.normalize_field(key)
-            if normalized:
-                normalized_keys.add(normalized)
-        keys.update(normalized_keys)
-
-        for key in keys:
-            self._pending_writes[key] = {
-                "value": value,
-                "expires_at": expires_at,
-            }
-
-    def _cleanup_pending_writes(self):
-        now = time.monotonic()
-        expired = [key for key, pending in self._pending_writes.items() if pending.get("expires_at", 0) <= now]
-        for key in expired:
-            self._pending_writes.pop(key, None)
-
-    def _values_match(self, ent, incoming_value: Any, pending_value: Any) -> bool:
-        if hasattr(ent, "_attr_is_on"):
-            return self._coerce_bool(incoming_value) == self._coerce_bool(pending_value)
-
-        if hasattr(ent, "_attr_current_option"):
-            return self._coerce_option(ent, incoming_value) == self._coerce_option(ent, pending_value)
-
-        if isinstance(incoming_value, (int, float)) and isinstance(pending_value, (int, float)):
-            return abs(float(incoming_value) - float(pending_value)) < 1e-6
-
-        return incoming_value == pending_value
-
-    def _should_hold_pending_update(self, ent, incoming_value: Any, matched_keys: list[str]) -> bool:
-        now = time.monotonic()
-        hold = False
-
-        for key in matched_keys:
-            if not key:
-                continue
-
-            pending = self._pending_writes.get(key)
-            if not pending:
-                continue
-
-            if pending.get("expires_at", 0) <= now:
-                self._pending_writes.pop(key, None)
-                continue
-
-            if self._values_match(ent, incoming_value, pending.get("value")):
-                self._pending_writes.pop(key, None)
-                continue
-
-            hold = True
-
-        return hold
-
     def _decode_proto_payload(self, payload: bytes) -> tuple[str | None, dict]:
         if not self.pb2:
             self._last_decode_debug = {
@@ -407,33 +312,30 @@ class EntityGenerator:
                         "device_sn": getattr(header, "device_sn", None),
                         "from": getattr(header, "from", None),
                     }
-                    if getattr(header, "enc_type", 0) == 1 and getattr(header, "src", None) != PROTO_HEADER_SRC_CLOUD:
-                        seq = int(getattr(header, "seq", 0) or 0)
-                        pdata = bytes([(b ^ seq) & 0xFF for b in pdata])
                     _LOGGER.debug(
                         "PROTO header: src=%s dest=%s cmd_func=%s cmd_id=%s enc=%s seq=%s",
                         header.src, header.dest, header.cmd_func, header.cmd_id,
                         header.enc_type, header.seq,
                     )
 
-                    forced_source = PROTO_MSG_MAP.get((header.cmd_func, header.cmd_id))
-                    if forced_source == "set_cmd" and getattr(header, "src", None) == PROTO_HEADER_SRC_CLOUD:
-                        self._last_decode_debug["decode_path"] = "header_message_ignored"
-                        self._last_decode_debug["forced_source"] = forced_source
-                        self._last_decode_debug["note"] = "ignore_self_set_command_echo"
-                        return None, {}
-                    if forced_source:
-                        forced_suffix = self._suffix_for_source(forced_source)
-                        if forced_suffix:
-                            _f_sfx, _f_decoded, _f_score = self._decode_with_suffixes(prefix, pdata, [forced_suffix])
-                            if _f_decoded:
-                                self._last_decode_debug["decode_path"] = "header_message_forced"
-                                self._last_decode_debug["matched_proto"] = _f_sfx
-                                self._last_decode_debug["matched_fields"] = _f_score
-                                self._last_decode_debug["forced_source"] = forced_source
-                                return _f_sfx, _f_decoded
+                    _bsh, _bdh, _bsc = None, {}, -1
+                    for suffix in PROTO_MESSAGE_SUFFIXES:
+                        message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
+                        if not message_cls:
+                            continue
 
-                    _bsh, _bdh, _bsc = self._decode_with_suffixes(prefix, pdata, PROTO_MESSAGE_SUFFIXES)
+                        try:
+                            msg = message_cls()
+                            msg.ParseFromString(pdata)
+                            raw = MessageToDict(msg, preserving_proto_field_name=True)
+                            _dd = flatten_dict(raw)
+                            if not _dd:
+                                continue
+                            _sc = sum(1 for k in _dd if k in self._field_index)
+                            if _sc > _bsc:
+                                _bsc, _bsh, _bdh = _sc, suffix, _dd
+                        except Exception:
+                            continue
                     if _bdh:
                         self._last_decode_debug["decode_path"] = "header_message"
                         self._last_decode_debug["matched_proto"] = _bsh
@@ -473,29 +375,8 @@ class EntityGenerator:
         if header.enc_type == 1 and header.src != PROTO_HEADER_SRC_CLOUD:
             pdata = bytes([(b ^ header.seq) & 0xFF for b in pdata])
 
-        forced_source = PROTO_MSG_MAP.get((header.cmd_func, header.cmd_id))
-        if forced_source:
-            forced_suffix = self._suffix_for_source(forced_source)
-            if forced_suffix:
-                _f_sfx, _f_decoded, _f_score = self._decode_with_suffixes(prefix, pdata, [forced_suffix])
-                if _f_decoded:
-                    self._last_decode_debug["decode_path"] = "header_parser_forced"
-                    self._last_decode_debug["matched_proto"] = _f_sfx
-                    self._last_decode_debug["matched_fields"] = _f_score
-                    self._last_decode_debug["forced_source"] = forced_source
-                    return _f_sfx, _f_decoded
-
-        _bsb, _bdb, _bscb = self._decode_with_suffixes(prefix, pdata, PROTO_MESSAGE_SUFFIXES)
-
-        if _bdb:
-            self._last_decode_debug["decode_path"] = "header_parser"
-            self._last_decode_debug["matched_proto"] = _bsb
-            self._last_decode_debug["matched_fields"] = _bscb
-        return (_bsb, _bdb) if _bdb else (None, {})
-
-    def _decode_with_suffixes(self, prefix: str, pdata: bytes, suffixes: list[str]) -> tuple[str | None, dict, int]:
-        best_suffix, best_decoded, best_score = None, {}, -1
-        for suffix in suffixes:
+        _bsb, _bdb, _bscb = None, {}, -1
+        for suffix in PROTO_MESSAGE_SUFFIXES:
             message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
             if not message_cls:
                 continue
@@ -504,21 +385,20 @@ class EntityGenerator:
                 msg = message_cls()
                 msg.ParseFromString(pdata)
                 raw = MessageToDict(msg, preserving_proto_field_name=True)
-                decoded = flatten_dict(raw)
-                if not decoded:
+                _dd = flatten_dict(raw)
+                if not _dd:
                     continue
-                score = sum(1 for key in decoded if key in self._field_index)
-                if score > best_score:
-                    best_suffix, best_decoded, best_score = suffix, decoded, score
+                _sc = sum(1 for k in _dd if k in self._field_index)
+                if _sc > _bscb:
+                    _bscb, _bsb, _bdb = _sc, suffix, _dd
             except Exception:
                 continue
-        return best_suffix, best_decoded, best_score
 
-    def _suffix_for_source(self, source: str) -> str | None:
-        for suffix, mapped_source in PROTO_MESSAGE_SOURCE_BY_SUFFIX.items():
-            if mapped_source == source:
-                return suffix
-        return None
+        if _bdb:
+            self._last_decode_debug["decode_path"] = "header_parser"
+            self._last_decode_debug["matched_proto"] = _bsb
+            self._last_decode_debug["matched_fields"] = _bscb
+        return (_bsb, _bdb) if _bdb else (None, {})
 
     def decode_message(self, payload: bytes) -> dict:
         """Decode MQTT payload to a flattened proto dictionary."""
@@ -544,7 +424,6 @@ class EntityGenerator:
             ent = self._create_entity(field_path, meta)
             if ent:
                 self.entities[entity_key] = ent
-                self._apply_cached_state_to_entity(ent)
                 entities.append(ent)
 
         if platform == "sensor" and "diagnostics" not in self.entities:
@@ -554,55 +433,13 @@ class EntityGenerator:
 
         return entities
 
-    def _resolve_entity_value(self, meta: dict, payload: dict | None = None):
-        source_payload = payload or self.raw_json
-        if not source_payload:
-            return False, None, []
-
-        normalized_payload: dict[str, Any] = {}
-        for key, value in source_payload.items():
-            normalized_key = self.field_map.normalize_field(key)
-            if normalized_key and normalized_key not in normalized_payload:
-                normalized_payload[normalized_key] = value
-
-        state_paths = meta.get("state_field_paths") or [meta.get("field_path")]
-        if not state_paths:
-            return False, None, []
-
-        for candidate in state_paths:
-            if candidate and candidate in source_payload:
-                return True, source_payload[candidate], [candidate]
-            normalized_candidate = self.field_map.normalize_field(candidate) if candidate else None
-            if normalized_candidate and normalized_candidate in normalized_payload:
-                return True, normalized_payload[normalized_candidate], [candidate, normalized_candidate]
-
-        return False, None, []
-
-    def _apply_entity_value(self, ent, value):
-        if isinstance(value, float):
-            value = round(value, 2)
-
-        if hasattr(ent, "_attr_is_on"):
-            ent._attr_is_on = self._coerce_bool(value)
-        elif hasattr(ent, "_attr_current_option"):
-            ent._attr_current_option = self._coerce_option(ent, value)
-        else:
-            ent._attr_native_value = value
-
-    def _apply_cached_state_to_entity(self, ent):
-        meta = getattr(ent, "_meta", {})
-        found, value, _matched_keys = self._resolve_entity_value(meta, self.raw_json)
-        if not found:
-            return
-        self._apply_entity_value(ent, value)
-
     def update_entities(self, decoded: dict):
         """Update entity states from a flattened proto payload."""
         if not decoded:
             return
 
-        self._cleanup_pending_writes()
-        self.raw_json.update(decoded)
+        self.raw_json = decoded
+
         diag = self.entities.get("diagnostics")
         if diag and hasattr(diag, "set_last_message_type"):
             diag.set_last_message_type(self._last_msg_type, self._last_proto_key)
@@ -627,14 +464,29 @@ class EntityGenerator:
 
         for entity_key, ent in self.entities.items():
             meta = getattr(ent, "_meta", {})
-            found, val, matched_keys = self._resolve_entity_value(meta, decoded)
+            state_paths = meta.get("state_field_paths") or [meta.get("field_path")]
+            if not state_paths:
+                continue
+
+            val = None
+            found = False
+            for candidate in state_paths:
+                if candidate and candidate in decoded:
+                    val = decoded[candidate]
+                    found = True
+                    break
             if not found:
                 continue
 
-            if self._should_hold_pending_update(ent, val, matched_keys):
-                continue
+            if isinstance(val, float):
+                val = round(val, 2)
 
-            self._apply_entity_value(ent, val)
+            if hasattr(ent, "_attr_is_on"):
+                ent._attr_is_on = self._coerce_bool(val)
+            elif hasattr(ent, "_attr_current_option"):
+                ent._attr_current_option = self._coerce_option(ent, val)
+            else:
+                ent._attr_native_value = val
 
             if ent.hass:
                 ent.async_write_ha_state()
@@ -691,4 +543,3 @@ class EntityGenerator:
 
     def get_last_decode_debug(self):
         return copy.deepcopy(self._last_decode_debug)
-
