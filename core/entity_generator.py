@@ -192,7 +192,6 @@ class EntityGenerator:
 
         meta: dict[str, Any] = {
             "name": name,
-            "translation_key": self.field_map.normalize_field(field_path).lower(),
             "unit": unit,
             "icon": icon,
             "device_class": device_class,

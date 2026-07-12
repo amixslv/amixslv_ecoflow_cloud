@@ -31,8 +31,6 @@ class FieldMap:
         "pow_get_pv": "PV Input 1 Power",
         "pow_get_pv2": "PV Input 2 Power",
         "pow_get_pv_sum": "PV Total Input Power",
-        "pow_get_sys_grid": "Grid Input Power",
-        "pow_get_sys_load_from_grid": "Load From Grid Power",
         "pow_get_bms": "Battery Power",
         "pow_get_dcp": "DCP Power",
         "pow_get_12v": "12V Output Power",
@@ -122,31 +120,40 @@ class FieldMap:
         "chg": "Charge",
     }
 
+    _STRINGS_PATH = pathlib.Path(__file__).parent.parent / "strings.json"
     _TRANSLATIONS_DIR = pathlib.Path(__file__).parent.parent / "translations"
     _translation_cache: dict[str, dict] = {}
+
+    @classmethod
+    def _load_entity_names(cls, path: pathlib.Path) -> dict[str, str]:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+
+        entity_section = data.get("entity", {})
+        flat: dict[str, str] = {}
+        for _platform, fields in entity_section.items():
+            for key, val in fields.items():
+                name = val.get("name") if isinstance(val, dict) else None
+                if name:
+                    flat[key] = name
+        return flat
 
     @classmethod
     def _load_translations(cls, lang: str) -> dict:
         if lang in cls._translation_cache:
             return cls._translation_cache[lang]
-        for candidate in (lang, lang.split("-")[0], "en"):
+
+        merged = cls._load_entity_names(cls._STRINGS_PATH)
+        for candidate in (lang, lang.split("-")[0]):
             p = cls._TRANSLATIONS_DIR / f"{candidate}.json"
             if p.exists():
-                try:
-                    data = json.loads(p.read_text(encoding="utf-8"))
-                    entity_section = data.get("entity", {})
-                    flat: dict[str, str] = {}
-                    for _platform, fields in entity_section.items():
-                        for key, val in fields.items():
-                            name = val.get("name") if isinstance(val, dict) else None
-                            if name:
-                                flat[key] = name
-                    cls._translation_cache[lang] = flat
-                    return flat
-                except Exception:
-                    pass
-        cls._translation_cache[lang] = {}
-        return {}
+                merged.update(cls._load_entity_names(p))
+                break
+
+        cls._translation_cache[lang] = merged
+        return merged
 
     def get_localized_name(self, field: str, lang: str) -> str | None:
         translations = self._load_translations(lang)
@@ -409,8 +416,6 @@ class FieldMap:
             "pow_get_pv",
             "pow_get_pv2",
             "pow_get_pv_sum",
-            "pow_get_sys_grid",
-            "pow_get_sys_load_from_grid",
             "pow_get_ac_in",
         }
         return normalized in energy_focus
