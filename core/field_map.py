@@ -1,4 +1,6 @@
-﻿import re
+﻿import json
+import pathlib
+import re
 from homeassistant.helpers.entity import EntityCategory
 
 
@@ -456,4 +458,5 @@ class FieldMap:
             return list(self.AUTO_ENUMS[normalized].values())
 
         return None
+
 
