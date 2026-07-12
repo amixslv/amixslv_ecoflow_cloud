@@ -7,7 +7,7 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-from .cont import DOMAIN
+from .cont import DOMAIN, LEGACY_DOMAIN
 from .supported_devices import SUPPORTED_DEVICE_LABELS, DEVICE_TYPE_MAP
 from .api.cloud_client import CloudClient
 
@@ -177,7 +177,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             device_registry = dr.async_get(self.hass)
             for dev in device_registry.devices.values():
-                if (DOMAIN, self._device_sn) in dev.identifiers:
+                if (DOMAIN, self._device_sn) in dev.identifiers or (LEGACY_DOMAIN, self._device_sn) in dev.identifiers:
                     return await self.async_step_device_exists()
 
             return self._create_entry()
@@ -193,7 +193,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Check if device already exists in registry
         device_registry = dr.async_get(self.hass)
         for dev in device_registry.devices.values():
-            if (DOMAIN, self._device_sn) in dev.identifiers:
+            if (DOMAIN, self._device_sn) in dev.identifiers or (LEGACY_DOMAIN, self._device_sn) in dev.identifiers:
                 return await self.async_step_device_exists()
 
         return self._create_entry()
@@ -214,7 +214,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         device_registry = dr.async_get(self.hass)
         for dev in device_registry.devices.values():
-            if (DOMAIN, self._device_sn) in dev.identifiers:
+            if (DOMAIN, self._device_sn) in dev.identifiers or (LEGACY_DOMAIN, self._device_sn) in dev.identifiers:
                 return await self.async_step_device_exists()
 
         return self._create_entry()
@@ -256,7 +256,7 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Remove device
         for dev in list(device_registry.devices.values()):
-            if (DOMAIN, self._device_sn) in dev.identifiers:
+            if (DOMAIN, self._device_sn) in dev.identifiers or (LEGACY_DOMAIN, self._device_sn) in dev.identifiers:
                 device_registry.async_remove_device(dev.id)
 
     def _create_entry(self) -> FlowResult:
@@ -273,4 +273,5 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "device_sn": self._device_sn,
             },
         )
+
 
