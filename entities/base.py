@@ -1,7 +1,7 @@
 import logging
 from homeassistant.helpers.entity import Entity
 
-from ..cont import DOMAIN
+from ..cont import DOMAIN, LEGACY_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class EcoFlowBaseEntity(Entity):
             human_name = self.device_type
 
         info = {
-            "identifiers": {(DOMAIN, self.device_sn)},
+            "identifiers": {(DOMAIN, self.device_sn), (LEGACY_DOMAIN, self.device_sn)},
             "manufacturer": "EcoFlow",
             "model": human_name,
             "name": human_name,
@@ -83,7 +83,7 @@ class EcoFlowBaseEntity(Entity):
         if hasattr(self, "_meta") and "device_override" in self._meta:
             dev_id = self._meta["device_override"]
             return {
-                "identifiers": {(DOMAIN, dev_id)},
+                "identifiers": {(DOMAIN, dev_id), (LEGACY_DOMAIN, dev_id)},
                 "manufacturer": "EcoFlow",
                 "model": "Extra Battery",
                 "name": f"Extra Battery {dev_id.split('_')[-1]}",

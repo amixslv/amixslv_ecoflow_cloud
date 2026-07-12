@@ -3,7 +3,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import async_get as async_get_device_registry
 
-from .cont import DOMAIN, PLATFORMS
+from .cont import DOMAIN, LEGACY_DOMAIN, PLATFORMS
 from .core.device_manager import DeviceManager
 
 _LOGGER = logging.getLogger(__name__)
