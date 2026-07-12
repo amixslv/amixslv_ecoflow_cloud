@@ -16,6 +16,7 @@ from ..supported_devices import DEVICE_TYPE_MAP
 from ..api.message import JSONMessage
 from ..cont import (
     DOMAIN,
+    LEGACY_DOMAIN,
     MQTT_TOPIC_DEVICE_PROP_LEGACY,
     MQTT_TOPIC_DEVICE_PROPERTY,
     MQTT_TOPIC_USER_DEVICE_PROPERTY,
@@ -85,6 +86,10 @@ class DeviceManager:
         self._pending_debug_records: list[dict] = []
         self._debug_flush_scheduled = False
         self._debug_root = Path(self.hass.config.path(f"{DOMAIN}_debug")) / self.device_sn
+        self._legacy_debug_root = Path(self.hass.config.path(f"{LEGACY_DOMAIN}_debug")) / self.device_sn
+        self._debug_roots = [self._debug_root]
+        if self._legacy_debug_root != self._debug_root:
+            self._debug_roots.append(self._legacy_debug_root)
         self._debug_latest_path = self._debug_root / "latest.json"
         self._debug_history_path = self._debug_root / "history.jsonl"
 
@@ -322,13 +327,17 @@ class DeviceManager:
                 self.hass.loop.call_soon(self._apply_pending_update)
 
     def _prepare_debug_dump_dir(self):
-        self._debug_root.mkdir(parents=True, exist_ok=True)
+        for root in self._debug_roots:
+            root.mkdir(parents=True, exist_ok=True)
 
-    def _load_cached_decoded_snapshot(self) -> dict:
+    def _load_cached_record_from_root(self, root: Path) -> dict | None:
+        latest_path = root / "latest.json"
+        history_path = root / "history.jsonl"
+
         latest_record = None
-        if self._debug_latest_path.exists():
+        if latest_path.exists():
             try:
-                latest_payload = json.loads(self._debug_latest_path.read_text(encoding="utf-8"))
+                latest_payload = json.loads(latest_path.read_text(encoding="utf-8"))
                 latest_record = latest_payload.get("last_record") if isinstance(latest_payload, dict) else None
             except Exception:
                 latest_record = None
@@ -338,9 +347,9 @@ class DeviceManager:
             if isinstance(decoded, dict) and decoded:
                 return decoded
 
-        if self._debug_history_path.exists():
+        if history_path.exists():
             try:
-                lines = self._debug_history_path.read_text(encoding="utf-8").splitlines()
+                lines = history_path.read_text(encoding="utf-8").splitlines()
             except Exception:
                 lines = []
             for line in reversed(lines[-200:]):
@@ -352,6 +361,13 @@ class DeviceManager:
                 if isinstance(decoded, dict) and decoded:
                     return decoded
 
+        return None
+
+    def _load_cached_decoded_snapshot(self) -> dict:
+        for root in self._debug_roots:
+            decoded = self._load_cached_record_from_root(root)
+            if decoded:
+                return decoded
         return {}
 
     def _build_debug_record(
@@ -432,20 +448,21 @@ class DeviceManager:
     def _write_debug_records(self, records: list[dict]):
         self._prepare_debug_dump_dir()
 
-        with self._debug_history_path.open("a", encoding="utf-8") as history_file:
-            for record in records:
-                history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
-
         latest = {
             "updated_at": records[-1].get("received_at") or records[-1].get("sent_at"),
             "device_sn": self.device_sn,
             "device_type": self.device_type,
             "last_record": records[-1],
         }
-        self._debug_latest_path.write_text(
-            json.dumps(latest, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        latest_payload = json.dumps(latest, ensure_ascii=False, indent=2) + "\n"
+
+        for root in self._debug_roots:
+            history_path = root / "history.jsonl"
+            latest_path = root / "latest.json"
+            with history_path.open("a", encoding="utf-8") as history_file:
+                for record in records:
+                    history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+            latest_path.write_text(latest_payload, encoding="utf-8")
 
     # ----------------------------------------------------------------------
     # DEVICE REGISTRATION
