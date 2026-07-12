@@ -19,13 +19,8 @@ class EcoFlowBaseEntity(Entity):
         # -----------------------------
         # BASIC ATTRIBUTES
         # -----------------------------
-        translation_key = meta.get("translation_key")
-        if translation_key:
-            self._attr_translation_key = translation_key
-            self._attr_has_entity_name = True
-            self._attr_name = None
-        else:
-            self._attr_name = meta.get("name", field)
+        self._attr_has_entity_name = False
+        self._attr_name = meta.get("name", field)
         self._attr_icon = meta.get("icon")
         self._attr_entity_category = meta.get("entity_category")
         self._attr_native_unit_of_measurement = meta.get("unit")
@@ -116,4 +111,3 @@ class EcoFlowBaseEntity(Entity):
             return self._attr_is_on is not None
 
         return True
-
