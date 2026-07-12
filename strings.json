@@ -2,119 +2,119 @@
   "config": {
     "step": {
       "user": {
-        "title": "EcoFlow pierakstīšanās",
-        "description": "Ievadiet EcoFlow Cloud konts akreditācijas datus.",
+        "title": "EcoFlow Login",
+        "description": "Enter your EcoFlow Cloud account credentials.",
         "data": {
-          "username": "E-pasta adrese",
-          "password": "Parole"
+          "username": "Email address",
+          "password": "Password"
         }
       },
       "device": {
-        "title": "Izvēlieties ierīci",
-        "description": "Atlasiet ierīci no sava EcoFlow Cloud konta vai manuāli ievadiet informāciju.",
+        "title": "Select Device",
+        "description": "Select a device from your EcoFlow Cloud account or enter information manually.",
         "data": {
-          "account_device": "Kontos ierīce",
-          "device_label": "Ierīces tips",
-          "device_sn": "Sērijas numurs (SN)"
+          "account_device": "Account device",
+          "device_label": "Device type",
+          "device_sn": "Serial Number (SN)"
         }
       },
       "device_type": {
-        "title": "Ierīces tipa kartēšana",
-        "description": "Atlasiet ierīces tipu, jo pēc mākoņa nosaukuma to nevar noteikt.",
+        "title": "Device Type Mapping",
+        "description": "Select device type as it cannot be determined from the cloud name.",
         "data": {
-          "device_label": "Ierīces tips"
+          "device_label": "Device type"
         }
       },
       "device_exists": {
-        "title": "Ierīce jau konfigurēta",
-        "description": "Ierīce ar sērijas numuru {sn} jau eksistē. Ko vēlaties darīt?",
+        "title": "Device Already Configured",
+        "description": "Device with serial number {sn} already exists. What would you like to do?",
         "data": {
-          "action": "Darbība"
+          "action": "Action"
         }
       }
     },
     "error": {
-      "invalid_auth": "Pierakstīšanās neizdevās. Pārbaudiet e-pasta adresi un paroli.",
-      "unknown": "Nezināma kļūda. Lūdzu, mēģiniet vēlreiz.",
-      "device_list_unavailable": "Nevarēja iegūt ierīču sarakstu no EcoFlow Cloud. Varat manuāli ievadīt informāciju."
+      "invalid_auth": "Login failed. Please check your email address and password.",
+      "unknown": "Unknown error. Please try again.",
+      "device_list_unavailable": "Could not retrieve device list from EcoFlow Cloud. You can enter information manually."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "EcoFlow Cloud opcijas",
-        "description": "Rediģējiet integrācijas iestatījumus."
+        "title": "EcoFlow Cloud Options",
+        "description": "Edit integration settings."
       },
       "device_exists": {
-        "title": "Ierīce jau konfigurēta",
-        "description": "Ierīce ar sērijas numuru {sn} jau eksistē. Ko vēlaties darīt?",
+        "title": "Device Already Configured",
+        "description": "Device with serial number {sn} already exists. What would you like to do?",
         "data": {
-          "action": "Darbība"
+          "action": "Action"
         }
       }
     }
   },
   "entity": {
     "sensor": {
-      "pow_in_sum_w": { "name": "Kopeja ieejas jauda" },
-      "pow_out_sum_w": { "name": "Kopeja izejas jauda" },
-      "pow_get_ac_in": { "name": "AC ieejas jauda" },
-      "pow_get_ac_out": { "name": "AC izejas jauda" },
-      "pow_get_ac": { "name": "AC jauda" },
-      "pow_get_pv": { "name": "PV1 ieejas jauda" },
-      "pow_get_pv2": { "name": "PV2 ieejas jauda" },
-      "pow_get_pv_sum": { "name": "PV kopeja ieejas jauda" },
-      "pow_get_bms": { "name": "Baterijas jauda" },
-      "pow_get_dcp": { "name": "DCP jauda" },
-      "pow_get_12v": { "name": "12V izejas jauda" },
-      "cms_batt_soc": { "name": "CMS baterijas SOC" },
-      "bms_batt_soc": { "name": "BMS baterijas SOC" },
-      "soc": { "name": "Baterijas SOC" },
-      "cms_chg_rem_time": { "name": "CMS uzlades atlikusais laiks" },
-      "cms_dsg_rem_time": { "name": "CMS izlades atlikusais laiks" },
-      "bms_chg_rem_time": { "name": "BMS uzlades atlikusais laiks" },
-      "bms_dsg_rem_time": { "name": "BMS izlades atlikusais laiks" },
-      "remain_time": { "name": "Atlikusais laiks" },
-      "bms_batt_vol": { "name": "BMS baterijas spriegums" },
-      "cms_batt_vol": { "name": "CMS baterijas spriegums" },
-      "bms_batt_amp": { "name": "BMS baterijas strava" },
-      "cms_batt_amp": { "name": "CMS baterijas strava" },
-      "temp_pcs_dc": { "name": "PCS DC temperatura" },
-      "temp_pcs_ac": { "name": "PCS AC temperatura" },
-      "temp_pv": { "name": "PV temperatura" },
-      "flow_info_ac_in": { "name": "AC ieejas plusmas stavoklis" },
-      "flow_info_ac_out": { "name": "AC izejas plusmas stavoklis" },
-      "flow_info_pv": { "name": "PV1 plusmas stavoklis" },
-      "flow_info_pv2": { "name": "PV2 plusmas stavoklis" },
-      "ac_out_freq": { "name": "AC izejas frekvence" },
-      "plug_in_info_ac_in_vol": { "name": "AC ieejas spriegums" },
-      "plug_in_info_ac_out_vol": { "name": "AC izejas spriegums" },
-      "plug_in_info_ac_in_amp": { "name": "AC ieejas strava" },
-      "plug_in_info_ac_out_amp": { "name": "AC izejas strava" },
-      "plug_in_info_pv_vol": { "name": "PV spriegums" },
-      "plug_in_info_pv_amp": { "name": "PV strava" },
-      "plug_in_info_dcp_sn": { "name": "DCP serijas numurs" },
-      "bms_err_code": { "name": "BMS kludas kods" },
-      "pd_err_code": { "name": "PD kludas kods" },
-      "all_err_code": { "name": "Kopejais kludas kods" },
-      "water_in_flag": { "name": "Udensa detekcijas pazime" }
+      "pow_in_sum_w": { "name": "Total input power" },
+      "pow_out_sum_w": { "name": "Total output power" },
+      "pow_get_ac_in": { "name": "AC input power" },
+      "pow_get_ac_out": { "name": "AC output power" },
+      "pow_get_ac": { "name": "AC power" },
+      "pow_get_pv": { "name": "PV input 1 power" },
+      "pow_get_pv2": { "name": "PV input 2 power" },
+      "pow_get_pv_sum": { "name": "PV total input power" },
+      "pow_get_bms": { "name": "Battery power" },
+      "pow_get_dcp": { "name": "DCP power" },
+      "pow_get_12v": { "name": "12V output power" },
+      "cms_batt_soc": { "name": "CMS battery SOC" },
+      "bms_batt_soc": { "name": "BMS battery SOC" },
+      "soc": { "name": "Battery SOC" },
+      "cms_chg_rem_time": { "name": "CMS charge remaining time" },
+      "cms_dsg_rem_time": { "name": "CMS discharge remaining time" },
+      "bms_chg_rem_time": { "name": "BMS charge remaining time" },
+      "bms_dsg_rem_time": { "name": "BMS discharge remaining time" },
+      "remain_time": { "name": "Remaining time" },
+      "bms_batt_vol": { "name": "BMS battery voltage" },
+      "cms_batt_vol": { "name": "CMS battery voltage" },
+      "bms_batt_amp": { "name": "BMS battery current" },
+      "cms_batt_amp": { "name": "CMS battery current" },
+      "temp_pcs_dc": { "name": "PCS DC temperature" },
+      "temp_pcs_ac": { "name": "PCS AC temperature" },
+      "temp_pv": { "name": "PV temperature" },
+      "flow_info_ac_in": { "name": "AC input flow state" },
+      "flow_info_ac_out": { "name": "AC output flow state" },
+      "flow_info_pv": { "name": "PV1 flow state" },
+      "flow_info_pv2": { "name": "PV2 flow state" },
+      "ac_out_freq": { "name": "AC output frequency" },
+      "plug_in_info_ac_in_vol": { "name": "AC input voltage" },
+      "plug_in_info_ac_out_vol": { "name": "AC output voltage" },
+      "plug_in_info_ac_in_amp": { "name": "AC input current" },
+      "plug_in_info_ac_out_amp": { "name": "AC output current" },
+      "plug_in_info_pv_vol": { "name": "PV voltage" },
+      "plug_in_info_pv_amp": { "name": "PV current" },
+      "plug_in_info_dcp_sn": { "name": "DCP serial number" },
+      "bms_err_code": { "name": "BMS error code" },
+      "pd_err_code": { "name": "PD error code" },
+      "all_err_code": { "name": "All error code" },
+      "water_in_flag": { "name": "Water ingress flag" }
     },
     "switch": {
-      "en_beep": { "name": "Skanas signali" },
+      "en_beep": { "name": "Beep" },
       "xboost_en": { "name": "X-Boost" },
-      "output_power_off_memory": { "name": "Atcereties izejas stavokli" }
+      "output_power_off_memory": { "name": "Output power-off memory" }
     },
     "number": {
-      "cms_max_chg_soc": { "name": "Maksimalais uzlades SOC" },
-      "cms_min_dsg_soc": { "name": "Minimalais izlades SOC" },
-      "dev_standby_time": { "name": "Ierices gaidisanas laiks" },
-      "screen_off_time": { "name": "Ekrana izslegsanas laiks" },
-      "ac_standby_time": { "name": "AC gaidisanas laiks" },
-      "plug_in_info_ac_in_chg_pow_max": { "name": "AC uzlades jaudas limits" }
+      "cms_max_chg_soc": { "name": "Maximum charge SOC" },
+      "cms_min_dsg_soc": { "name": "Minimum discharge SOC" },
+      "dev_standby_time": { "name": "Device standby time" },
+      "screen_off_time": { "name": "Screen off time" },
+      "ac_standby_time": { "name": "AC standby time" },
+      "plug_in_info_ac_in_chg_pow_max": { "name": "AC charge power limit" }
     }
   },
   "abort": {
-    "keep_existing": "Saglabāta esošā konfigurācija",
-    "reconfigure_failed": "Rekonfigurācija neizdevās"
+    "keep_existing": "Existing configuration has been saved",
+    "reconfigure_failed": "Reconfiguration failed"
   }
 }

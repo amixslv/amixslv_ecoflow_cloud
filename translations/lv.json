@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "EcoFlow pierakstīšanās",
-        "description": "Ievadiet EcoFlow Cloud konta akreditācijas datus.",
+        "description": "Ievadiet EcoFlow Cloud konts akreditācijas datus.",
         "data": {
           "username": "E-pasta adrese",
           "password": "Parole"
@@ -11,16 +11,16 @@
       },
       "device": {
         "title": "Izvēlieties ierīci",
-        "description": "Atlasiet ierīci no sava EcoFlow Cloud konta vai ievadiet informāciju manuāli.",
+        "description": "Atlasiet ierīci no sava EcoFlow Cloud konta vai manuāli ievadiet informāciju.",
         "data": {
-          "account_device": "Konta ierīce",
+          "account_device": "Kontos ierīce",
           "device_label": "Ierīces tips",
           "device_sn": "Sērijas numurs (SN)"
         }
       },
       "device_type": {
         "title": "Ierīces tipa kartēšana",
-        "description": "Atlasiet ierīces tipu, jo to nevar noteikt no mākoņa nosaukuma.",
+        "description": "Atlasiet ierīces tipu, jo pēc mākoņa nosaukuma to nevar noteikt.",
         "data": {
           "device_label": "Ierīces tips"
         }
@@ -46,10 +46,10 @@
         "description": "Rediģējiet integrācijas iestatījumus."
       },
       "device_exists": {
-        "title": "Ier?ce jau konfigur?ta",
-        "description": "Ier?ce ar s?rijas numuru {sn} jau eksist?. Ko v?laties dar?t?",
+        "title": "Ierīce jau konfigurēta",
+        "description": "Ierīce ar sērijas numuru {sn} jau eksistē. Ko vēlaties darīt?",
         "data": {
-          "action": "Darb?ba"
+          "action": "Darbība"
         }
       }
     }
@@ -114,7 +114,7 @@
     }
   },
   "abort": {
-    "keep_existing": "Eso?? konfigur?cija ir saglab?ta",
-    "reconfigure_failed": "Rekonfigur?cija neizdev?s"
+    "keep_existing": "Saglabāta esošā konfigurācija",
+    "reconfigure_failed": "Rekonfigurācija neizdevās"
   }
 }
