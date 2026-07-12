@@ -1,7 +1,7 @@
 import logging
 from homeassistant.helpers.entity import Entity
 
-from ..cont import DOMAIN, LEGACY_DOMAIN
+from ..cont import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,8 +30,8 @@ class EcoFlowBaseEntity(Entity):
         # Enable/disable by default
         self._attr_entity_registry_enabled_default = meta.get("enabled", True)
 
-        # Controls sÄkotnÄ“ji uzskatÄm par pieejamiem,
-        # sensoriem pieejamÄ«ba tiks noteikta pÄ“c vÄ“rtÄ«bas.
+        # Controls sĆ„ĀkotnĆ„ā€ji uzskatĆ„Ām par pieejamiem,
+        # sensoriem pieejamĆ„Ā«ba tiks noteikta pĆ„ā€c vĆ„ā€rtĆ„Ā«bas.
         self._attr_available = meta.get("is_control", False)
 
         # Runtime metadata (firmware, hw, utt.)
@@ -42,7 +42,7 @@ class EcoFlowBaseEntity(Entity):
     # ------------------------------------------------------------------
     @property
     def unique_id(self):
-        # SN + proto source + field = stabils, nemainÄ«gs, droÅs
+        # SN + proto source + field = stabils, nemainĆ„Ā«gs, droĆ…ļ£¼s
         return self._meta.get("unique_id", f"{self.device_sn}_{self._field}")
 
     @property
@@ -52,14 +52,14 @@ class EcoFlowBaseEntity(Entity):
 
     @property
     def device_info(self):
-        # CilvÄ“ciskais nosaukums (Delta 3 Plus)
+        # CilvĆ„ā€ciskais nosaukums (Delta 3 Plus)
         try:
             human_name = self.generator.manager.device_label
         except Exception:
             human_name = self.device_type
 
         info = {
-            "identifiers": {(DOMAIN, self.device_sn), (LEGACY_DOMAIN, self.device_sn)},
+            "identifiers": {(DOMAIN, self.device_sn)},
             "manufacturer": "EcoFlow",
             "model": human_name,
             "name": human_name,
@@ -83,7 +83,7 @@ class EcoFlowBaseEntity(Entity):
         if hasattr(self, "_meta") and "device_override" in self._meta:
             dev_id = self._meta["device_override"]
             return {
-                "identifiers": {(DOMAIN, dev_id), (LEGACY_DOMAIN, dev_id)},
+                "identifiers": {(DOMAIN, dev_id)},
                 "manufacturer": "EcoFlow",
                 "model": "Extra Battery",
                 "name": f"Extra Battery {dev_id.split('_')[-1]}",
@@ -97,17 +97,17 @@ class EcoFlowBaseEntity(Entity):
     # ------------------------------------------------------------------
     @property
     def available(self):
-        # Controls vienmÄ“r pieejami
+        # Controls vienmĆ„ā€r pieejami
         if self._meta.get("is_control"):
             return True
 
-        # Sensori pieejami, ja tiem ir pÄ“dÄ“jÄ zinÄmÄ vÄ“rtÄ«ba
+        # Sensori pieejami, ja tiem ir pĆ„ā€dĆ„ā€jĆ„Ā zinĆ„ĀmĆ„Ā vĆ„ā€rtĆ„Ā«ba
         # (update_entities() iestata _attr_native_value / _attr_is_on)
         if hasattr(self, "_attr_native_value"):
             return self._attr_native_value is not None
 
         if hasattr(self, "_attr_is_on"):
-            # binary_sensor / switch ā€“ ja nekad nav bijis stÄvoklis, uzskatÄm par nepieejamu
+            # binary_sensor / switch Äā‚¬ā€ ja nekad nav bijis stĆ„Āvoklis, uzskatĆ„Ām par nepieejamu
             return self._attr_is_on is not None
 
         return True

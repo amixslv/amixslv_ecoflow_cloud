@@ -1,4 +1,4 @@
-DOMAIN = "ecoflow"
+DOMAIN = "amixslv_ecoflow_cloud"
 LEGACY_DOMAIN = "amixslv_ecoflow_cloud"
 
 PLATFORMS = [
