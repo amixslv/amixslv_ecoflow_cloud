@@ -274,3 +274,4 @@ class EcoflowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             },
         )
 
+

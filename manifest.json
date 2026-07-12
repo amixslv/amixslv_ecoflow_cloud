@@ -1,14 +1,18 @@
 {
-  "domain": "amixslv_ecoflow_cloud",
-  "name": "EcoFlow Cloud (amixslv)",
-  "version": "2026.5.1",
-  "documentation": "https://github.com/amixslv/amixslv_ecoflow_cloud",
-  "issue_tracker": "https://github.com/amixslv/amixslv_ecoflow_cloud/issues",
-  "requirements": [],
-  "dependencies": ["mqtt"],
-  "codeowners": [
-    "@amixslv"
-  ],
-  "iot_class":  "cloud_polling",
-  "config_flow": true
+    "domain":  "amixslv_ecoflow_cloud",
+    "name":  "EcoFlow Cloud (amixslv)",
+    "version":  "2026.5.1",
+    "documentation":  "https://github.com/amixslv/amixslv_ecoflow_cloud",
+    "issue_tracker":  "https://github.com/amixslv/amixslv_ecoflow_cloud/issues",
+    "requirements":  [
+
+                     ],
+    "dependencies":  [
+                         "mqtt"
+                     ],
+    "codeowners":  [
+                       "@amixslv"
+                   ],
+    "iot_class":  "cloud_polling",
+    "config_flow":  true
 }

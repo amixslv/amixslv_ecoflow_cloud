@@ -30,8 +30,8 @@ class EcoFlowBaseEntity(Entity):
         # Enable/disable by default
         self._attr_entity_registry_enabled_default = meta.get("enabled", True)
 
-        # Controls sākotnēji uzskatām par pieejamiem,
-        # sensoriem pieejamība tiks noteikta pēc vērtības.
+        # Controls sĆ„ĀkotnĆ„ā€ji uzskatĆ„Ām par pieejamiem,
+        # sensoriem pieejamĆ„Ā«ba tiks noteikta pĆ„ā€c vĆ„ā€rtĆ„Ā«bas.
         self._attr_available = meta.get("is_control", False)
 
         # Runtime metadata (firmware, hw, utt.)
@@ -42,7 +42,7 @@ class EcoFlowBaseEntity(Entity):
     # ------------------------------------------------------------------
     @property
     def unique_id(self):
-        # SN + proto source + field = stabils, nemainīgs, drošs
+        # SN + proto source + field = stabils, nemainĆ„Ā«gs, droĆ…ļ£¼s
         return self._meta.get("unique_id", f"{self.device_sn}_{self._field}")
 
     @property
@@ -52,7 +52,7 @@ class EcoFlowBaseEntity(Entity):
 
     @property
     def device_info(self):
-        # Cilvēciskais nosaukums (Delta 3 Plus)
+        # CilvĆ„ā€ciskais nosaukums (Delta 3 Plus)
         try:
             human_name = self.generator.manager.device_label
         except Exception:
@@ -97,17 +97,18 @@ class EcoFlowBaseEntity(Entity):
     # ------------------------------------------------------------------
     @property
     def available(self):
-        # Controls vienmēr pieejami
+        # Controls vienmĆ„ā€r pieejami
         if self._meta.get("is_control"):
             return True
 
-        # Sensori pieejami, ja tiem ir pēdējā zināmā vērtība
+        # Sensori pieejami, ja tiem ir pĆ„ā€dĆ„ā€jĆ„Ā zinĆ„ĀmĆ„Ā vĆ„ā€rtĆ„Ā«ba
         # (update_entities() iestata _attr_native_value / _attr_is_on)
         if hasattr(self, "_attr_native_value"):
             return self._attr_native_value is not None
 
         if hasattr(self, "_attr_is_on"):
-            # binary_sensor / switch – ja nekad nav bijis stāvoklis, uzskatām par nepieejamu
+            # binary_sensor / switch Äā‚¬ā€ ja nekad nav bijis stĆ„Āvoklis, uzskatĆ„Ām par nepieejamu
             return self._attr_is_on is not None
 
         return True
+
