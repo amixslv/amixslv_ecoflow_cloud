@@ -1,4 +1,4 @@
-import base64
+﻿import base64
 import copy
 import logging
 import time
@@ -66,7 +66,7 @@ def load_proto_messages(pb2_module: Any) -> dict[str, Any]:
 
 
 class EntityGenerator:
-    PENDING_WRITE_TTL_SECONDS = 10.0
+    PENDING_WRITE_TTL_SECONDS = 5.0
     CONTROL_SWITCH_HINTS = (
         "flag",
         "enable",
@@ -672,3 +672,5 @@ class EntityGenerator:
 
     def get_last_decode_debug(self):
         return copy.deepcopy(self._last_decode_debug)
+
+
