@@ -54,6 +54,65 @@
       }
     }
   },
+  "entity": {
+    "sensor": {
+      "pow_in_sum_w": { "name": "Kopeja ieejas jauda" },
+      "pow_out_sum_w": { "name": "Kopeja izejas jauda" },
+      "pow_get_ac_in": { "name": "AC ieejas jauda" },
+      "pow_get_ac_out": { "name": "AC izejas jauda" },
+      "pow_get_ac": { "name": "AC jauda" },
+      "pow_get_pv": { "name": "PV1 ieejas jauda" },
+      "pow_get_pv2": { "name": "PV2 ieejas jauda" },
+      "pow_get_pv_sum": { "name": "PV kopeja ieejas jauda" },
+      "pow_get_bms": { "name": "Baterijas jauda" },
+      "pow_get_dcp": { "name": "DCP jauda" },
+      "pow_get_12v": { "name": "12V izejas jauda" },
+      "cms_batt_soc": { "name": "CMS baterijas SOC" },
+      "bms_batt_soc": { "name": "BMS baterijas SOC" },
+      "soc": { "name": "Baterijas SOC" },
+      "cms_chg_rem_time": { "name": "CMS uzlades atlikusais laiks" },
+      "cms_dsg_rem_time": { "name": "CMS izlades atlikusais laiks" },
+      "bms_chg_rem_time": { "name": "BMS uzlades atlikusais laiks" },
+      "bms_dsg_rem_time": { "name": "BMS izlades atlikusais laiks" },
+      "remain_time": { "name": "Atlikusais laiks" },
+      "bms_batt_vol": { "name": "BMS baterijas spriegums" },
+      "cms_batt_vol": { "name": "CMS baterijas spriegums" },
+      "bms_batt_amp": { "name": "BMS baterijas strava" },
+      "cms_batt_amp": { "name": "CMS baterijas strava" },
+      "temp_pcs_dc": { "name": "PCS DC temperatura" },
+      "temp_pcs_ac": { "name": "PCS AC temperatura" },
+      "temp_pv": { "name": "PV temperatura" },
+      "flow_info_ac_in": { "name": "AC ieejas plusmas stavoklis" },
+      "flow_info_ac_out": { "name": "AC izejas plusmas stavoklis" },
+      "flow_info_pv": { "name": "PV1 plusmas stavoklis" },
+      "flow_info_pv2": { "name": "PV2 plusmas stavoklis" },
+      "ac_out_freq": { "name": "AC izejas frekvence" },
+      "plug_in_info_ac_in_vol": { "name": "AC ieejas spriegums" },
+      "plug_in_info_ac_out_vol": { "name": "AC izejas spriegums" },
+      "plug_in_info_ac_in_amp": { "name": "AC ieejas strava" },
+      "plug_in_info_ac_out_amp": { "name": "AC izejas strava" },
+      "plug_in_info_pv_vol": { "name": "PV spriegums" },
+      "plug_in_info_pv_amp": { "name": "PV strava" },
+      "plug_in_info_dcp_sn": { "name": "DCP serijas numurs" },
+      "bms_err_code": { "name": "BMS kludas kods" },
+      "pd_err_code": { "name": "PD kludas kods" },
+      "all_err_code": { "name": "Kopejais kludas kods" },
+      "water_in_flag": { "name": "Udensa detekcijas pazime" }
+    },
+    "switch": {
+      "en_beep": { "name": "Skanas signali" },
+      "xboost_en": { "name": "X-Boost" },
+      "output_power_off_memory": { "name": "Atcereties izejas stavokli" }
+    },
+    "number": {
+      "cms_max_chg_soc": { "name": "Maksimalais uzlades SOC" },
+      "cms_min_dsg_soc": { "name": "Minimalais izlades SOC" },
+      "dev_standby_time": { "name": "Ierices gaidisanas laiks" },
+      "screen_off_time": { "name": "Ekrana izslegsanas laiks" },
+      "ac_standby_time": { "name": "AC gaidisanas laiks" },
+      "plug_in_info_ac_in_chg_pow_max": { "name": "AC uzlades jaudas limits" }
+    }
+  },
   "abort": {
     "keep_existing": "Eso?? konfigur?cija ir saglab?ta",
     "reconfigure_failed": "Rekonfigur?cija neizdev?s"
