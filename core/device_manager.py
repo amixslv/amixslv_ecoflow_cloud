@@ -191,6 +191,28 @@ class DeviceManager:
             _LOGGER.error("DM: Failed to load PB2 module %s: %s", full_path, e)
             raise
 
+    def _build_mqtt_subscription_topics(self) -> list[str]:
+        topics: set[str] = set()
+        base = [
+            MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn),
+            MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn),
+        ]
+
+        for topic in base:
+            topics.add(topic)
+            topics.add(topic.lstrip("/"))
+
+        if self.user_id:
+            user_topic = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(user_id=self.user_id, sn=self.device_sn)
+            topics.add(user_topic)
+            topics.add(user_topic.lstrip("/"))
+
+        wildcard_user = f"/app/+/device/property/{self.device_sn}"
+        topics.add(wildcard_user)
+        topics.add(wildcard_user.lstrip("/"))
+
+        return sorted(topics)
+
     # ----------------------------------------------------------------------
     # MQTT SETUP
     # ----------------------------------------------------------------------
@@ -208,12 +230,10 @@ class DeviceManager:
         await self.mqtt.async_setup(self.hass)
         _LOGGER.debug("DM: MQTT async_setup completed")
 
-        topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
-        topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
-        topic3 = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(user_id=self.user_id, sn=self.device_sn)
-
-        self.mqtt.subscribe([topic1, topic2, topic3])
-        _LOGGER.info("DM: Subscribed to topics %s, %s, %s", topic1, topic2, topic3)
+        topics = self._build_mqtt_subscription_topics()
+        self.mqtt.subscribe(topics)
+        _LOGGER.info("DM: Subscribed to %s MQTT topics", len(topics))
+        _LOGGER.debug("DM: MQTT subscription topics: %s", topics)
 
     # ----------------------------------------------------------------------
     # MQTT MESSAGE HANDLER
