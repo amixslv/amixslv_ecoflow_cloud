@@ -536,6 +536,7 @@ class EntityGenerator:
             ent = self._create_entity(field_path, meta)
             if ent:
                 self.entities[entity_key] = ent
+                self._apply_cached_state_to_entity(ent)
                 entities.append(ent)
 
         if platform == "sensor" and "diagnostics" not in self.entities:
@@ -545,6 +546,48 @@ class EntityGenerator:
 
         return entities
 
+    def _resolve_entity_value(self, meta: dict, payload: dict | None = None):
+        source_payload = payload or self.raw_json
+        if not source_payload:
+            return False, None, []
+
+        normalized_payload: dict[str, Any] = {}
+        for key, value in source_payload.items():
+            normalized_key = self.field_map.normalize_field(key)
+            if normalized_key and normalized_key not in normalized_payload:
+                normalized_payload[normalized_key] = value
+
+        state_paths = meta.get("state_field_paths") or [meta.get("field_path")]
+        if not state_paths:
+            return False, None, []
+
+        for candidate in state_paths:
+            if candidate and candidate in source_payload:
+                return True, source_payload[candidate], [candidate]
+            normalized_candidate = self.field_map.normalize_field(candidate) if candidate else None
+            if normalized_candidate and normalized_candidate in normalized_payload:
+                return True, normalized_payload[normalized_candidate], [candidate, normalized_candidate]
+
+        return False, None, []
+
+    def _apply_entity_value(self, ent, value):
+        if isinstance(value, float):
+            value = round(value, 2)
+
+        if hasattr(ent, "_attr_is_on"):
+            ent._attr_is_on = self._coerce_bool(value)
+        elif hasattr(ent, "_attr_current_option"):
+            ent._attr_current_option = self._coerce_option(ent, value)
+        else:
+            ent._attr_native_value = value
+
+    def _apply_cached_state_to_entity(self, ent):
+        meta = getattr(ent, "_meta", {})
+        found, value, _matched_keys = self._resolve_entity_value(meta, self.raw_json)
+        if not found:
+            return
+        self._apply_entity_value(ent, value)
+
     def update_entities(self, decoded: dict):
         """Update entity states from a flattened proto payload."""
         if not decoded:
@@ -552,12 +595,6 @@ class EntityGenerator:
 
         self._cleanup_pending_writes()
         self.raw_json.update(decoded)
-        normalized_decoded: dict[str, Any] = {}
-        for key, value in decoded.items():
-            normalized_key = self.field_map.normalize_field(key)
-            if normalized_key and normalized_key not in normalized_decoded:
-                normalized_decoded[normalized_key] = value
-
         diag = self.entities.get("diagnostics")
         if diag and hasattr(diag, "set_last_message_type"):
             diag.set_last_message_type(self._last_msg_type, self._last_proto_key)
@@ -582,40 +619,14 @@ class EntityGenerator:
 
         for entity_key, ent in self.entities.items():
             meta = getattr(ent, "_meta", {})
-            state_paths = meta.get("state_field_paths") or [meta.get("field_path")]
-            if not state_paths:
-                continue
-
-            val = None
-            found = False
-            matched_keys: list[str] = []
-            for candidate in state_paths:
-                if candidate and candidate in decoded:
-                    val = decoded[candidate]
-                    found = True
-                    matched_keys = [candidate]
-                    break
-                normalized_candidate = self.field_map.normalize_field(candidate) if candidate else None
-                if normalized_candidate and normalized_candidate in normalized_decoded:
-                    val = normalized_decoded[normalized_candidate]
-                    found = True
-                    matched_keys = [candidate, normalized_candidate]
-                    break
+            found, val, matched_keys = self._resolve_entity_value(meta, decoded)
             if not found:
                 continue
-
-            if isinstance(val, float):
-                val = round(val, 2)
 
             if self._should_hold_pending_update(ent, val, matched_keys):
                 continue
 
-            if hasattr(ent, "_attr_is_on"):
-                ent._attr_is_on = self._coerce_bool(val)
-            elif hasattr(ent, "_attr_current_option"):
-                ent._attr_current_option = self._coerce_option(ent, val)
-            else:
-                ent._attr_native_value = val
+            self._apply_entity_value(ent, val)
 
             if ent.hass:
                 ent.async_write_ha_state()

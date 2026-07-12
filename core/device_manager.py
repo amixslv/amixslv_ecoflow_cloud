@@ -150,6 +150,14 @@ class DeviceManager:
             _LOGGER.error("DM: Debug dump setup FAILED: %s", e)
             raise
 
+        try:
+            cached_decoded = await self.hass.async_add_executor_job(self._load_cached_decoded_snapshot)
+            if cached_decoded and self.entity_generator:
+                self.entity_generator.raw_json.update(cached_decoded)
+                _LOGGER.info("DM: Restored %s cached telemetry fields", len(cached_decoded))
+        except Exception as e:
+            _LOGGER.debug("DM: Cached telemetry restore skipped: %s", e)
+
         # 5. Register device in HA
         try:
             self._register_device()
@@ -289,6 +297,36 @@ class DeviceManager:
 
     def _prepare_debug_dump_dir(self):
         self._debug_root.mkdir(parents=True, exist_ok=True)
+
+    def _load_cached_decoded_snapshot(self) -> dict:
+        latest_record = None
+        if self._debug_latest_path.exists():
+            try:
+                latest_payload = json.loads(self._debug_latest_path.read_text(encoding="utf-8"))
+                latest_record = latest_payload.get("last_record") if isinstance(latest_payload, dict) else None
+            except Exception:
+                latest_record = None
+
+        if isinstance(latest_record, dict):
+            decoded = latest_record.get("decoded")
+            if isinstance(decoded, dict) and decoded:
+                return decoded
+
+        if self._debug_history_path.exists():
+            try:
+                lines = self._debug_history_path.read_text(encoding="utf-8").splitlines()
+            except Exception:
+                lines = []
+            for line in reversed(lines[-200:]):
+                try:
+                    record = json.loads(line)
+                except Exception:
+                    continue
+                decoded = record.get("decoded") if isinstance(record, dict) else None
+                if isinstance(decoded, dict) and decoded:
+                    return decoded
+
+        return {}
 
     def _build_debug_record(
         self,
