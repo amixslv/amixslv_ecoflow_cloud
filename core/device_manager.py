@@ -203,26 +203,20 @@ class DeviceManager:
             raise
 
     def _build_mqtt_subscription_topics(self) -> list[str]:
-        topics: set[str] = set()
-        base = [
+        topics = [
             MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn),
             MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn),
         ]
 
-        for topic in base:
-            topics.add(topic)
-            topics.add(topic.lstrip("/"))
-
         if self.user_id:
-            user_topic = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(user_id=self.user_id, sn=self.device_sn)
-            topics.add(user_topic)
-            topics.add(user_topic.lstrip("/"))
+            topics.append(
+                MQTT_TOPIC_USER_DEVICE_PROPERTY.format(
+                    user_id=self.user_id,
+                    sn=self.device_sn,
+                )
+            )
 
-        wildcard_user = f"/app/+/device/property/{self.device_sn}"
-        topics.add(wildcard_user)
-        topics.add(wildcard_user.lstrip("/"))
-
-        return sorted(topics)
+        return list(dict.fromkeys(topics))
 
     # ----------------------------------------------------------------------
     # MQTT SETUP
