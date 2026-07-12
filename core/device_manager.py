@@ -11,6 +11,7 @@ from homeassistant.helpers.device_registry import async_get as async_get_device_
 from ..api.cloud_client import CloudClient
 from ..api.mqtt_client import MQTTClient
 from ..core.entity_generator import EntityGenerator
+from ..core.field_map import FieldMap
 from ..supported_devices import DEVICE_TYPE_MAP
 from ..api.message import JSONMessage
 from ..cont import (
@@ -123,12 +124,17 @@ class DeviceManager:
 
         # 3. Create EntityGenerator ONCE
         try:
+            lang = getattr(self.hass.config, "language", "en")
+            localized_names = await self.hass.async_add_executor_job(
+                FieldMap.load_localized_names, lang
+            )
             self.entity_generator = EntityGenerator(
                 manager=self,
                 hass=self.hass,
                 device_sn=self.device_sn,
                 device_type=self.device_type,
                 pb2_module=self.pb2_module,
+                localized_names=localized_names,
             )
             _LOGGER.info("DM: EntityGenerator initialized")
         except Exception as e:

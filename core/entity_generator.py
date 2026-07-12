@@ -90,13 +90,21 @@ class EntityGenerator:
         "led_mode",
     )
 
-    def __init__(self, manager, hass, device_sn: str, device_type: str, pb2_module: Any):
+    def __init__(
+        self,
+        manager,
+        hass,
+        device_sn: str,
+        device_type: str,
+        pb2_module: Any,
+        localized_names: dict[str, str] | None = None,
+    ):
         self.manager = manager
         self.hass = hass
         self.device_sn = device_sn
         self.device_type = device_type
         self.pb2 = pb2_module
-        self.field_map = FieldMap()
+        self.field_map = FieldMap(localized_names=localized_names)
 
         self.entities: dict[str, object] = {}
         self._field_meta: dict[str, dict] = {}
@@ -683,5 +691,4 @@ class EntityGenerator:
 
     def get_last_decode_debug(self):
         return copy.deepcopy(self._last_decode_debug)
-
 
