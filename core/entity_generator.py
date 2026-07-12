@@ -1,4 +1,4 @@
-﻿import base64
+import base64
 import copy
 import logging
 import time
@@ -172,7 +172,8 @@ class EntityGenerator:
             self._add_index(field_path, entity_key)
 
     def _build_field_meta(self, field: FieldDescriptor, field_path: str, source: str, is_control: bool) -> dict:
-        name = self.field_map.get_name(field_path)
+        lang = getattr(self.hass.config, "language", "en") if self.hass else "en"
+        name = self.field_map.get_localized_name(field_path, lang) or self.field_map.get_name(field_path)
         unit = self.field_map.get_unit(field_path)
         icon = self.field_map.get_icon(field_path)
         device_class = self.field_map.get_device_class(field_path)
