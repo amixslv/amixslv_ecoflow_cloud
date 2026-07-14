@@ -114,10 +114,13 @@ class MQTTClient:
         except Exception as e:
             _LOGGER.error("MQTT stop error: %s", e)
 
-    async def async_unload(self, hass: HomeAssistant):
+    async def async_unload(self, hass: HomeAssistant | None = None):
         """
         Async-friendly unload, ko var droši izsaukt no async_unload_entry.
         """
+        if hass is None:
+            self.stop()
+            return
         await hass.async_add_executor_job(self.stop)
 
     # ----------------------------------------------------------------------

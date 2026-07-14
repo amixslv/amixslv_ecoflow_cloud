@@ -1,6 +1,6 @@
 {
-    "domain":  "amixslv_ecoflow_cloud",
-    "name":  "EcoFlow Cloud (amixslv)",
+    "domain":  "ecoflow",
+    "name":  "ecoflow (amixslv)",
     "version":  "2026.5.1",
     "documentation":  "https://github.com/amixslv/amixslv_ecoflow_cloud",
     "issue_tracker":  "https://github.com/amixslv/amixslv_ecoflow_cloud/issues",
