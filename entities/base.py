@@ -36,6 +36,7 @@ class EcoFlowBaseEntity(Entity):
 
         # Runtime metadata (firmware, hw, utt.)
         self.runtime_data = {}
+        self._has_known_state = False
 
     # ------------------------------------------------------------------
     # UNIQUE ID
@@ -101,6 +102,9 @@ class EcoFlowBaseEntity(Entity):
         if self._meta.get("is_control"):
             return True
 
+        if self._has_known_state:
+            return True
+
         # Sensori pieejami, ja tiem ir pĆ„ā€dĆ„ā€jĆ„Ā zinĆ„ĀmĆ„Ā vĆ„ā€rtĆ„Ā«ba
         # (update_entities() iestata _attr_native_value / _attr_is_on)
         if hasattr(self, "_attr_native_value"):
@@ -111,4 +115,3 @@ class EcoFlowBaseEntity(Entity):
             return self._attr_is_on is not None
 
         return True
-

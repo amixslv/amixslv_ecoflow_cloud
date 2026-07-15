@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -18,6 +19,10 @@ from ..cont import (
     MQTT_TOPIC_DEVICE_PROP_LEGACY,
     MQTT_TOPIC_DEVICE_PROPERTY,
     MQTT_TOPIC_USER_DEVICE_PROPERTY,
+    MQTT_TOPIC_USER_THING_PROPERTY_GET,
+    MQTT_TOPIC_USER_THING_PROPERTY_GET_REPLY,
+    MQTT_TOPIC_USER_THING_PROPERTY_SET,
+    MQTT_TOPIC_USER_THING_PROPERTY_SET_REPLY,
     PROTO_HEADER_D_DEST,
     PROTO_HEADER_D_SRC,
     PROTO_HEADER_DEST_MAIN,
@@ -65,6 +70,8 @@ class DeviceManager:
         self._debug_root = Path(self.hass.config.path(f"{DOMAIN}_debug")) / self.device_sn
         self._debug_latest_path = self._debug_root / "latest.json"
         self._debug_history_path = self._debug_root / "history.jsonl"
+        self._last_real_telemetry_at = 0.0
+        self._snapshot_task: asyncio.Task | None = None
 
     # ----------------------------------------------------------------------
     # MAIN SETUP
@@ -137,6 +144,9 @@ class DeviceManager:
             _LOGGER.error("DM: Device registration FAILED: %s", e)
             raise
 
+        if not self._snapshot_task:
+            self._snapshot_task = self.hass.async_create_task(self._snapshot_watchdog())
+
         _LOGGER.info("DM: async_setup END for %s", self.device_sn)
         return True
 
@@ -181,6 +191,22 @@ class DeviceManager:
 
         topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
         topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
+        topic_get_reply = (
+            MQTT_TOPIC_USER_THING_PROPERTY_GET_REPLY.format(
+                user_id=self.user_id,
+                sn=self.device_sn,
+            )
+            if self.user_id
+            else None
+        )
+        topic_set_reply = (
+            MQTT_TOPIC_USER_THING_PROPERTY_SET_REPLY.format(
+                user_id=self.user_id,
+                sn=self.device_sn,
+            )
+            if self.user_id
+            else None
+        )
         topics = [
             topic1,
             topic2,
@@ -198,6 +224,10 @@ class DeviceManager:
                 [
                     topic3,
                     topic3.lstrip("/"),
+                    topic_get_reply,
+                    topic_get_reply.lstrip("/"),
+                    topic_set_reply,
+                    topic_set_reply.lstrip("/"),
                     f"/app/{self.user_id}/device/property/+",
                     f"app/{self.user_id}/device/property/+",
                 ]
@@ -246,7 +276,69 @@ class DeviceManager:
         if not decoded:
             return
 
+        debug = self.entity_generator.get_last_decode_debug()
+        header = debug.get("header") or {}
+        src = header.get("src")
+        if topic.endswith("/thing/property/get_reply") or (src is not None and src != PROTO_HEADER_SRC_CLOUD):
+            self._last_real_telemetry_at = time.time()
+
         self.hass.loop.call_soon_threadsafe(self._apply_decoded_update, decoded)
+
+    async def _snapshot_watchdog(self):
+        await asyncio.sleep(2)
+        while True:
+            try:
+                if self.mqtt and self.mqtt.connected:
+                    idle_for = time.time() - self._last_real_telemetry_at
+                    if self._last_real_telemetry_at == 0.0 or idle_for >= 2.0:
+                        await self._request_full_snapshot()
+                await asyncio.sleep(2)
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:
+                _LOGGER.error("DM: Snapshot watchdog failed: %s", exc)
+                await asyncio.sleep(2)
+
+    async def _request_full_snapshot(self):
+        if not self.mqtt or not self.user_id:
+            return
+
+        payload = self._build_full_snapshot_payload()
+        if not payload:
+            return
+
+        topic = MQTT_TOPIC_USER_THING_PROPERTY_GET.format(
+            user_id=self.user_id,
+            sn=self.device_sn,
+        )
+        _LOGGER.debug("DM: REQUEST SNAPSHOT topic=%s", topic)
+        self.mqtt.publish(topic, payload, qos=1)
+
+    def _build_full_snapshot_payload(self) -> bytes:
+        try:
+            proto_prefix = DEVICE_TYPE_MAP[self.device_label]["proto_prefix"]
+            header_cls = getattr(self.pb2_module, f"{proto_prefix}Header", None) if self.pb2_module else None
+            send_cls = getattr(self.pb2_module, f"{proto_prefix}SendHeaderMsg", None) if self.pb2_module else None
+            if not header_cls or not send_cls:
+                return b""
+
+            header = header_cls()
+            header.src = PROTO_HEADER_SRC_CLOUD
+            header.dest = PROTO_HEADER_SRC_CLOUD
+            header.seq = int(time.time() * 1000) & 0x7FFFFFFF
+            if self.device_sn:
+                header.device_sn = self.device_sn
+            try:
+                setattr(header, "from", self.client_id or "HomeAssistant")
+            except (AttributeError, TypeError):
+                pass
+
+            wrapper = send_cls()
+            wrapper.msg.append(header)
+            return wrapper.SerializeToString()
+        except Exception as exc:
+            _LOGGER.error("DM: Failed to build snapshot payload: %s", exc)
+            return b""
 
     # ----------------------------------------------------------------------
     # APPLY PENDING UPDATE (HA EVENT LOOP)
@@ -397,7 +489,7 @@ class DeviceManager:
     async def send_set_command(self, field: str, value):
         if not self.mqtt:
             _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
-            return
+            return False
 
         data = {
             "sn": self.device_sn,
@@ -453,14 +545,14 @@ class DeviceManager:
         if not payload:
             if not data["params"]:
                 _LOGGER.error("DM: Invalid set command field: %s", field)
-                return
+                return False
 
             msg = JSONMessage(data)
             payload = msg.to_mqtt_payload()
 
             if not payload:
                 _LOGGER.error("DM: Empty MQTT payload for set command %s=%s", field, value)
-                return
+                return False
 
         # Primary topic same as telemetry topic (App API community-verified).
         # Also send to userId-prefixed topic as fallback in case broker routing differs.
@@ -475,6 +567,35 @@ class DeviceManager:
         )
 
         _LOGGER.debug("DM: SEND SET %s=%s topic=%s proto=%s", field, value, topic, used_proto)
-        self.mqtt.publish(topic, payload, qos=0)
+        set_topic = (
+            MQTT_TOPIC_USER_THING_PROPERTY_SET.format(
+                user_id=self.user_id,
+                sn=self.device_sn,
+            )
+            if self.user_id
+            else None
+        )
+        published = False
+        if set_topic:
+            published = self.mqtt.publish(set_topic, payload, qos=1) or published
+        published = self.mqtt.publish(topic, payload, qos=0) or published
         if topic_alt and topic_alt != topic:
-            self.mqtt.publish(topic_alt, payload, qos=0)
+            published = self.mqtt.publish(topic_alt, payload, qos=0) or published
+
+        if published and self.entity_generator:
+            # Keep UI stable while broker/device sends delayed snapshots.
+            self.entity_generator.register_pending_write(field, value, ttl_seconds=5.0)
+            if field.startswith("cfg_energy_backup."):
+                self.entity_generator.register_pending_write(
+                    field.split(".", 1)[1], value, ttl_seconds=5.0
+                )
+            elif field == "cfg_dc12v_out_open":
+                self.entity_generator.register_pending_write("dc_out_open", value, ttl_seconds=5.0)
+            elif field == "cfg_led_mode":
+                self.entity_generator.register_pending_write("led_mode", value, ttl_seconds=5.0)
+            elif field.startswith("cfg_"):
+                self.entity_generator.register_pending_write(
+                    field.removeprefix("cfg_"), value, ttl_seconds=5.0
+                )
+
+        return published

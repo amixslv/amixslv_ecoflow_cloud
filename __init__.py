@@ -29,6 +29,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload integration."""
     manager: DeviceManager = hass.data[DOMAIN].get(entry.entry_id)
 
+    if manager and getattr(manager, "_snapshot_task", None):
+        manager._snapshot_task.cancel()
+
     if manager and hasattr(manager, "mqtt"):
         await manager.mqtt.async_unload()
 

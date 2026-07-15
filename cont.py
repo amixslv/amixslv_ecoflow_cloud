@@ -20,6 +20,10 @@ API_DEVICE_LIST_PATHS = (
 MQTT_TOPIC_DEVICE_PROPERTY = "/app/device/property/{sn}"
 MQTT_TOPIC_DEVICE_PROP_LEGACY = "/app/device/prop/{sn}"
 MQTT_TOPIC_USER_DEVICE_PROPERTY = "/app/{user_id}/device/property/{sn}"
+MQTT_TOPIC_USER_THING_PROPERTY_GET = "/app/{user_id}/{sn}/thing/property/get"
+MQTT_TOPIC_USER_THING_PROPERTY_GET_REPLY = "/app/{user_id}/{sn}/thing/property/get_reply"
+MQTT_TOPIC_USER_THING_PROPERTY_SET = "/app/{user_id}/{sn}/thing/property/set"
+MQTT_TOPIC_USER_THING_PROPERTY_SET_REPLY = "/app/{user_id}/{sn}/thing/property/set_reply"
 
 PROTO_SET_CMD_FUNC = 254
 PROTO_SET_CMD_ID = 17
