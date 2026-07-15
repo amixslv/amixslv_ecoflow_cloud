@@ -181,13 +181,27 @@ class DeviceManager:
 
         topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
         topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
-        topics = [topic1, topic2]
+        topics = [
+            topic1,
+            topic2,
+            topic1.lstrip("/"),
+            topic2.lstrip("/"),
+            "/app/device/property/+",
+            "app/device/property/+",
+        ]
 
         if self.user_id:
             topic3 = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(
                 user_id=self.user_id, sn=self.device_sn
             )
-            topics.append(topic3)
+            topics.extend(
+                [
+                    topic3,
+                    topic3.lstrip("/"),
+                    f"/app/{self.user_id}/device/property/+",
+                    f"app/{self.user_id}/device/property/+",
+                ]
+            )
             _LOGGER.info("DM: Subscribed to topics: %s", topics)
         else:
             _LOGGER.info("DM: Subscribed to topics %s and %s (no user_id)", topic1, topic2)

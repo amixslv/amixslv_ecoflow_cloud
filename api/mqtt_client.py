@@ -135,8 +135,11 @@ class MQTTClient:
         rc: ReasonCode,
         properties: Properties | None = None,
     ):
-        if rc == 0:
+        # Paho v2 may provide ReasonCode object instead of plain int.
+        is_failure = rc.is_failure if hasattr(rc, "is_failure") else int(rc) != 0
+        if not is_failure:
             self.connected = True
+            _LOGGER.info("MQTT connected: %s", rc)
             if self._topics:
                 topic_pairs = [(t, 1) for t in self._topics]
                 self._client.subscribe(topic_pairs)

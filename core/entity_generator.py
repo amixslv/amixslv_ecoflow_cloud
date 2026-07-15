@@ -318,6 +318,12 @@ class EntityGenerator:
                         header.enc_type, header.seq,
                     )
 
+                    # Device-origin telemetry packets may come encrypted in header_message
+                    # format (enc_type=1). Apply the same XOR decoding used in legacy parser.
+                    if getattr(header, "enc_type", 0) == 1 and getattr(header, "src", None) != PROTO_HEADER_SRC_CLOUD:
+                        seq = int(getattr(header, "seq", 0))
+                        pdata = bytes([(b ^ seq) & 0xFF for b in pdata])
+
                     _bsh, _bdh, _bsc = None, {}, -1
                     for suffix in PROTO_MESSAGE_SUFFIXES:
                         message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
