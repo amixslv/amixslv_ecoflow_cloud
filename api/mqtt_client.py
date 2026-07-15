@@ -96,10 +96,10 @@ class MQTTClient:
             self._client.subscribe(topic_pairs)
             _LOGGER.info("Subscribed to MQTT topics: %s", topic_pairs)
 
-    def publish(self, topic: str, payload: bytes):
+    def publish(self, topic: str, payload: bytes, qos: int = 1):
         """Publish a message."""
         try:
-            info = self._client.publish(topic, payload, qos=1)
+            info = self._client.publish(topic, payload, qos=qos)
             _LOGGER.debug("Published to %s: %s (%s)", topic, payload, info.is_published())
         except Exception as e:
             _LOGGER.error("MQTT publish error: %s", e)
