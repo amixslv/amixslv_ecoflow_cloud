@@ -1,8 +1,8 @@
 import json
 import logging
+import time
 from datetime import datetime, timezone
 import importlib
-import time
 from pathlib import Path
 
 from homeassistant.core import HomeAssistant, callback
@@ -60,15 +60,6 @@ class DeviceManager:
         self.user_id: str | None = None
         self.client_id: str | None = None
 
-        # RATE-LIMIT LOGGING
-        self._last_log_time = 0.0
-        self._log_interval = 10.0  # seconds
-
-        # RATE-LIMIT ENTITY UPDATES
-        self._last_update_time = 0.0
-        self._update_interval = 0.5  # seconds
-        self._pending_decoded: dict | None = None
-        self._update_scheduled = False
         self._pending_debug_records: list[dict] = []
         self._debug_flush_scheduled = False
         self._debug_root = Path(self.hass.config.path(f"{DOMAIN}_debug")) / self.device_sn
@@ -159,7 +150,8 @@ class DeviceManager:
         except KeyError:
             raise ValueError(f"Unsupported device_label: {self.device_label}")
 
-        full_path = f"custom_components.amixslv_ecoflow_cloud.protocol.{proto_file}"
+        base_pkg = __package__.rsplit(".", 1)[0]
+        full_path = f"{base_pkg}.protocol.{proto_file}"
 
         try:
             self.pb2_module = await self.hass.async_add_executor_job(
@@ -189,9 +181,18 @@ class DeviceManager:
 
         topic1 = MQTT_TOPIC_DEVICE_PROPERTY.format(sn=self.device_sn)
         topic2 = MQTT_TOPIC_DEVICE_PROP_LEGACY.format(sn=self.device_sn)
+        topics = [topic1, topic2]
 
-        self.mqtt.subscribe([topic1, topic2])
-        _LOGGER.info("DM: Subscribed to topics %s and %s", topic1, topic2)
+        if self.user_id:
+            topic3 = MQTT_TOPIC_USER_DEVICE_PROPERTY.format(
+                user_id=self.user_id, sn=self.device_sn
+            )
+            topics.append(topic3)
+            _LOGGER.info("DM: Subscribed to topics: %s", topics)
+        else:
+            _LOGGER.info("DM: Subscribed to topics %s and %s (no user_id)", topic1, topic2)
+
+        self.mqtt.subscribe(topics)
 
     # ----------------------------------------------------------------------
     # MQTT MESSAGE HANDLER
@@ -199,12 +200,7 @@ class DeviceManager:
     @callback
     def _on_mqtt_message(self, topic: str, payload: bytes):
         """Handle incoming MQTT messages (called from Paho thread)."""
-        now = time.time()
-
-        # Rate-limit logging
-        if now - self._last_log_time > self._log_interval:
-            _LOGGER.debug("DM: MQTT MESSAGE topic=%s len=%s", topic, len(payload))
-            self._last_log_time = now
+        _LOGGER.debug("DM: MQTT MESSAGE topic=%s len=%s", topic, len(payload))
 
         if not self.entity_generator:
             _LOGGER.error("DM: EntityGenerator not initialized yet")
@@ -236,39 +232,21 @@ class DeviceManager:
         if not decoded:
             return
 
-        self._pending_decoded = decoded
-
-        if self._update_scheduled:
-            return
-
-        self._update_scheduled = True
-        self.hass.loop.call_soon_threadsafe(self._apply_pending_update)
+        self.hass.loop.call_soon_threadsafe(self._apply_decoded_update, decoded)
 
     # ----------------------------------------------------------------------
     # APPLY PENDING UPDATE (HA EVENT LOOP)
     # ----------------------------------------------------------------------
-    def _apply_pending_update(self):
-        """Apply the latest decoded message on HA event loop."""
-        payload = self._pending_decoded
-        if not payload:
-            self._update_scheduled = False
-            return
-
+    def _apply_decoded_update(self, payload: dict):
+        """Apply decoded message on HA event loop immediately."""
         if not self.entity_generator:
-            _LOGGER.error("DM: EntityGenerator not initialized in _apply_pending_update")
-            self._update_scheduled = False
+            _LOGGER.error("DM: EntityGenerator not initialized in _apply_decoded_update")
             return
 
         try:
-            self._pending_decoded = None
             self.entity_generator.update_entities(payload)
         except Exception as e:
             _LOGGER.error("DM: update_entities FAILED: %s", e)
-        finally:
-            self._update_scheduled = False
-            if self._pending_decoded is not None:
-                self._update_scheduled = True
-                self.hass.loop.call_soon(self._apply_pending_update)
 
     def _prepare_debug_dump_dir(self):
         self._debug_root.mkdir(parents=True, exist_ok=True)

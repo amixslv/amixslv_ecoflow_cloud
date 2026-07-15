@@ -1,5 +1,5 @@
-DOMAIN = "amixslv_ecoflow_cloud"
-LEGACY_DOMAIN = "ecoflow"
+DOMAIN = "ecoflow"
+LEGACY_DOMAIN = "amixslv_ecoflow_cloud"
 
 PLATFORMS = [
     "sensor",
@@ -7,7 +7,6 @@ PLATFORMS = [
     "number",
     "select",
     "binary_sensor",
-    "button",
 ]
 
 API_HOST = "api.ecoflow.com"
