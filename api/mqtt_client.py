@@ -96,13 +96,18 @@ class MQTTClient:
             self._client.subscribe(topic_pairs)
             _LOGGER.info("Subscribed to MQTT topics: %s", topic_pairs)
 
-    def publish(self, topic: str, payload: bytes, qos: int = 1):
+    def publish(self, topic: str, payload: bytes, qos: int = 1) -> bool:
         """Publish a message."""
+        if not self.connected:
+            _LOGGER.debug("MQTT publish skipped while disconnected: topic=%s", topic)
+            return False
         try:
             info = self._client.publish(topic, payload, qos=qos)
-            _LOGGER.debug("Published to %s: %s (%s)", topic, payload, info.is_published())
+            _LOGGER.debug("Published to %s qos=%s rc=%s", topic, qos, info.rc)
+            return info.rc == 0
         except Exception as e:
             _LOGGER.error("MQTT publish error: %s", e)
+            return False
 
     def stop(self):
         """Stop MQTT client (sync)."""
@@ -135,8 +140,11 @@ class MQTTClient:
         rc: ReasonCode,
         properties: Properties | None = None,
     ):
-        if rc == 0:
+        # Paho v2 may provide ReasonCode object instead of plain int.
+        is_failure = rc.is_failure if hasattr(rc, "is_failure") else int(rc) != 0
+        if not is_failure:
             self.connected = True
+            _LOGGER.info("MQTT connected: %s", rc)
             if self._topics:
                 topic_pairs = [(t, 1) for t in self._topics]
                 self._client.subscribe(topic_pairs)

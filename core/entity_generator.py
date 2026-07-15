@@ -1,6 +1,7 @@
 import base64
 import copy
 import logging
+import time
 from typing import Any
 
 from google.protobuf.descriptor import FieldDescriptor
@@ -104,6 +105,7 @@ class EntityGenerator:
         self._last_msg_type: str | None = None
         self._last_proto_key: str | None = None
         self._last_decode_debug: dict[str, Any] = {}
+        self._pending_writes: dict[str, tuple[Any, float]] = {}
 
         if self.pb2:
             self._load_proto_definitions()
@@ -261,6 +263,63 @@ class EntityGenerator:
         field_name = field_path.split(".")[-1].lower()
         return any(hint in field_name for hint in self.CONTROL_SELECT_HINTS)
 
+    def _decode_proto_candidates(self, prefix: str, pdata: bytes) -> tuple[str | None, dict, int]:
+        best_suffix = None
+        best_data: dict = {}
+        best_score = -1
+
+        for suffix in PROTO_MESSAGE_SUFFIXES:
+            message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
+            if not message_cls:
+                continue
+
+            try:
+                msg = message_cls()
+                msg.ParseFromString(pdata)
+                raw = MessageToDict(msg, preserving_proto_field_name=True)
+                flat = flatten_dict(raw)
+                if not flat:
+                    continue
+                score = sum(1 for key in flat if key in self._field_index)
+                if score > best_score:
+                    best_suffix = suffix
+                    best_data = flat
+                    best_score = score
+            except Exception:
+                continue
+
+        return best_suffix, best_data, best_score
+
+    def _decode_header_message_headers(self, prefix: str, headers) -> tuple[str | None, dict, int]:
+        merged: dict = {}
+        matched_suffixes: list[str] = []
+        total_score = 0
+
+        for header in headers:
+            pdata = getattr(header, "pdata", b"")
+            if not pdata:
+                continue
+
+            if getattr(header, "enc_type", 0) == 1 and getattr(header, "src", None) != PROTO_HEADER_SRC_CLOUD:
+                seq = int(getattr(header, "seq", 0))
+                pdata = bytes([(b ^ seq) & 0xFF for b in pdata])
+
+            suffix, decoded, score = self._decode_proto_candidates(prefix, pdata)
+            if not decoded:
+                continue
+
+            merged.update(decoded)
+            if suffix:
+                matched_suffixes.append(suffix)
+            if score > 0:
+                total_score += score
+
+        if not merged:
+            return None, {}, 0
+
+        matched = "+".join(dict.fromkeys(matched_suffixes)) if matched_suffixes else None
+        return matched, merged, total_score or len(merged)
+
     def _decode_proto_payload(self, payload: bytes) -> tuple[str | None, dict]:
         if not self.pb2:
             self._last_decode_debug = {
@@ -296,8 +355,8 @@ class EntityGenerator:
                 try:
                     header_msg = HeaderMessage()
                     header_msg.ParseFromString(payload)
-                    header = header_msg.header[-1]
-                    pdata = header.pdata
+                    headers = list(header_msg.header)
+                    header = headers[-1]
                     self._last_decode_debug["header"] = {
                         "parser": "header_message",
                         "src": getattr(header, "src", None),
@@ -311,33 +370,18 @@ class EntityGenerator:
                         "time_snap": getattr(header, "time_snap", None),
                         "device_sn": getattr(header, "device_sn", None),
                         "from": getattr(header, "from", None),
+                        "header_count": len(headers),
                     }
                     _LOGGER.debug(
                         "PROTO header: src=%s dest=%s cmd_func=%s cmd_id=%s enc=%s seq=%s",
                         header.src, header.dest, header.cmd_func, header.cmd_id,
                         header.enc_type, header.seq,
                     )
-
-                    _bsh, _bdh, _bsc = None, {}, -1
-                    for suffix in PROTO_MESSAGE_SUFFIXES:
-                        message_cls = getattr(self.pb2, f"{prefix}{suffix}", None)
-                        if not message_cls:
-                            continue
-
-                        try:
-                            msg = message_cls()
-                            msg.ParseFromString(pdata)
-                            raw = MessageToDict(msg, preserving_proto_field_name=True)
-                            _dd = flatten_dict(raw)
-                            if not _dd:
-                                continue
-                            _sc = sum(1 for k in _dd if k in self._field_index)
-                            if _sc > _bsc:
-                                _bsc, _bsh, _bdh = _sc, suffix, _dd
-                        except Exception:
-                            continue
+                    _bsh, _bdh, _bsc = self._decode_header_message_headers(prefix, headers)
                     if _bdh:
-                        self._last_decode_debug["decode_path"] = "header_message"
+                        self._last_decode_debug["decode_path"] = (
+                            "header_message_multi" if len(headers) > 1 else "header_message"
+                        )
                         self._last_decode_debug["matched_proto"] = _bsh
                         self._last_decode_debug["matched_fields"] = _bsc
                         return _bsh, _bdh
@@ -438,7 +482,7 @@ class EntityGenerator:
         if not decoded:
             return
 
-        self.raw_json = decoded
+        self.raw_json.update(decoded)
 
         diag = self.entities.get("diagnostics")
         if diag and hasattr(diag, "set_last_message_type"):
@@ -469,24 +513,44 @@ class EntityGenerator:
                 continue
 
             val = None
-            found = False
+            found_path = None
             for candidate in state_paths:
                 if candidate and candidate in decoded:
                     val = decoded[candidate]
-                    found = True
+                    found_path = candidate
                     break
-            if not found:
+            if not found_path:
                 continue
+
+            pending = self._get_pending_write(found_path)
+            if pending is not None:
+                expected, _ = pending
+                if str(val) == str(expected):
+                    self._clear_pending_write(found_path)
+                else:
+                    # Ignore stale telemetry while waiting for command confirmation.
+                    continue
 
             if isinstance(val, float):
                 val = round(val, 2)
 
             if hasattr(ent, "_attr_is_on"):
-                ent._attr_is_on = self._coerce_bool(val)
+                coerced = self._coerce_bool(val)
+                if coerced is None:
+                    continue
+                ent._attr_is_on = coerced
             elif hasattr(ent, "_attr_current_option"):
-                ent._attr_current_option = self._coerce_option(ent, val)
+                coerced = self._coerce_option(ent, val)
+                if coerced is None:
+                    continue
+                ent._attr_current_option = coerced
             else:
+                if val is None:
+                    continue
                 ent._attr_native_value = val
+
+            if hasattr(ent, "_has_known_state"):
+                ent._has_known_state = True
 
             if ent.hass:
                 ent.async_write_ha_state()
@@ -531,6 +595,23 @@ class EntityGenerator:
             return BinarySensor(self, self.device_sn, self.device_type, field, meta)
 
         return None
+
+    def register_pending_write(self, field_path: str, value: Any, ttl_seconds: float = 5.0):
+        expires_at = time.time() + ttl_seconds
+        self._pending_writes[field_path] = (value, expires_at)
+
+    def _get_pending_write(self, field_path: str) -> tuple[Any, float] | None:
+        pending = self._pending_writes.get(field_path)
+        if not pending:
+            return None
+        expected, expires_at = pending
+        if time.time() > expires_at:
+            self._pending_writes.pop(field_path, None)
+            return None
+        return expected, expires_at
+
+    def _clear_pending_write(self, field_path: str):
+        self._pending_writes.pop(field_path, None)
 
     def has_field(self, field_path: str) -> bool:
         return field_path in self._field_index
