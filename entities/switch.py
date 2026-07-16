@@ -11,7 +11,20 @@ class Switch(EcoFlowBaseEntity, SwitchEntity):
 
     def __init__(self, generator, device_sn, device_type, field, meta):
         super().__init__(generator, device_sn, device_type, field, meta)
-        self._attr_is_on = None  # vērtība tiks iestatīta update_entities()
+        self._attr_is_on = False
+
+        # If we already have a known value in the cumulative proto snapshot, use it.
+        state_paths = meta.get("state_field_paths") or [field]
+        for candidate in state_paths:
+            val = generator.get_field_value(candidate)
+            if isinstance(val, bool):
+                self._attr_is_on = val
+                self._has_known_state = True
+                break
+            if isinstance(val, (int, float)):
+                self._attr_is_on = val != 0
+                self._has_known_state = True
+                break
 
     @property
     def is_on(self):

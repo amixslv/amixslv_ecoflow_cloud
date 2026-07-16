@@ -95,7 +95,12 @@ class EntityGenerator:
         self.device_sn = device_sn
         self.device_type = device_type
         self.pb2 = pb2_module
-        self.field_map = FieldMap()
+        language = "en"
+        try:
+            language = getattr(hass.config, "language", "en") or "en"
+        except Exception:
+            language = "en"
+        self.field_map = FieldMap(FieldMap.load_localized_names(language))
 
         self.entities: dict[str, object] = {}
         self._field_meta: dict[str, dict] = {}
@@ -214,10 +219,17 @@ class EntityGenerator:
                     state_field_paths.append("cms_oil_self_start")
                 alias = f"energy_strategy_operate_mode.{leaf}"
             elif field_path == "cfg_dc12v_out_open":
+                state_field_paths.append("cfg_dc_12v_out_open")
+                state_field_paths.append("dc_12v_out_open")
                 alias = "dc_out_open"
             elif field_path == "cfg_led_mode":
                 alias = "led_mode"
+            elif field_path == "en_beep":
+                state_field_paths.append("cfg_beep_en")
+            elif field_path == "xboost_en":
+                state_field_paths.append("cfg_xboost_en")
             elif field_path == "cms_oil_self_start":
+                state_field_paths.append("cfg_cms_oil_self_start")
                 state_field_paths.append("cfg_energy_strategy_operate_mode.operate_self_powered_open")
                 alias = "energy_strategy_operate_mode.operate_self_powered_open"
             elif field_path.startswith("cfg_"):
@@ -277,6 +289,8 @@ class EntityGenerator:
         if is_control:
             # Controls: switch/button only. Number/select should be in Configuration.
             if meta.get("type") in ("number", "select"):
+                meta["entity_category"] = EntityCategory.CONFIG
+            elif self.field_map.is_config_control(field_path):
                 meta["entity_category"] = EntityCategory.CONFIG
             else:
                 meta["entity_category"] = None

@@ -114,6 +114,11 @@ class FieldMap:
     MAX_MAP = {}
     STEP_MAP = {}
     OPTIONS_MAP = {}
+    CONFIG_CONTROL_FIELDS = {
+        "llc_gfci_flag",
+        "operate_intelligent_schedule_mode_open",
+        "operate_scheduled_open",
+    }
     TOKEN_LABELS = {
         "ac": "AC",
         "dc": "DC",
@@ -183,10 +188,18 @@ class FieldMap:
     # AUTO NAME
     # ------------------------------------------------------------------
     def get_name(self, field: str) -> str:
+        localized = self._localized_names.get(field)
+        if localized:
+            return localized
+
+        normalized = self._normalize_field(field)
+        localized = self._localized_names.get(normalized.lower()) or self._localized_names.get(normalized)
+        if localized:
+            return localized
+
         if field in self.NAME_MAP:
             return self.NAME_MAP[field]
 
-        normalized = self._normalize_field(field)
         if normalized in self.NAME_MAP:
             return self.NAME_MAP[normalized]
 
@@ -357,6 +370,8 @@ class FieldMap:
         f = normalized.lower()
 
         if is_control:
+            if self.is_config_control(field):
+                return EntityCategory.CONFIG
             if normalized.startswith("cfg_"):
                 return EntityCategory.CONFIG
             if any(x in f for x in ("timeout", "standby", "screen_off", "utc_", "timezone", "limit", "mode", "type", "beep", "xboost", "memory")):
@@ -425,6 +440,12 @@ class FieldMap:
             "pow_get_ac_in",
         }
         return normalized in energy_focus
+
+    def is_hidden_control(self, field: str) -> bool:
+        return False
+
+    def is_config_control(self, field: str) -> bool:
+        return self._normalize_field(field).lower() in self.CONFIG_CONTROL_FIELDS
 
     # ------------------------------------------------------------------
     # AUTO ENUM OPTIONS
