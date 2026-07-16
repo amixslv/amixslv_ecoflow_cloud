@@ -100,8 +100,15 @@
       "water_in_flag": { "name": "Udensa detekcijas pazime" }
     },
     "switch": {
+      "cfg_ac_out_open": { "name": "AC izeja" },
+      "cfg_dc12v_out_open": { "name": "12V DC izeja" },
+      "cfg_usb_open": { "name": "USB izeja" },
       "en_beep": { "name": "Skanas signali" },
+      "cfg_bypass_out_disable": { "name": "Disable grid bypass" },
       "xboost_en": { "name": "X-Boost" },
+      "operate_tou_mode_open": { "name": "TOU mode" },
+      "operate_self_powered_open": { "name": "Self-powered" },
+      "storm_pattern_enable": { "name": "Storm guard" },
       "output_power_off_memory": { "name": "Atcereties izejas stavokli" }
     },
     "number": {

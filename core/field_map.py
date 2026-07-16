@@ -77,9 +77,19 @@ class FieldMap:
         "plug_in_info_dcp_dsg_chg_type": "DCP Charge/Discharge Type",
         "plug_in_info_dcp_sn": "DCP Serial Number",
         "en_beep": "Beep Enabled",
+        "cfg_ac_out_open": "AC Output",
+        "cfg_dc12v_out_open": "12V DC Output",
+        "cfg_usb_open": "USB Output",
+        "cfg_bypass_out_disable": "Disable Grid Bypass",
         "xboost_en": "X-Boost Enabled",
         "cms_max_chg_soc": "Max Charge SOC",
         "cms_min_dsg_soc": "Min Discharge SOC",
+        "cms_oil_self_start": "Self-powered",
+        "operate_self_powered_open": "Self-powered",
+        "operate_tou_mode_open": "TOU Mode",
+        "storm_pattern_enable": "Storm Guard",
+        "storm_pattern_open_flag": "Storm Guard Active",
+        "tou_gird_chg_stop_soc": "TOU Grid Charge Stop SOC",
         "output_power_off_memory": "Output Power-Off Memory",
         "dev_standby_time": "Device Standby Time",
         "screen_off_time": "Screen Off Time",
@@ -390,7 +400,7 @@ class FieldMap:
         normalized = self._normalize_field(field).lower()
 
         if normalized == "cfg_power_off":
-            return "switch"
+            return "button"
         if any(x in normalized for x in ("power_off", "reconnect", "reset", "clear", "restart", "shutdown")):
             return "button"
         if normalized.endswith(("_en", "_enable", "_enabled", "_flag", "_switch", "_open", "_close")):

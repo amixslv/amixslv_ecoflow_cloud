@@ -447,6 +447,16 @@ class DeviceManager:
         if not parts:
             return {}
 
+        if len(parts) >= 2 and parts[-1].isdigit():
+            index = int(parts[-1])
+            list_field = parts[-2]
+            base_path = ".".join(parts[:-1])
+            list_payload = self._build_repeated_scalar_payload(base_path, index, value)
+            payload = {list_field: list_payload}
+            for part in reversed(parts[:-2]):
+                payload = {part: payload}
+            return payload
+
         payload = value
         for part in reversed(parts):
             payload = {part: payload}
@@ -459,6 +469,38 @@ class DeviceManager:
         parts = [part for part in field_path.split(".") if part]
         if not parts:
             raise ValueError("empty proto field path")
+
+        # Repeated scalar slot: cfg_tou_strategy.tou_hours_strategy.<index>
+        if len(parts) >= 2 and parts[-1].isdigit():
+            index = int(parts[-1])
+            repeated_name = parts[-2]
+            repeated_base_path = ".".join(parts[:-1])
+            current = msg
+            for part in parts[:-2]:
+                current = getattr(current, part)
+
+            field_desc = current.DESCRIPTOR.fields_by_name.get(repeated_name)
+            if not field_desc:
+                raise ValueError(f"unknown repeated field: {repeated_name}")
+
+            int_types = {
+                FieldDescriptor.TYPE_INT32, FieldDescriptor.TYPE_INT64,
+                FieldDescriptor.TYPE_UINT32, FieldDescriptor.TYPE_UINT64,
+                FieldDescriptor.TYPE_SINT32, FieldDescriptor.TYPE_SINT64,
+                FieldDescriptor.TYPE_FIXED32, FieldDescriptor.TYPE_FIXED64,
+                FieldDescriptor.TYPE_SFIXED32, FieldDescriptor.TYPE_SFIXED64,
+                FieldDescriptor.TYPE_BOOL,
+            }
+            float_types = {FieldDescriptor.TYPE_FLOAT, FieldDescriptor.TYPE_DOUBLE}
+            if field_desc.type in int_types:
+                value = int(value)
+            elif field_desc.type in float_types:
+                value = float(value)
+
+            repeated_field = getattr(current, repeated_name)
+            values = self._build_repeated_scalar_payload(repeated_base_path, index, value)
+            repeated_field.extend(values)
+            return
 
         current = msg
         for part in parts[:-1]:
@@ -484,9 +526,57 @@ class DeviceManager:
 
         setattr(current, last, value)
 
-    # SEND SET COMMAND
-    # ----------------------------------------------------------------------
-    async def send_set_command(self, field: str, value):
+    def _build_repeated_scalar_payload(self, base_path: str, index: int, value):
+        values_by_index: dict[int, float | int | str] = {}
+        max_index = index
+
+        if self.entity_generator and hasattr(self.entity_generator, "get_raw_json"):
+            raw_json = self.entity_generator.get_raw_json() or {}
+            prefixes = [f"{base_path}."]
+            if base_path.startswith("cfg_"):
+                prefixes.append(f"{base_path.removeprefix('cfg_')}.")
+            for key, cached in raw_json.items():
+                for prefix in prefixes:
+                    if not key.startswith(prefix):
+                        continue
+                    suffix = key[len(prefix):]
+                    if not suffix.isdigit():
+                        continue
+                    idx = int(suffix)
+                    values_by_index[idx] = cached
+                    if idx > max_index:
+                        max_index = idx
+                    break
+
+        values = [0] * (max_index + 1)
+        for idx, cached in values_by_index.items():
+            if 0 <= idx <= max_index:
+                values[idx] = cached
+        values[index] = value
+        return values
+
+    @staticmethod
+    def _is_true_value(value) -> bool:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return value != 0
+        if isinstance(value, str):
+            return value.strip().lower() in ("1", "true", "on", "yes")
+        return False
+
+    @staticmethod
+    def _is_tou_mode_field(field: str) -> bool:
+        return field == "cfg_energy_strategy_operate_mode.operate_tou_mode_open"
+
+    @staticmethod
+    def _is_self_powered_field(field: str) -> bool:
+        return field in {
+            "cms_oil_self_start",
+            "cfg_energy_strategy_operate_mode.operate_self_powered_open",
+        }
+
+    async def _send_set_command_internal(self, field: str, value):
         if not self.mqtt:
             _LOGGER.error("DM: MQTT client not initialized, cannot send set command")
             return False
@@ -599,3 +689,19 @@ class DeviceManager:
                 )
 
         return published
+
+    # SEND SET COMMAND
+    # ----------------------------------------------------------------------
+    async def send_set_command(self, field: str, value):
+        published = await self._send_set_command_internal(field, value)
+        if not published:
+            return False
+
+        # TOU un Self-powered ir savstarpēji ekskluzīvi režīmi.
+        if self._is_true_value(value) and self._is_tou_mode_field(field):
+            if not await self._send_set_command_internal("cfg_energy_strategy_operate_mode.operate_self_powered_open", 0):
+                await self._send_set_command_internal("cms_oil_self_start", 0)
+        elif self._is_true_value(value) and self._is_self_powered_field(field):
+            await self._send_set_command_internal("cfg_energy_strategy_operate_mode.operate_tou_mode_open", 0)
+
+        return True

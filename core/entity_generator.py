@@ -151,10 +151,12 @@ class EntityGenerator:
 
     def _register_message_fields(self, message_cls, source: str, is_control: bool, parent_path: str = ""):
         for field in message_cls.DESCRIPTOR.fields:
-            if field.label == FieldDescriptor.LABEL_REPEATED and field.type != FieldDescriptor.TYPE_MESSAGE:
-                continue
-
             field_path = f"{parent_path}.{field.name}" if parent_path else field.name
+
+            if field.label == FieldDescriptor.LABEL_REPEATED and field.type != FieldDescriptor.TYPE_MESSAGE:
+                if is_control and field_path == "cfg_tou_strategy.tou_hours_strategy":
+                    self._register_tou_hour_slots(field, source, field_path)
+                continue
 
             if field.type == FieldDescriptor.TYPE_MESSAGE:
                 nested_cls = self._resolve_nested_message(field)
@@ -170,6 +172,20 @@ class EntityGenerator:
             self._field_meta[entity_key] = meta
             self._add_index(field_path, entity_key)
 
+    def _register_tou_hour_slots(self, field: FieldDescriptor, source: str, field_path: str):
+        # 7 days * 24 hours tariff matrix
+        for idx in range(168):
+            slot_path = f"{field_path}.{idx}"
+            entity_key = self._entity_key(source, slot_path)
+            if entity_key in self._field_meta:
+                continue
+            meta = self._build_field_meta(field, slot_path, source, is_control=True)
+            day = idx // 24
+            hour = idx % 24
+            meta["name"] = f"TOU tariff day {day + 1} hour {hour:02d}"
+            self._field_meta[entity_key] = meta
+            self._add_index(slot_path, entity_key)
+
     def _build_field_meta(self, field: FieldDescriptor, field_path: str, source: str, is_control: bool) -> dict:
         name = self.field_map.get_name(field_path)
         unit = self.field_map.get_unit(field_path)
@@ -183,10 +199,27 @@ class EntityGenerator:
             alias = field_path
             if field_path.startswith("cfg_energy_backup."):
                 alias = field_path.split(".", 1)[1]
+            elif field_path.startswith("cfg_storm_pattern."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                alias = f"storm_pattern.{leaf}"
+            elif field_path.startswith("cfg_tou_strategy."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                alias = f"tou_strategy.{leaf}"
+            elif field_path.startswith("cfg_energy_strategy_operate_mode."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                if leaf == "operate_self_powered_open":
+                    state_field_paths.append("cms_oil_self_start")
+                alias = f"energy_strategy_operate_mode.{leaf}"
             elif field_path == "cfg_dc12v_out_open":
                 alias = "dc_out_open"
             elif field_path == "cfg_led_mode":
                 alias = "led_mode"
+            elif field_path == "cms_oil_self_start":
+                state_field_paths.append("cfg_energy_strategy_operate_mode.operate_self_powered_open")
+                alias = "energy_strategy_operate_mode.operate_self_powered_open"
             elif field_path.startswith("cfg_"):
                 alias = field_path.removeprefix("cfg_")
             if alias not in state_field_paths:
