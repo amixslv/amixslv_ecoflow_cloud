@@ -134,7 +134,6 @@ class FieldMap:
         "inv": "Inverter",
         "chg": "Charge",
     }
-
     _STRINGS_PATH = pathlib.Path(__file__).parent.parent / "strings.json"
     _TRANSLATIONS_DIR = pathlib.Path(__file__).parent.parent / "translations"
 
@@ -328,6 +327,8 @@ class FieldMap:
             return "current"
         if f.endswith("_w") or (("pow" in f or "power" in f) and not f.endswith(("_off","_on","_flag","_en","_enable"))):
             return "power"
+        if "energy" in f or f.endswith("_wh") or f.endswith("_kwh"):
+            return "energy"
         if "freq" in f:
             return "frequency"
         if f == "cms_batt_soc":
@@ -438,6 +439,7 @@ class FieldMap:
             "pow_get_pv2",
             "pow_get_pv_sum",
             "pow_get_ac_in",
+            "pow_get_bms",
         }
         return normalized in energy_focus
 

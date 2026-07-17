@@ -11,7 +11,7 @@ class Switch(EcoFlowBaseEntity, SwitchEntity):
 
     def __init__(self, generator, device_sn, device_type, field, meta):
         super().__init__(generator, device_sn, device_type, field, meta)
-        self._attr_is_on = False
+        self._attr_is_on = None
 
         # If we already have a known value in the cumulative proto snapshot, use it.
         state_paths = meta.get("state_field_paths") or [field]

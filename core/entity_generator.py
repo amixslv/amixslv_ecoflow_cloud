@@ -88,6 +88,41 @@ class EntityGenerator:
         "chg_type",
         "led_mode",
     )
+    CONTROL_STATE_ALIASES = {
+        "cfg_ac_out_open": ("ac_out_open", "flow_info_ac_out", "pow_get_ac_out"),
+        "cfg_dc12v_out_open": ("cfg_dc_12v_out_open", "dc_12v_out_open", "dc_out_open"),
+        "cfg_usb_open": (
+            "usb_open",
+            "flow_info_qcusb1",
+            "flow_info_qcusb2",
+            "flow_info_typec1",
+            "flow_info_typec2",
+            "pow_get_qcusb1",
+            "pow_get_qcusb2",
+            "pow_get_typec1",
+            "pow_get_typec2",
+        ),
+        "cfg_bypass_out_disable": ("bypass_out_disable",),
+        "en_beep": ("cfg_beep_en",),
+        "xboost_en": ("cfg_xboost_en",),
+        "output_power_off_memory": ("cfg_output_power_off_memory",),
+        "cfg_energy_backup.energy_backup_en": ("energy_backup_en",),
+        "cfg_energy_strategy_operate_mode.operate_tou_mode_open": (
+            "energy_strategy_operate_mode.operate_tou_mode_open",
+            "operate_tou_mode_open",
+        ),
+        "cfg_energy_strategy_operate_mode.operate_self_powered_open": (
+            "energy_strategy_operate_mode.operate_self_powered_open",
+            "operate_self_powered_open",
+            "cms_oil_self_start",
+            "cfg_cms_oil_self_start",
+        ),
+        "cms_oil_self_start": (
+            "cfg_cms_oil_self_start",
+            "energy_strategy_operate_mode.operate_self_powered_open",
+            "cfg_energy_strategy_operate_mode.operate_self_powered_open",
+        ),
+    }
 
     def __init__(self, manager, hass, device_sn: str, device_type: str, pb2_module: Any):
         self.manager = manager
@@ -111,6 +146,11 @@ class EntityGenerator:
         self._last_proto_key: str | None = None
         self._last_decode_debug: dict[str, Any] = {}
         self._pending_writes: dict[str, tuple[Any, float]] = {}
+        self._control_normalized_fields: set[str] = set()
+        self._bms_energy_by_pack: dict[str, dict[int, float]] = {
+            "accu_chg_energy": {},
+            "accu_dsg_energy": {},
+        }
 
         if self.pb2:
             self._load_proto_definitions()
@@ -145,14 +185,20 @@ class EntityGenerator:
     def _load_proto_definitions(self):
         messages = load_proto_messages(self.pb2)
 
+        set_cmd = messages.get("set_cmd")
+        if set_cmd:
+            self._register_message_fields(set_cmd, source="set_cmd", is_control=True)
+
+        self._control_normalized_fields = {
+            self.field_map.normalize_field(meta.get("field_path", "")).lower()
+            for meta in self._field_meta.values()
+            if meta.get("source") == "set_cmd"
+        }
+
         for source in ("display", "runtime", "cms", "bms"):
             message_cls = messages.get(source)
             if message_cls:
                 self._register_message_fields(message_cls, source=source, is_control=False)
-
-        set_cmd = messages.get("set_cmd")
-        if set_cmd:
-            self._register_message_fields(set_cmd, source="set_cmd", is_control=True)
 
     def _register_message_fields(self, message_cls, source: str, is_control: bool, parent_path: str = ""):
         for field in message_cls.DESCRIPTOR.fields:
@@ -168,6 +214,11 @@ class EntityGenerator:
                 if nested_cls:
                     self._register_message_fields(nested_cls, source=source, is_control=is_control, parent_path=field_path)
                 continue
+
+            if not is_control:
+                normalized = self.field_map.normalize_field(field_path).lower()
+                if normalized in self._control_normalized_fields:
+                    continue
 
             entity_key = self._entity_key(source, field_path)
             if entity_key in self._field_meta:
@@ -228,6 +279,8 @@ class EntityGenerator:
                 state_field_paths.append("cfg_beep_en")
             elif field_path == "xboost_en":
                 state_field_paths.append("cfg_xboost_en")
+            elif field_path == "output_power_off_memory":
+                state_field_paths.append("cfg_output_power_off_memory")
             elif field_path == "cms_oil_self_start":
                 state_field_paths.append("cfg_cms_oil_self_start")
                 state_field_paths.append("cfg_energy_strategy_operate_mode.operate_self_powered_open")
@@ -236,6 +289,9 @@ class EntityGenerator:
                 alias = field_path.removeprefix("cfg_")
             if alias not in state_field_paths:
                 state_field_paths.append(alias)
+            for extra in self.CONTROL_STATE_ALIASES.get(field_path, ()):
+                if extra not in state_field_paths:
+                    state_field_paths.append(extra)
 
         meta: dict[str, Any] = {
             "name": name,
@@ -529,6 +585,7 @@ class EntityGenerator:
         if not decoded:
             return
 
+        decoded = self._normalize_bms_energy(decoded)
         self.raw_json.update(decoded)
 
         diag = self.entities.get("diagnostics")
@@ -572,7 +629,14 @@ class EntityGenerator:
             pending = self._get_pending_write(found_path)
             if pending is not None:
                 expected, _ = pending
-                if str(val) == str(expected):
+                expected_bool = self._coerce_bool(expected)
+                value_bool = self._coerce_bool(val)
+                bool_match = (
+                    expected_bool is not None
+                    and value_bool is not None
+                    and expected_bool == value_bool
+                )
+                if bool_match or str(val) == str(expected):
                     self._clear_pending_write(found_path)
                 else:
                     # Ignore stale telemetry while waiting for command confirmation.
@@ -601,6 +665,33 @@ class EntityGenerator:
 
             if ent.hass:
                 ent.async_write_ha_state()
+
+    def _normalize_bms_energy(self, decoded: dict) -> dict:
+        normalized = dict(decoded)
+        pack_num = normalized.get("num")
+        try:
+            pack_index = int(pack_num) if pack_num is not None else None
+        except (TypeError, ValueError):
+            pack_index = None
+
+        if pack_index is None:
+            return normalized
+
+        for key in ("accu_chg_energy", "accu_dsg_energy"):
+            if key not in normalized:
+                continue
+            value = normalized.get(key)
+            try:
+                numeric = float(value)
+            except (TypeError, ValueError):
+                continue
+
+            pack_map = self._bms_energy_by_pack.setdefault(key, {})
+            pack_map[pack_index] = numeric
+            total = sum(pack_map.values())
+            normalized[key] = round(total, 3)
+
+        return normalized
 
     def _coerce_bool(self, value):
         if isinstance(value, bool):
