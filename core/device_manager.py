@@ -413,6 +413,38 @@ class DeviceManager:
             for record in records:
                 history_file.write(json.dumps(record, ensure_ascii=False) + "\n")
 
+        self._prune_debug_history(max_age_hours=3)
+
+    def _prune_debug_history(self, max_age_hours: int = 3):
+        """Remove history entries older than max_age_hours."""
+        if not self._debug_history_path.exists():
+            return
+        cutoff = time.time() - max_age_hours * 3600
+        kept: list[str] = []
+        try:
+            with self._debug_history_path.open("r", encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                        ts_str = rec.get("received_at") or rec.get("sent_at") or ""
+                        if ts_str:
+                            ts = datetime.fromisoformat(ts_str).timestamp()
+                        else:
+                            ts = cutoff  # unknown → keep on the boundary
+                        if ts >= cutoff:
+                            kept.append(line)
+                    except Exception:
+                        kept.append(line)  # malformed → keep to avoid data loss
+        except Exception as exc:
+            _LOGGER.warning("DM: Could not prune debug history: %s", exc)
+            return
+        with self._debug_history_path.open("w", encoding="utf-8") as fh:
+            for line in kept:
+                fh.write(line + "\n")
+
         latest = {
             "updated_at": records[-1]["received_at"],
             "device_sn": self.device_sn,
