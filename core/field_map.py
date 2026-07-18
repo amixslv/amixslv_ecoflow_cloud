@@ -77,9 +77,19 @@ class FieldMap:
         "plug_in_info_dcp_dsg_chg_type": "DCP Charge/Discharge Type",
         "plug_in_info_dcp_sn": "DCP Serial Number",
         "en_beep": "Beep Enabled",
+        "cfg_ac_out_open": "AC Output",
+        "cfg_dc12v_out_open": "12V DC Output",
+        "cfg_usb_open": "USB Output",
+        "cfg_bypass_out_disable": "Disable Grid Bypass",
         "xboost_en": "X-Boost Enabled",
         "cms_max_chg_soc": "Max Charge SOC",
         "cms_min_dsg_soc": "Min Discharge SOC",
+        "cms_oil_self_start": "Self-powered",
+        "operate_self_powered_open": "Self-powered",
+        "operate_tou_mode_open": "TOU Mode",
+        "storm_pattern_enable": "Storm Guard",
+        "storm_pattern_open_flag": "Storm Guard Active",
+        "tou_gird_chg_stop_soc": "TOU Grid Charge Stop SOC",
         "output_power_off_memory": "Output Power-Off Memory",
         "dev_standby_time": "Device Standby Time",
         "screen_off_time": "Screen Off Time",
@@ -104,6 +114,11 @@ class FieldMap:
     MAX_MAP = {}
     STEP_MAP = {}
     OPTIONS_MAP = {}
+    CONFIG_CONTROL_FIELDS = {
+        "llc_gfci_flag",
+        "operate_intelligent_schedule_mode_open",
+        "operate_scheduled_open",
+    }
     TOKEN_LABELS = {
         "ac": "AC",
         "dc": "DC",
@@ -119,7 +134,6 @@ class FieldMap:
         "inv": "Inverter",
         "chg": "Charge",
     }
-
     _STRINGS_PATH = pathlib.Path(__file__).parent.parent / "strings.json"
     _TRANSLATIONS_DIR = pathlib.Path(__file__).parent.parent / "translations"
 
@@ -173,10 +187,18 @@ class FieldMap:
     # AUTO NAME
     # ------------------------------------------------------------------
     def get_name(self, field: str) -> str:
+        localized = self._localized_names.get(field)
+        if localized:
+            return localized
+
+        normalized = self._normalize_field(field)
+        localized = self._localized_names.get(normalized.lower()) or self._localized_names.get(normalized)
+        if localized:
+            return localized
+
         if field in self.NAME_MAP:
             return self.NAME_MAP[field]
 
-        normalized = self._normalize_field(field)
         if normalized in self.NAME_MAP:
             return self.NAME_MAP[normalized]
 
@@ -305,6 +327,8 @@ class FieldMap:
             return "current"
         if f.endswith("_w") or (("pow" in f or "power" in f) and not f.endswith(("_off","_on","_flag","_en","_enable"))):
             return "power"
+        if "energy" in f or f.endswith("_wh") or f.endswith("_kwh"):
+            return "energy"
         if "freq" in f:
             return "frequency"
         if f == "cms_batt_soc":
@@ -347,6 +371,8 @@ class FieldMap:
         f = normalized.lower()
 
         if is_control:
+            if self.is_config_control(field):
+                return EntityCategory.CONFIG
             if normalized.startswith("cfg_"):
                 return EntityCategory.CONFIG
             if any(x in f for x in ("timeout", "standby", "screen_off", "utc_", "timezone", "limit", "mode", "type", "beep", "xboost", "memory")):
@@ -390,7 +416,7 @@ class FieldMap:
         normalized = self._normalize_field(field).lower()
 
         if normalized == "cfg_power_off":
-            return "switch"
+            return "button"
         if any(x in normalized for x in ("power_off", "reconnect", "reset", "clear", "restart", "shutdown")):
             return "button"
         if normalized.endswith(("_en", "_enable", "_enabled", "_flag", "_switch", "_open", "_close")):
@@ -413,8 +439,15 @@ class FieldMap:
             "pow_get_pv2",
             "pow_get_pv_sum",
             "pow_get_ac_in",
+            "pow_get_bms",
         }
         return normalized in energy_focus
+
+    def is_hidden_control(self, field: str) -> bool:
+        return False
+
+    def is_config_control(self, field: str) -> bool:
+        return self._normalize_field(field).lower() in self.CONFIG_CONTROL_FIELDS
 
     # ------------------------------------------------------------------
     # AUTO ENUM OPTIONS

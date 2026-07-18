@@ -163,6 +163,7 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 plug_in_info_pv2_chg_amp_max = 81; // PV2 max uzlādes strāva (A)
   optional uint32 plug_in_info_pv2_chg_vol_max = 82; // PV2 max uzlādes spriegums (V)
   optional uint32 bms_err_code = 140;              // BMS kļūdas kods
+  optional uint32 bypass_out_disable = 146;        // Grid bypass atspējots (0/1)
   optional uint32 output_power_off_memory = 147;   // Power‑off memory (READ lauks)
   optional uint32 pv_chg_type = 148;               // PV uzlādes tips (0=Auto,1=Solar,2=Car)
   optional uint32 flow_info_bms_dsg = 152;         // BMS izlādes plūsma
@@ -219,13 +220,22 @@ message Delta3PlusDisplayPropertyUpload {
   optional uint32 cms_batt_pow_in_max = 460;       // CMS maksimālā ievades jauda (W)
   optional uint32 time_task_conflict_flag = 285;   // Laika uzdevumu konflikts
   optional uint32 time_task_change_cnt = 286;      // Laika uzdevumu izmaiņu skaits
+  optional Delta3PlusTimeTaskItemV2 time_task_current = 219; // Aktīvais TOU/time-task ieraksts
   optional Delta3PlusTimeTaskItemV2 current_time_task_v2_item = 126; // Aktīvais TOU/time-task ieraksts
+  optional Delta3PlusCfgEnergyStrategyOperateMode energy_strategy_operate_mode = 393; // Energy strategy režīmi
+  optional uint32 self_powered_conflict_flag = 395; // Self-powered konflikta karogs
+  optional uint32 tou_mode_conflict_flag = 396;     // TOU mode konflikta karogs
+  optional uint32 storm_pattern_conflict_flag = 397; // Storm guard konflikta karogs
+  optional uint32 bypass_out_disable_conflict_flag = 398; // Grid bypass konflikta karogs
   optional int32 utc_timezone = 133;              // UTC timezone offset (min)
   optional string utc_timezone_id = 134;          // UTC timezone ID
   optional uint32 utc_set_mode = 135;             // UTC set mode (0/1)
   optional uint32 cms_oil_on_soc = 272;            // Self-powered / generator start SOC (%)
   optional uint32 cms_oil_off_soc = 273;           // Self-powered / generator stop SOC (%)
   optional uint32 cms_oil_self_start = 274;        // Self-powered (0/1)
+  optional uint32 storm_pattern_enable = 467;      // Storm guard ieslēgts (0/1)
+  optional uint32 storm_pattern_open_flag = 468;   // Storm guard aktīvs (0/1)
+  optional uint32 storm_pattern_end_time = 469;    // Storm guard beigu laiks (UTC)
   optional uint32 ups_alram = 355;                 // UPS trauksme (0/1)
   optional uint32 plug_in_info_pv_dc_amp_max = 356; // PV max uzlādes strāva (A)
   optional uint32 led_mode = 357;                  // LED režīms
@@ -377,8 +387,10 @@ message Delta3PlusSetCommand {
     optional int32 lcd_light = 14;                    // LCD spilgtums (0–100)
 
     optional int32 cfg_dc12v_out_open = 18;           // 12V DC izvade (0/1)
+    optional int32 cfg_usb_open = 19;                 // USB izvades ports (0/1)
 
     optional int32 xboost_en = 25;                    // X‑Boost režīms (0/1)
+    optional int32 cfg_bypass_out_disable = 26;       // Disable grid bypass (0/1)
 
     optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
     optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
@@ -393,10 +405,13 @@ message Delta3PlusSetCommand {
     optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
     optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
     optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional Delta3PlusCfgTouStrategy cfg_tou_strategy = 65; // TOU stratēģija/tarifi
     optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional Delta3PlusCfgStormPattern cfg_storm_pattern = 93; // Storm guard iestatījumi
     optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
     optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
     optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
+    optional Delta3PlusCfgEnergyStrategyOperateMode cfg_energy_strategy_operate_mode = 106; // Self-powered/TOU režīmi
 
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
 
@@ -441,8 +456,10 @@ message Delta3PlusSetReply {
     optional int32 lcd_light = 14;                    // LCD spilgtums (0–100)
 
     optional int32 cfg_dc12v_out_open = 18;           // 12V DC izvade (0/1)
+    optional int32 cfg_usb_open = 19;                 // USB izvades ports (0/1)
 
     optional int32 xboost_en = 25;                    // X‑Boost režīms (0/1/2/3/4)
+    optional int32 cfg_bypass_out_disable = 26;       // Disable grid bypass (0/1)
 
     optional int32 cms_max_chg_soc = 33;              // Max uzlādes SOC (%)
     optional int32 cms_min_dsg_soc = 34;              // Min izlādes SOC (%)
@@ -457,10 +474,13 @@ message Delta3PlusSetReply {
     optional int32 cms_oil_self_start = 58;             // Self-powered (0/1)
     optional int32 cms_oil_on_soc = 59;                 // Self-powered start SOC (%)
     optional int32 cms_oil_off_soc = 60;                // Self-powered stop SOC (%)
+    optional Delta3PlusCfgTouStrategy cfg_tou_strategy = 65; // TOU stratēģija/tarifi
     optional int32 llc_gfci_flag = 61;                  // AC drošības/GFCI režīms
+    optional Delta3PlusCfgStormPattern cfg_storm_pattern = 93; // Storm guard iestatījumi
     optional int32 ac_energy_saving_open = 99;          // AC energy-saving režīms (0/1)
     optional int32 multi_bp_chg_dsg_mode = 100;         // Multi battery charge/discharge mode
     optional int32 low_discharge_limit_cmd = 102;       // Zema izlādes limita komanda (%)
+    optional Delta3PlusCfgEnergyStrategyOperateMode cfg_energy_strategy_operate_mode = 106; // Self-powered/TOU režīmi
 
     optional uint32 dc_out_open = 74;                 // DC izvade ieslēgta (0/1)
     optional uint32 cfg_ac_out_open = 76;             // AC izvade ieslēgta (0/1)
@@ -494,6 +514,24 @@ message Delta3PlusSetReply {
 message Delta3PlusCfgEnergyBackup {
   optional uint32 energy_backup_en = 1;
   optional uint32 energy_backup_start_soc = 2;
+}
+
+message Delta3PlusCfgTouStrategy {
+  repeated uint32 tou_hours_strategy = 1;
+  optional uint32 tou_gird_chg_stop_soc = 2;
+}
+
+message Delta3PlusCfgStormPattern {
+  optional bool storm_pattern_enable = 1;
+  optional bool storm_pattern_open_flag = 2;
+  optional uint32 storm_pattern_end_time = 3;
+}
+
+message Delta3PlusCfgEnergyStrategyOperateMode {
+  optional bool operate_self_powered_open = 1;
+  optional bool operate_scheduled_open = 2;
+  optional bool operate_tou_mode_open = 3;
+  optional bool operate_intelligent_schedule_mode_open = 4;
 }
 
 //

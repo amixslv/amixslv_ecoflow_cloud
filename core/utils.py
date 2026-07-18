@@ -35,11 +35,12 @@ def flatten_dict(data, parent_key: str = "", sep: str = ".") -> dict:
             # List / tuple / set
             elif isinstance(value, (list, tuple, set)):
                 for index, item in enumerate(value):
-                    # EcoFlow listi gandrīz vienmēr ir dict
                     if isinstance(item, dict):
                         list_key = f"{new_key}{sep}{index}"
                         items.update(flatten_dict(item, list_key, sep))
-                    # Primitives list items are ignored
+                    else:
+                        # Repeated primitives (piem. TOU hour slots)
+                        items[f"{new_key}{sep}{index}"] = item
                 continue
 
             # Primitive
@@ -56,6 +57,7 @@ def flatten_dict(data, parent_key: str = "", sep: str = ".") -> dict:
 
         if isinstance(item, dict):
             items.update(flatten_dict(item, new_key, sep))
-        # primitives ignored
+        else:
+            items[new_key] = item
 
     return items

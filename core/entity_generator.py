@@ -88,6 +88,41 @@ class EntityGenerator:
         "chg_type",
         "led_mode",
     )
+    CONTROL_STATE_ALIASES = {
+        "cfg_ac_out_open": ("ac_out_open", "flow_info_ac_out", "pow_get_ac_out"),
+        "cfg_dc12v_out_open": ("cfg_dc_12v_out_open", "dc_12v_out_open", "dc_out_open"),
+        "cfg_usb_open": (
+            "usb_open",
+            "flow_info_qcusb1",
+            "flow_info_qcusb2",
+            "flow_info_typec1",
+            "flow_info_typec2",
+            "pow_get_qcusb1",
+            "pow_get_qcusb2",
+            "pow_get_typec1",
+            "pow_get_typec2",
+        ),
+        "cfg_bypass_out_disable": ("bypass_out_disable",),
+        "en_beep": ("cfg_beep_en",),
+        "xboost_en": ("cfg_xboost_en",),
+        "output_power_off_memory": ("cfg_output_power_off_memory",),
+        "cfg_energy_backup.energy_backup_en": ("energy_backup_en",),
+        "cfg_energy_strategy_operate_mode.operate_tou_mode_open": (
+            "energy_strategy_operate_mode.operate_tou_mode_open",
+            "operate_tou_mode_open",
+        ),
+        "cfg_energy_strategy_operate_mode.operate_self_powered_open": (
+            "energy_strategy_operate_mode.operate_self_powered_open",
+            "operate_self_powered_open",
+            "cms_oil_self_start",
+            "cfg_cms_oil_self_start",
+        ),
+        "cms_oil_self_start": (
+            "cfg_cms_oil_self_start",
+            "energy_strategy_operate_mode.operate_self_powered_open",
+            "cfg_energy_strategy_operate_mode.operate_self_powered_open",
+        ),
+    }
 
     def __init__(self, manager, hass, device_sn: str, device_type: str, pb2_module: Any):
         self.manager = manager
@@ -95,7 +130,12 @@ class EntityGenerator:
         self.device_sn = device_sn
         self.device_type = device_type
         self.pb2 = pb2_module
-        self.field_map = FieldMap()
+        language = "en"
+        try:
+            language = getattr(hass.config, "language", "en") or "en"
+        except Exception:
+            language = "en"
+        self.field_map = FieldMap(FieldMap.load_localized_names(language))
 
         self.entities: dict[str, object] = {}
         self._field_meta: dict[str, dict] = {}
@@ -106,6 +146,11 @@ class EntityGenerator:
         self._last_proto_key: str | None = None
         self._last_decode_debug: dict[str, Any] = {}
         self._pending_writes: dict[str, tuple[Any, float]] = {}
+        self._control_normalized_fields: set[str] = set()
+        self._bms_energy_by_pack: dict[str, dict[int, float]] = {
+            "accu_chg_energy": {},
+            "accu_dsg_energy": {},
+        }
 
         if self.pb2:
             self._load_proto_definitions()
@@ -140,27 +185,40 @@ class EntityGenerator:
     def _load_proto_definitions(self):
         messages = load_proto_messages(self.pb2)
 
+        set_cmd = messages.get("set_cmd")
+        if set_cmd:
+            self._register_message_fields(set_cmd, source="set_cmd", is_control=True)
+
+        self._control_normalized_fields = {
+            self.field_map.normalize_field(meta.get("field_path", "")).lower()
+            for meta in self._field_meta.values()
+            if meta.get("source") == "set_cmd"
+        }
+
         for source in ("display", "runtime", "cms", "bms"):
             message_cls = messages.get(source)
             if message_cls:
                 self._register_message_fields(message_cls, source=source, is_control=False)
 
-        set_cmd = messages.get("set_cmd")
-        if set_cmd:
-            self._register_message_fields(set_cmd, source="set_cmd", is_control=True)
-
     def _register_message_fields(self, message_cls, source: str, is_control: bool, parent_path: str = ""):
         for field in message_cls.DESCRIPTOR.fields:
-            if field.label == FieldDescriptor.LABEL_REPEATED and field.type != FieldDescriptor.TYPE_MESSAGE:
-                continue
-
             field_path = f"{parent_path}.{field.name}" if parent_path else field.name
+
+            if field.label == FieldDescriptor.LABEL_REPEATED and field.type != FieldDescriptor.TYPE_MESSAGE:
+                if is_control and field_path == "cfg_tou_strategy.tou_hours_strategy":
+                    self._register_tou_hour_slots(field, source, field_path)
+                continue
 
             if field.type == FieldDescriptor.TYPE_MESSAGE:
                 nested_cls = self._resolve_nested_message(field)
                 if nested_cls:
                     self._register_message_fields(nested_cls, source=source, is_control=is_control, parent_path=field_path)
                 continue
+
+            if not is_control:
+                normalized = self.field_map.normalize_field(field_path).lower()
+                if normalized in self._control_normalized_fields:
+                    continue
 
             entity_key = self._entity_key(source, field_path)
             if entity_key in self._field_meta:
@@ -169,6 +227,20 @@ class EntityGenerator:
             meta = self._build_field_meta(field, field_path, source, is_control)
             self._field_meta[entity_key] = meta
             self._add_index(field_path, entity_key)
+
+    def _register_tou_hour_slots(self, field: FieldDescriptor, source: str, field_path: str):
+        # 7 days * 24 hours tariff matrix
+        for idx in range(168):
+            slot_path = f"{field_path}.{idx}"
+            entity_key = self._entity_key(source, slot_path)
+            if entity_key in self._field_meta:
+                continue
+            meta = self._build_field_meta(field, slot_path, source, is_control=True)
+            day = idx // 24
+            hour = idx % 24
+            meta["name"] = f"TOU tariff day {day + 1} hour {hour:02d}"
+            self._field_meta[entity_key] = meta
+            self._add_index(slot_path, entity_key)
 
     def _build_field_meta(self, field: FieldDescriptor, field_path: str, source: str, is_control: bool) -> dict:
         name = self.field_map.get_name(field_path)
@@ -183,14 +255,43 @@ class EntityGenerator:
             alias = field_path
             if field_path.startswith("cfg_energy_backup."):
                 alias = field_path.split(".", 1)[1]
+            elif field_path.startswith("cfg_storm_pattern."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                alias = f"storm_pattern.{leaf}"
+            elif field_path.startswith("cfg_tou_strategy."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                alias = f"tou_strategy.{leaf}"
+            elif field_path.startswith("cfg_energy_strategy_operate_mode."):
+                leaf = field_path.split(".", 1)[1]
+                state_field_paths.append(leaf)
+                if leaf == "operate_self_powered_open":
+                    state_field_paths.append("cms_oil_self_start")
+                alias = f"energy_strategy_operate_mode.{leaf}"
             elif field_path == "cfg_dc12v_out_open":
+                state_field_paths.append("cfg_dc_12v_out_open")
+                state_field_paths.append("dc_12v_out_open")
                 alias = "dc_out_open"
             elif field_path == "cfg_led_mode":
                 alias = "led_mode"
+            elif field_path == "en_beep":
+                state_field_paths.append("cfg_beep_en")
+            elif field_path == "xboost_en":
+                state_field_paths.append("cfg_xboost_en")
+            elif field_path == "output_power_off_memory":
+                state_field_paths.append("cfg_output_power_off_memory")
+            elif field_path == "cms_oil_self_start":
+                state_field_paths.append("cfg_cms_oil_self_start")
+                state_field_paths.append("cfg_energy_strategy_operate_mode.operate_self_powered_open")
+                alias = "energy_strategy_operate_mode.operate_self_powered_open"
             elif field_path.startswith("cfg_"):
                 alias = field_path.removeprefix("cfg_")
             if alias not in state_field_paths:
                 state_field_paths.append(alias)
+            for extra in self.CONTROL_STATE_ALIASES.get(field_path, ()):
+                if extra not in state_field_paths:
+                    state_field_paths.append(extra)
 
         meta: dict[str, Any] = {
             "name": name,
@@ -244,6 +345,8 @@ class EntityGenerator:
         if is_control:
             # Controls: switch/button only. Number/select should be in Configuration.
             if meta.get("type") in ("number", "select"):
+                meta["entity_category"] = EntityCategory.CONFIG
+            elif self.field_map.is_config_control(field_path):
                 meta["entity_category"] = EntityCategory.CONFIG
             else:
                 meta["entity_category"] = None
@@ -482,6 +585,7 @@ class EntityGenerator:
         if not decoded:
             return
 
+        decoded = self._normalize_bms_energy(decoded)
         self.raw_json.update(decoded)
 
         diag = self.entities.get("diagnostics")
@@ -525,7 +629,14 @@ class EntityGenerator:
             pending = self._get_pending_write(found_path)
             if pending is not None:
                 expected, _ = pending
-                if str(val) == str(expected):
+                expected_bool = self._coerce_bool(expected)
+                value_bool = self._coerce_bool(val)
+                bool_match = (
+                    expected_bool is not None
+                    and value_bool is not None
+                    and expected_bool == value_bool
+                )
+                if bool_match or str(val) == str(expected):
                     self._clear_pending_write(found_path)
                 else:
                     # Ignore stale telemetry while waiting for command confirmation.
@@ -554,6 +665,33 @@ class EntityGenerator:
 
             if ent.hass:
                 ent.async_write_ha_state()
+
+    def _normalize_bms_energy(self, decoded: dict) -> dict:
+        normalized = dict(decoded)
+        pack_num = normalized.get("num")
+        try:
+            pack_index = int(pack_num) if pack_num is not None else None
+        except (TypeError, ValueError):
+            pack_index = None
+
+        if pack_index is None:
+            return normalized
+
+        for key in ("accu_chg_energy", "accu_dsg_energy"):
+            if key not in normalized:
+                continue
+            value = normalized.get(key)
+            try:
+                numeric = float(value)
+            except (TypeError, ValueError):
+                continue
+
+            pack_map = self._bms_energy_by_pack.setdefault(key, {})
+            pack_map[pack_index] = numeric
+            total = sum(pack_map.values())
+            normalized[key] = round(total, 3)
+
+        return normalized
 
     def _coerce_bool(self, value):
         if isinstance(value, bool):
